@@ -12,9 +12,9 @@ open class RouteRegistrationBase protected constructor() : RouteRegistrationStor
 
     private companion object : KLogging()
 
-    private val registrations = hashSetOf<RouteRegistration>()
+    private val registrations = hashSetOf<RouteRegistrationLambda>()
 
-    fun <T : RouteBase> register(clazz: KClass<T>) {
+    fun <T : Any> register(clazz: KClass<T>) {
         registrations.add {
             with(clazz.primaryConstructor!!) {
                 callBy(parameters.associateWith { get<Any>(clazz = it.type.jvmErasure) })
@@ -23,7 +23,5 @@ open class RouteRegistrationBase protected constructor() : RouteRegistrationStor
 
     }
 
-    override fun obtainRegistrations(): Collection<RouteRegistration> = registrations
+    override fun obtainRegistrations(): Collection<RouteRegistrationLambda> = registrations.toList()
 }
-
-inline fun <reified T : RouteBase> RouteRegistrationBase.register() = this.register(T::class)

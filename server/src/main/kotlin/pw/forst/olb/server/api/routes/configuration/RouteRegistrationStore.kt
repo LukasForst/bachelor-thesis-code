@@ -1,5 +1,5 @@
 package pw.forst.olb.server.api.routes.configuration
 
 interface RouteRegistrationStore {
-    fun obtainRegistrations(): Collection<RouteRegistration>
+    fun obtainRegistrations(): Collection<RouteRegistrationLambda>
 }

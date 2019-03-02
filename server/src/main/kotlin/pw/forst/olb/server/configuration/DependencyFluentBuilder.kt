@@ -2,7 +2,7 @@ package pw.forst.olb.server.configuration
 
 import org.koin.dsl.module.Module
 import org.koin.standalone.StandAloneContext.startKoin
-import pw.forst.olb.server.api.routes.configuration.RouteRegistration
+import pw.forst.olb.server.api.routes.configuration.RouteRegistrationLambda
 import pw.forst.olb.server.api.routes.configuration.RouteRegistrationStore
 
 /**
@@ -39,7 +39,7 @@ interface RoutesStep {
 class ApplicationDependencyBuilder : ModuleRegistryEmpty, FromModuleToServiceStep, RoutesStep {
 
     private val modules = arrayListOf<Module>()
-    private val routes = arrayListOf<RouteRegistration>()
+    private val routes = arrayListOf<RouteRegistrationLambda>()
 
     override fun registerModule(module: Module): FromModuleToServiceStep = modules.add(module).run { this@ApplicationDependencyBuilder }
 
