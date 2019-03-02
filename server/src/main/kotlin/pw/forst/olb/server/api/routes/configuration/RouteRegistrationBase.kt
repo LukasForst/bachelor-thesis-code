@@ -1,5 +1,7 @@
 package pw.forst.olb.server.api.routes.configuration
 
+import pw.forst.olb.server.api.routes.DefaultRouteRegistrationStore
+
 
 open class RouteRegistrationBase protected constructor() : RouteRegistrationStore {
     private val registrations = hashSetOf<RouteRegistration>()

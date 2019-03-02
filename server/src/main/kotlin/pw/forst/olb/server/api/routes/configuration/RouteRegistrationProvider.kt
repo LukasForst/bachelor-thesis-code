@@ -1,6 +1,7 @@
 package pw.forst.olb.server.api.routes.configuration
 
 import io.ktor.application.Application
+import pw.forst.olb.server.api.routes.DefaultRouteRegistrationStore
 
 object RouteRegistrationProvider {
 
