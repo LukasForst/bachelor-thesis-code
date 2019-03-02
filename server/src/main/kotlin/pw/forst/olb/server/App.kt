@@ -4,8 +4,8 @@ import io.ktor.application.Application
 import io.ktor.server.engine.commandLineEnvironment
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import pw.forst.olb.server.configuration.resolveDependencies
 import pw.forst.olb.server.configuration.configureInstallation
+import pw.forst.olb.server.configuration.resolveDependencies
 
 fun main(arg: Array<String>) {
     embeddedServer(Netty, commandLineEnvironment(arg)).start(wait = true)

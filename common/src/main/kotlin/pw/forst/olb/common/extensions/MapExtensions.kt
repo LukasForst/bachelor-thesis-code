@@ -96,7 +96,12 @@ fun <K1, K2, K3, KR1, KR2, KR3, V> Map<K1, Map<K2, Map<K3, V>>>.swapKeys(transfo
  * map. [topDestination] specifies which map should be used to store the new primary keys, [middleDestination] is used to store the new secondary keys and
  * [bottomDestination] is used to store the new tertiary keys.
  */
-fun <K1, K2, K3, KR1, KR2, KR3, V, M3 : MutableMap<KR3, V>, M2 : MutableMap<KR2, M3>, M1 : MutableMap<KR1, M2>> Map<K1, Map<K2, Map<K3, V>>>.swapKeysTo(topDestination: M1, middleDestination: () -> M2, bottomDestination: () -> M3, transform: (K1, K2, K3) -> Triple<KR1, KR2, KR3>): M1 {
+fun <K1, K2, K3, KR1, KR2, KR3, V, M3 : MutableMap<KR3, V>, M2 : MutableMap<KR2, M3>, M1 : MutableMap<KR1, M2>> Map<K1, Map<K2, Map<K3, V>>>.swapKeysTo(
+    topDestination: M1,
+    middleDestination: () -> M2,
+    bottomDestination: () -> M3,
+    transform: (K1, K2, K3) -> Triple<KR1, KR2, KR3>
+): M1 {
     for ((key1, map2) in this) {
         for ((key2, map3) in map2) {
             for ((key3, value) in map3) {
@@ -151,13 +156,18 @@ fun <K1, K2, V, M2 : MutableMap<K2, V>, M1 : MutableMap<K1, M2>> List<Pair<Pair<
 /**
  * Works similarly as [toTwoLevelMap] but the final map has three levels.
  */
-fun <K1, K2, K3, V> Map<Triple<K1, K2, K3>, V>.toThreeLevelMap(): Map<K1, Map<K2, Map<K3, V>>> = toThreeLevelMap(LinkedHashMap(), { LinkedHashMap<K2, MutableMap<K3, V>>() }, { LinkedHashMap() })
+fun <K1, K2, K3, V> Map<Triple<K1, K2, K3>, V>.toThreeLevelMap(): Map<K1, Map<K2, Map<K3, V>>> =
+    toThreeLevelMap(LinkedHashMap(), { LinkedHashMap<K2, MutableMap<K3, V>>() }, { LinkedHashMap() })
 
 /**
  * Works similarly as [toTwoLevelMap] but the final map has three levels. [topDestination] specifies which map should be used to store the new primary keys,
  * [middleDestination] is used to store the new secondary keys and [bottomDestination] is used to store the new tertiary keys.
  */
-fun <K1, K2, K3, V, M3 : MutableMap<K3, V>, M2 : MutableMap<K2, M3>, M1 : MutableMap<K1, M2>> Map<Triple<K1, K2, K3>, V>.toThreeLevelMap(topDestination: M1, middleDestination: () -> M2, bottomDestination: () -> M3): M1 {
+fun <K1, K2, K3, V, M3 : MutableMap<K3, V>, M2 : MutableMap<K2, M3>, M1 : MutableMap<K1, M2>> Map<Triple<K1, K2, K3>, V>.toThreeLevelMap(
+    topDestination: M1,
+    middleDestination: () -> M2,
+    bottomDestination: () -> M3
+): M1 {
     for ((key, value) in this) {
         val (key1, key2, key3) = key
         topDestination.getOrPut(key1, middleDestination).getOrPut(key2, bottomDestination)[key3] = value
