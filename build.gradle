@@ -14,16 +14,10 @@ subprojects {
         jcenter()
         mavenLocal()
         mavenCentral()
+        maven { url 'https://jitpack.io' }
     }
 
     apply plugin: 'kotlin'
-
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
 
     dependencies {
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -31,6 +25,25 @@ subprojects {
         implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_couroutines_version"
 
         implementation "org.koin:koin-core:$koin_version"
+
+        implementation 'io.github.microutils:kotlin-logging:1.6.24'
+
+        testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+
+        testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_engine_version"
+
+        testRuntime "org.junit.jupiter:junit-jupiter-engine:$junit_engine_version"
     }
 
+    test {
+        useJUnitPlatform()
+    }
+
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
 }
