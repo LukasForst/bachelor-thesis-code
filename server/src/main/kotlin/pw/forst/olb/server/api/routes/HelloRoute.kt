@@ -4,15 +4,12 @@ import io.ktor.application.call
 import io.ktor.response.respond
 import io.ktor.routing.get
 import mu.KLogging
-import org.koin.standalone.inject
 import pw.forst.olb.reporting.HelloService
 import pw.forst.olb.server.api.routes.configuration.RouteBase
 
-class HelloRoute : RouteBase("hello") {
+class HelloRoute(helloService: HelloService) : RouteBase("hello") {
 
     private companion object : KLogging()
-
-    private val helloService: HelloService by inject()
 
     init {
         route {
