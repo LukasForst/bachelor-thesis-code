@@ -1,5 +1,7 @@
 package pw.forst.olb.reporting
 
+import kotlinx.coroutines.delay
+
 class HelloService {
-    fun getHello() = "hello world!"
+    suspend fun getHello() = delay(10).let { "hello world!" }
 }
