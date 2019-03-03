@@ -1,0 +1,11 @@
+Dockerfile*
+.git
+.travis.yml
+.gradle
+.idea
+README.md
+
+*/build
+*/out
+
+
