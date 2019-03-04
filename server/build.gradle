@@ -1,7 +1,5 @@
 apply plugin: 'application'
 
-group 'server'
-
 mainClassName = "io.ktor.server.netty.EngineMain"
 
 repositories {
