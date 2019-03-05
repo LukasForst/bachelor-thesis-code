@@ -21,7 +21,8 @@ class DefaultDockerClientProvider(
 
     private val cache: MutableMap<DockerHost, Pair<DockerClient, Int>> = mutableMapOf()
 
-    private fun create(host: DockerHost): DockerClient = DefaultDockerClient
+    //will be used in the future
+    private fun create(@Suppress("UNUSED_PARAMETER") host: DockerHost): DockerClient = DefaultDockerClient
         .fromEnv()
 //        .uri(host.uri)
         .build()
@@ -37,7 +38,7 @@ class DefaultDockerClientProvider(
     /**
      * Returns docker client for given docker host configuration or null when docker host does not respond to the ping
      * */
-    override suspend fun getClient(host: DockerHost): DockerClient? {
+    override suspend fun getClient(host: DockerHost): DockerClient? { //TODO make this thread safe
         val (client, usage) = cache[host] ?: create(host).also { logger.info { "New client for $host was created." } } to 0
 
         if (usage == 0 && verify(client) == null) return null
@@ -47,7 +48,7 @@ class DefaultDockerClientProvider(
     }
 
 
-    override fun returnClient(host: DockerHost) {
+    override fun returnClient(host: DockerHost) { //TODO make this thread safe
         val (client, usage) = cache[host]
             ?: logger.error { "Some process tried to return client that does not exist! This should not happen! $host" }.run { return }
 

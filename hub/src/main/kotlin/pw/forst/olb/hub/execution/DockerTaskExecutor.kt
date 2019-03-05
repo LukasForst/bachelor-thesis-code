@@ -9,12 +9,18 @@ import kotlinx.coroutines.withContext
 import mu.KLogging
 import pw.forst.olb.common.dto.ResourcesLimit
 import pw.forst.olb.common.dto.docker.DockerCommandTask
+import pw.forst.olb.common.dto.docker.DockerCommandTaskResult
+import pw.forst.olb.common.dto.docker.DockerContainerCreateResult
 import pw.forst.olb.common.dto.docker.DockerContainerCreateTask
+import pw.forst.olb.common.dto.docker.DockerFailureTaskResult
 import pw.forst.olb.common.dto.docker.DockerHost
 import pw.forst.olb.common.dto.docker.DockerJobSendDataCommand
 import pw.forst.olb.common.dto.docker.DockerJobStopTask
+import pw.forst.olb.common.dto.docker.DockerJobStopTaskResult
 import pw.forst.olb.common.dto.docker.DockerResourcesChangeTask
+import pw.forst.olb.common.dto.docker.DockerResourcesChangeTaskResult
 import pw.forst.olb.common.dto.docker.DockerTask
+import pw.forst.olb.common.dto.docker.DockerTaskResult
 import pw.forst.olb.common.extensions.mapToSet
 import pw.forst.olb.hub.client.DockerClientProvider
 import pw.forst.olb.hub.error.ContainerNotCreatedException
@@ -53,7 +59,7 @@ class DockerTaskExecutor(
     /**
      * Executes given docker task in coroutine context as suspended method
      * */
-    suspend fun executeSuspended(task: DockerTask) =
+    suspend fun executeSuspended(task: DockerTask): DockerTaskResult =
         runCatching {
             obtainClient(task.dockerHost)
                 .let { client ->
@@ -68,12 +74,12 @@ class DockerTaskExecutor(
                 }
         }
             .also { clientProvider.returnClient(task.dockerHost) }
-            .getOrElse {
-                logger.error(it) { "Exception while updating resources configuration occurred!" }
-                errorHandler.handle(task, it)
+            .getOrElse { throwAble ->
+                logger.error(throwAble) { "Exception while updating resources configuration occurred!" }
+                DockerFailureTaskResult(task, throwAble).also { errorHandler.handle(task, throwAble) }
             }
 
-    fun execute(task: DockerContainerCreateTask, client: DockerClient) {
+    fun execute(task: DockerContainerCreateTask, client: DockerClient): DockerContainerCreateResult {
         val containerId = ContainerConfig.builder()
             .image("${task.image.name}:${task.image.tag}") //TODO another parameters?
             .hostConfig(buildHostConfig(task.resourcesLimit))
@@ -95,26 +101,34 @@ class DockerTaskExecutor(
             logger.info { "Starting container - $containerId" }
             startContainer(containerId).also { logger.info { "Container started - $containerId" } }
         }
+        return DockerContainerCreateResult(containerId, task)
     }
 
 
-    fun execute(task: DockerResourcesChangeTask, client: DockerClient) = client
-        .also { logger.info { "Updating resource configuration for ${task.dockerContainer}" } }
-        .updateContainer(task.dockerContainer.containerId, buildHostConfig(task.resourcesLimit))
-        ?.warnings()?.joinToString { " ; " }
-        ?.let { logger.warn { "Executed with following warnings: $it" } }
-        ?: logger.info { "Execution successful!" }
+    fun execute(task: DockerResourcesChangeTask, client: DockerClient): DockerResourcesChangeTaskResult {
+        client
+            .also { logger.info { "Updating resource configuration for ${task.dockerContainer}" } }
+            .updateContainer(task.dockerContainer.containerId, buildHostConfig(task.resourcesLimit))
+            ?.warnings()?.joinToString { " ; " }
+            ?.let { logger.warn { "Executed with following warnings: $it" } }
+            ?: logger.info { "Execution successful!" }
+        return DockerResourcesChangeTaskResult(task)
+    }
 
 
-    fun execute(task: DockerJobStopTask, client: DockerClient) = client
-        .also { logger.info { "Updating resource configuration for ${task.dockerContainer}" } }
-        .stopContainer(task.dockerContainer.containerId, secondsBeforeKillingContainer)
-        .also { logger.info { "Container ${task.dockerContainer.containerId} stopped!" } }
+    fun execute(task: DockerJobStopTask, client: DockerClient): DockerJobStopTaskResult {
+        client
+            .also { logger.info { "Stopping container ${task.dockerContainer}" } }
+            .stopContainer(task.dockerContainer.containerId, secondsBeforeKillingContainer)
+            .also { logger.info { "Container ${task.dockerContainer.containerId} stopped!" } }
+        return DockerJobStopTaskResult(task)
+    }
 
-    fun execute(task: DockerCommandTask, client: DockerClient) = task.command.let {
+    fun execute(task: DockerCommandTask, client: DockerClient): DockerCommandTaskResult = task.command.let {
         when (it) {
             is DockerJobSendDataCommand -> executeCommand(client, task.dockerContainer.containerId, it.cmds)
         }
+        return DockerCommandTaskResult(task)
     }
 
     private fun executeCommand(client: DockerClient, containerId: String, cmd: Array<String>) = client
