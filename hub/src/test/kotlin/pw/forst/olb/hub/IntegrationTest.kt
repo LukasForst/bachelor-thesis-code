@@ -2,6 +2,7 @@ package pw.forst.olb.hub
 
 import kotlinx.coroutines.runBlocking
 import mu.KLogging
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import pw.forst.olb.common.dto.ResourcesLimit
 import pw.forst.olb.common.dto.docker.DockerCommandTask
@@ -31,7 +32,7 @@ internal class IntegrationTest {
     private companion object : KLogging()
 
 
-    //    @Disabled("This is docker integration test! Run only on environment with docker!")
+    @Disabled("This is docker integration test! Run only on environment with docker!")
     @Test
     fun `integration test - create, update, shutdown`() = runBlocking {
         val dockerClientProvider = DefaultDockerClientProvider(EagerReleaseStrategy(), coroutineContext)
