@@ -87,6 +87,7 @@ class DockerTaskExecutor(
             .let {
                 with(client) {
                     logger.info { "Creating new container for job id ${task.jobId}" }
+                    stopIfRunning(task.containerName) //TODO remove this
                     removeIfExist(task.containerName) //TODO remove this
                     createContainer(it, task.containerName).also { logger.info { "Container created! - Id ${it.id()}" } }
                 }
@@ -133,16 +134,29 @@ class DockerTaskExecutor(
 
     private fun executeCommand(client: DockerClient, containerId: String, cmd: Array<String>) = client
         .also { logger.info { "Executing command $cmd for container $containerId" } }
-        .execCreate(containerId, cmd).id()
+        .execCreate(containerId, arrayOf("sh", "-c") + cmd).id()
         .also { logger.info { "New command created - container: $containerId, command id: $it" } }
-        .let { commandId -> client.execStart(commandId).use { logger.info { it.readFully() } } } //TODO verify whether this ends successfully
+        .let { commandId -> client.execStart(commandId) } //TODO vereify whether execution was successful -> https://github.com/spotify/docker-client/issues/513
+        // this ends successfully
         .also { logger.info { "Command successfully executed!" } }
 
-}
+    private fun DockerClient.removeIfExist(containerName: String) {
+        val containers = this.listContainers(DockerClient.ListContainersParam.allContainers())
+            .filter { it.names()?.contains("/$containerName") ?: false }
+        val ids = containers.mapToSet { it.id() }
+        if (ids.any()) {
+            logger.warn { "Removing some containers! This should not be in production mode! Containers that will be removed $ids" }
+            ids.forEach { this.removeContainer(it) }
+        }
+    }
 
-fun DockerClient.removeIfExist(containerName: String) {
-    val containers = this.listContainers(DockerClient.ListContainersParam.allContainers())
-        .filter { it.names()?.contains("/$containerName") ?: false }
-    val ids = containers.mapToSet { it.id() }
-    ids.forEach { this.removeContainer(it) }
+    private fun DockerClient.stopIfRunning(containerName: String) {
+        val containers = this.listContainers()
+            .filter { it.names()?.contains("/$containerName") ?: false }
+        val ids = containers.mapToSet { it.id() }
+        if (ids.any()) {
+            logger.warn { "Stopping some containers! This should not be in production mode! Containers that will be stopped $ids" }
+            ids.forEach { this.stopContainer(it, secondsBeforeKillingContainer) }
+        }
+    }
 }

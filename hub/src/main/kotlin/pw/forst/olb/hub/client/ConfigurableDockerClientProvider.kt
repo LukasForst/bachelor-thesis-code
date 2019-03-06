@@ -21,10 +21,9 @@ class ConfigurableDockerClientProvider(
 
     private val cache: MutableMap<DockerHost, Pair<DockerClient, Int>> = mutableMapOf()
 
-    //will be used in the future
-    private fun create(@Suppress("UNUSED_PARAMETER") host: DockerHost): DockerClient = DefaultDockerClient
+    private fun create(host: DockerHost): DockerClient = DefaultDockerClient
         .builder() //TODO set various types of connection settings
-//        .uri(host.uri)
+        .uri(host.uri)
         .build()
 
 

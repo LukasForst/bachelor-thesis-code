@@ -2,14 +2,16 @@ package pw.forst.olb.hub
 
 import kotlinx.coroutines.runBlocking
 import mu.KLogging
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import pw.forst.olb.common.dto.ResourcesLimit
+import pw.forst.olb.common.dto.docker.DockerCommandTask
+import pw.forst.olb.common.dto.docker.DockerCommandTaskResult
 import pw.forst.olb.common.dto.docker.DockerContainerCreateResult
 import pw.forst.olb.common.dto.docker.DockerContainerCreateTask
 import pw.forst.olb.common.dto.docker.DockerContainerInfo
 import pw.forst.olb.common.dto.docker.DockerHost
 import pw.forst.olb.common.dto.docker.DockerImage
+import pw.forst.olb.common.dto.docker.DockerJobSendDataCommand
 import pw.forst.olb.common.dto.docker.DockerJobStopTask
 import pw.forst.olb.common.dto.docker.DockerJobStopTaskResult
 import pw.forst.olb.common.dto.docker.DockerResourcesChangeTask
@@ -29,7 +31,7 @@ internal class IntegrationTest {
     private companion object : KLogging()
 
 
-    @Disabled("This is docker integration test! Run only on environment with docker!")
+    //    @Disabled("This is docker integration test! Run only on environment with docker!")
     @Test
     fun `integration test - create, update, shutdown`() = runBlocking {
         val dockerClientProvider = DefaultDockerClientProvider(EagerReleaseStrategy(), coroutineContext)
@@ -39,7 +41,7 @@ internal class IntegrationTest {
         val dockerTaskExecutor = DockerTaskExecutor(dockerClientProvider, errorHandler, inputFileProvider, coroutineContext)
 
         val jobId = JobId(1L)
-        val dockerHost = DockerHost("localhost")
+        val dockerHost = DockerHost("unix:///var/run/docker.sock") //localhost
 
         val createTask = DockerContainerCreateTask(
             jobId,
@@ -62,6 +64,16 @@ internal class IntegrationTest {
 
         val resultUpdate = dockerTaskExecutor.executeSuspended(updateTask) as DockerResourcesChangeTaskResult
         logger.info { resultUpdate }
+
+        val commandTask = DockerCommandTask(
+            jobId,
+            containerInfo,
+            DockerJobSendDataCommand(
+                arrayOf("touch /app/i_said_hello!.txt ; echo Hello World!!!!!!!")
+            )
+        )
+        val resultCommand = dockerTaskExecutor.executeSuspended(commandTask) as DockerCommandTaskResult
+        logger.info { resultCommand }
 
         val closeTask = DockerJobStopTask(
             jobId,
