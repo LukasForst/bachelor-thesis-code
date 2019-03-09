@@ -35,10 +35,6 @@ subprojects {
         testRuntime "org.junit.jupiter:junit-jupiter-engine:$junit_engine_version"
     }
 
-    test {
-        useJUnitPlatform()
-    }
-
 
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
