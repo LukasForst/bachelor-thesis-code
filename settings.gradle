@@ -1,6 +1,3 @@
 include 'common'
 include 'core'
-include 'hub'
-include 'job'
-include 'server'
-include 'reporting'
+include 'simulation'
