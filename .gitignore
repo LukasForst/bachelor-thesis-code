@@ -1,3 +1,9 @@
+#folder with gradle wrapper
+gradle/
+
+#gradle wrapper build scripts
+gradlew
+gradlew.bat
 
 # Created by https://www.gitignore.io/api/java,linux,kotlin,gradle,windows,java-web,jetbrains+all
 # Edit at https://www.gitignore.io/?templates=java,linux,kotlin,gradle,windows,java-web,jetbrains+all
