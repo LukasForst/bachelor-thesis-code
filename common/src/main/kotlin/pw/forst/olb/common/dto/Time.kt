@@ -5,7 +5,8 @@ data class Time(
 ) : Comparable<Time> {
 
     init {
-        if (seconds < 0) throw IllegalArgumentException("It is not possible have negative time!")
+        //TODO enable this check
+//        if (seconds < 0) throw IllegalArgumentException("It is not possible have negative time!")
     }
 
     override fun compareTo(other: Time): Int = this.seconds.compareTo(other.seconds)
@@ -13,6 +14,9 @@ data class Time(
     operator fun plus(other: Time) = Time(this.seconds + other.seconds)
 
     operator fun minus(other: Time) = Time(this.seconds - other.seconds)
+
+    operator fun times(times: Long) = Time(this.seconds * times)
+    operator fun times(times: Int) = Time(this.seconds * times)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

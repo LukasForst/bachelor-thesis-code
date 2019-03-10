@@ -11,6 +11,6 @@ class NaiveEvaluator : Evaluator {
     override fun evaluate(plan: Plan): Cost =
         plan.assignments.values
             .flatMap { assignments ->
-                assignments.map { assignment -> assignment.resourcesStack.cpuCost * assignment.cpu + assignment.resourcesStack.memoryCost * assignment.memory }
+                assignments.map { (_, assignment) -> assignment.resourcesStack.cpuCost * assignment.cpu + assignment.resourcesStack.memoryCost * assignment.memory }
             }.sumOnlyValues()
 }

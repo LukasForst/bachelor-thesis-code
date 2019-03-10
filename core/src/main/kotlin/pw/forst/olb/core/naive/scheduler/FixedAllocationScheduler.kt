@@ -1,6 +1,7 @@
-package pw.forst.olb.core.naive
+package pw.forst.olb.core.naive.scheduler
 
 import pw.forst.olb.common.dto.Time
+import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.job.JobAssignment
 import pw.forst.olb.common.dto.planning.Plan
 import pw.forst.olb.common.dto.planning.PlanningInput
@@ -9,18 +10,17 @@ import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.step
 import pw.forst.olb.common.dto.until
-import pw.forst.olb.core.Planner
+import pw.forst.olb.core.Scheduler
 
-class RandomPlanner : Planner {
+class FixedAllocationScheduler : Scheduler {
     override fun createPlan(input: PlanningInput): Plan {
-        val finalMap = sortedMapOf<Time, Collection<JobAssignment>>()
+        val finalMap = sortedMapOf<Time, Map<Job, JobAssignment>>()
 
         for (time in input.currentTime until input.planHorizon step input.timeStep) {
-            val assignments = mutableListOf<JobAssignment>()
+            val assignments = mutableMapOf<Job, JobAssignment>()
 
-            val currentStac = input.resourcesStack.first()
 
-            var resourcesStack = currentStac
+            var resourcesStack = input.resourcesStack.first()
             for (job in input.jobs) {
                 val cpu = CpuResources(1.0, CpuPowerType.SINGLE_CORE)
                 val mem = MemoryResources(1024)
@@ -30,13 +30,13 @@ class RandomPlanner : Planner {
                     time = time,
                     cpu = cpu,
                     memory = mem,
-                    resourcesStack = currentStac
+                    resourcesStack = resourcesStack
                 )
 
                 resourcesStack -= cpu
                 resourcesStack -= mem
 
-                assignments.add(jobAssignment)
+                assignments[job] = jobAssignment
             }
 
             finalMap[time] = assignments

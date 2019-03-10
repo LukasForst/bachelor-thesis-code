@@ -4,9 +4,9 @@ import pw.forst.olb.common.dto.planning.Plan
 import pw.forst.olb.common.dto.planning.PlanningInput
 
 /**
- * Planner interface should be implemented by every planning executor
+ * Scheduler interface should be implemented by every planning executor
  * */
-interface Planner {
+interface Scheduler {
     /**
      * Executes planning for specified input
      * */

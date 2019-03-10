@@ -15,14 +15,15 @@ import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryCost
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesStack
+import pw.forst.olb.core.Scheduler
 import pw.forst.olb.core.naive.NaiveEvaluator
-import pw.forst.olb.core.naive.RandomPlanner
+import pw.forst.olb.core.naive.scheduler.CspScheduler
 
 fun main() {
-    val planner = RandomPlanner()
+    val scheduler = CspScheduler() as Scheduler
     val evaluator = NaiveEvaluator()
 
-    val result = planner.createPlan(createPlanningInput())
+    val result = scheduler.createPlan(createPlanningInput())
 
     val cost = evaluator.evaluate(result)
 
@@ -35,7 +36,7 @@ fun createPlanningInput() = PlanningInput(
     resourcesStack = obtainResourcesStacks(),
     currentPlan = obtainPlan(),
     currentTime = Time(0),
-    planHorizon = Time(60 * 5),
+    planHorizon = Time(60 * 10),
     timeStep = Time(60)
 )
 
@@ -47,10 +48,10 @@ fun obtainJobs() = listOf(
     Job(
         parameters = JobParameters(
             maxTime = Time(
-                seconds = 60 * 2
+                seconds = 60 * 10
             ),
             maxCost = createCost(
-                value = 100.0 * 3.0 * 2.0 + 200.0 * 1.0 * 2.0
+                value = Double.MAX_VALUE
             ),
             jobType = JobType.SINGLE_CORE_HEAVY,
             algorithmType = AlgorithmType.TASP
@@ -66,7 +67,7 @@ fun obtainJobs() = listOf(
                 seconds = 60 * 1
             ),
             maxCost = createCost(
-                value = 100.0 * 3.0 * 2.0 + 200.0 * 1.0 * 2.0
+                value = Double.MAX_VALUE
             ),
             jobType = JobType.SINGLE_CORE_HEAVY,
             algorithmType = AlgorithmType.TASP
@@ -87,7 +88,7 @@ fun obtainResourcesStacks() = listOf(
             memoryInMegaBytes = 1024 * 10
         ),
         memoryCost = MemoryCost(
-            cost = createCost(105.0)
+            cost = createCost(100.0)
         ),
 
         cpuResources = CpuResources(
