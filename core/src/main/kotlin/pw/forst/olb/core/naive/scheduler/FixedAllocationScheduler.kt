@@ -2,9 +2,9 @@ package pw.forst.olb.core.naive.scheduler
 
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.Job
-import pw.forst.olb.common.dto.job.JobAssignment
-import pw.forst.olb.common.dto.planning.Plan
+import pw.forst.olb.common.dto.job.JobAssignmentImpl
 import pw.forst.olb.common.dto.planning.PlanningInput
+import pw.forst.olb.common.dto.planning.SimplePlan
 import pw.forst.olb.common.dto.resources.CpuPowerType
 import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
@@ -13,11 +13,11 @@ import pw.forst.olb.common.dto.until
 import pw.forst.olb.core.Scheduler
 
 class FixedAllocationScheduler : Scheduler {
-    override fun createPlan(input: PlanningInput): Plan {
-        val finalMap = sortedMapOf<Time, Map<Job, JobAssignment>>()
+    override fun createPlan(input: PlanningInput): SimplePlan {
+        val finalMap = sortedMapOf<Time, Map<Job, JobAssignmentImpl>>()
 
         for (time in input.currentTime until input.planHorizon step input.timeStep) {
-            val assignments = mutableMapOf<Job, JobAssignment>()
+            val assignments = mutableMapOf<Job, JobAssignmentImpl>()
 
 
             var resourcesStack = input.resourcesStack.first()
@@ -25,7 +25,7 @@ class FixedAllocationScheduler : Scheduler {
                 val cpu = CpuResources(1.0, CpuPowerType.SINGLE_CORE)
                 val mem = MemoryResources(1024)
 
-                val jobAssignment = JobAssignment(
+                val jobAssignment = JobAssignmentImpl(
                     job = job,
                     time = time,
                     cpu = cpu,
@@ -42,7 +42,7 @@ class FixedAllocationScheduler : Scheduler {
             finalMap[time] = assignments
         }
 
-        return Plan(assignments = finalMap)
+        return SimplePlan(assignments = finalMap)
     }
 
 }

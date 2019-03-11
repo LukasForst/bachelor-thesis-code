@@ -2,10 +2,10 @@ package pw.forst.olb.core.naive.scheduler
 
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.Job
-import pw.forst.olb.common.dto.job.JobAssignment
+import pw.forst.olb.common.dto.job.JobAssignmentImpl
 import pw.forst.olb.common.dto.job.JobType
-import pw.forst.olb.common.dto.planning.Plan
 import pw.forst.olb.common.dto.planning.PlanningInput
+import pw.forst.olb.common.dto.planning.SimplePlan
 import pw.forst.olb.common.dto.resources.CpuPowerType
 import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
@@ -20,12 +20,12 @@ import kotlin.random.Random
 
 class CspScheduler : Scheduler {
 
-    override fun createPlan(input: PlanningInput): Plan {
+    override fun createPlan(input: PlanningInput): SimplePlan {
         val timeStep = input.timeStep
 
         val variables = createVariables(input)
 
-        val jobAssignments = sortedMapOf<Time, Map<Job, JobAssignment>>()
+        val jobAssignments = sortedMapOf<Time, Map<Job, JobAssignmentImpl>>()
             .also { it.putAll(input.currentPlan.assignments) }
 
         var resourcesStacks = input.resourcesStack
@@ -35,7 +35,7 @@ class CspScheduler : Scheduler {
 
             val jobs = variables.sortedBy { it.jobPriority }
 
-            val timeAssignments = mutableMapOf<Job, JobAssignment>()
+            val timeAssignments = mutableMapOf<Job, JobAssignmentImpl>()
             for (job in jobs) {
                 val domain = getDomainForJob(job, time, timeStep, jobAssignments, resourcesStacks)
                 val stack = preferredStackForJob(job, domain) ?: continue
@@ -48,11 +48,11 @@ class CspScheduler : Scheduler {
             jobAssignments[time] = timeAssignments
         }
 
-        return Plan(assignments = jobAssignments)
+        return SimplePlan(assignments = jobAssignments)
     }
 
-    private fun createJobAssignment(job: Job, allocation: ResourcesAllocation, time: Time, stack: ResourcesStack): JobAssignment =
-        JobAssignment(
+    private fun createJobAssignment(job: Job, allocation: ResourcesAllocation, time: Time, stack: ResourcesStack): JobAssignmentImpl =
+        JobAssignmentImpl(
             job = job,
             time = time,
             cpu = allocation.cpu,
@@ -60,14 +60,14 @@ class CspScheduler : Scheduler {
             resourcesStack = stack
         )
 
-    private fun ResourcesStack.update(jobAssignment: JobAssignment): ResourcesStack = this - jobAssignment.cpu - jobAssignment.memory
+    private fun ResourcesStack.update(jobAssignment: JobAssignmentImpl): ResourcesStack = this - jobAssignment.cpu - jobAssignment.memory
 
-    private fun obtainPreferredAllocation(job: Job, previousAllocation: JobAssignment?, stack: ResourcesStack): ResourcesAllocation {
+    private fun obtainPreferredAllocation(job: Job, previousAllocation: JobAssignmentImpl?, stack: ResourcesStack): ResourcesAllocation {
         return randomAllocation(stack, Random.Default)
     }
 
     private fun randomAllocation(stack: ResourcesStack, rd: Random): ResourcesAllocation = ResourcesAllocation(
-        cpu = stack.cpuResources.copy(cpusPercentage = stack.cpuResources.cpusPercentage / rd.nextInt(1, 4)),
+        cpu = stack.cpuResources.copy(cpuValue = stack.cpuResources.cpuValue / rd.nextInt(1, 4)),
         memory = stack.memoryResources.copy(memoryInMegaBytes = stack.memoryResources.memoryInMegaBytes / rd.nextInt(1, 4))
     )
 
@@ -87,7 +87,7 @@ class CspScheduler : Scheduler {
         job: Job,
         currentTime: Time,
         timeStep: Time,
-        jobAssignment: Map<Time, Map<Job, JobAssignment>>,
+        jobAssignment: Map<Time, Map<Job, JobAssignmentImpl>>,
         resourcesStack: Collection<ResourcesStack>
     ): Collection<ResourcesStack> {
         val jobData = getDataPerJob(job, jobAssignment)[job]
@@ -105,7 +105,7 @@ class CspScheduler : Scheduler {
         return resourcesStack.filter { it isFor assignment.resourcesStack }
     }
 
-    private fun getDataPerJob(job: Job, jobAssignment: Map<Time, Map<Job, JobAssignment>>) =
+    private fun getDataPerJob(job: Job, jobAssignment: Map<Time, Map<Job, JobAssignmentImpl>>) =
         jobAssignment.swapKeys()
 
     private data class ResourcesAllocation(val cpu: CpuResources, val memory: MemoryResources)

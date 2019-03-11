@@ -29,5 +29,5 @@ data class CpuCost(
 
     operator fun minus(other: CpuCost): CpuCost = copy(cost = this.cost + other)
 
-    operator fun times(other: CpuResources): Cost = createCost(cost = this.cost * other.cpusPercentage)
+    operator fun times(other: CpuResources): Cost = createCost(cost = this.cost * other.cpuValue)
 }

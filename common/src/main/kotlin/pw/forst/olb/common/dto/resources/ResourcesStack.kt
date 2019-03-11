@@ -11,9 +11,10 @@ interface ResourcesStackInfo {
 
     val memoryCost: MemoryCost
 
-    operator fun times(other: CpuResources) = cpuCost * other.cpusPercentage
+    operator fun times(other: CpuResources) = cpuCost * other.cpuValue
     operator fun times(other: MemoryResources) = memoryCost * other.memoryInMegaBytes
 }
+
 
 data class ResourcesStack(
     override val name: String,

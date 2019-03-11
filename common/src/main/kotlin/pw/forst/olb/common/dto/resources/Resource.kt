@@ -6,13 +6,13 @@ data class CpuResources(
     /**
      * 2.5 represents two wholes cores and half of the power of one core
      * */
-    val cpusPercentage: Double,
+    val cpuValue: Double,
 
     val type: CpuPowerType
 ) : Resources() {
-    operator fun plus(other: CpuResources) = assertSameType(other) { copy(cpusPercentage = this.cpusPercentage + other.cpusPercentage) }
+    operator fun plus(other: CpuResources) = assertSameType(other) { copy(cpuValue = this.cpuValue + other.cpuValue) }
 
-    operator fun minus(other: CpuResources) = assertSameType(other) { copy(cpusPercentage = this.cpusPercentage - other.cpusPercentage) }
+    operator fun minus(other: CpuResources) = assertSameType(other) { copy(cpuValue = this.cpuValue - other.cpuValue) }
 
 
     private fun <T> assertSameType(other: CpuResources, block: () -> T): T =

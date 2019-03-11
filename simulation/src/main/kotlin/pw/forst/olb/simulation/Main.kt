@@ -7,8 +7,8 @@ import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.job.JobParameters
 import pw.forst.olb.common.dto.job.JobPlanningData
 import pw.forst.olb.common.dto.job.JobType
-import pw.forst.olb.common.dto.planning.Plan
 import pw.forst.olb.common.dto.planning.PlanningInput
+import pw.forst.olb.common.dto.planning.SimplePlan
 import pw.forst.olb.common.dto.resources.CpuCost
 import pw.forst.olb.common.dto.resources.CpuPowerType
 import pw.forst.olb.common.dto.resources.CpuResources
@@ -40,7 +40,7 @@ fun createPlanningInput() = PlanningInput(
     timeStep = Time(60)
 )
 
-fun obtainPlan() = Plan(
+fun obtainPlan() = SimplePlan(
     assignments = sortedMapOf()
 )
 
@@ -92,7 +92,7 @@ fun obtainResourcesStacks() = listOf(
         ),
 
         cpuResources = CpuResources(
-            cpusPercentage = 4.0,
+            cpuValue = 4.0,
             type = CpuPowerType.SINGLE_CORE
         ),
         cpuCost = CpuCost(
