@@ -1,9 +1,9 @@
-package pw.forst.olb.core.evaluator.leastsquares
+package pw.forst.olb.core.predict.leastsquares
 
 import mu.KLogging
 
 
-class HyperbolaFitter(
+class HyperbolaFitting(
     private val parameters: DoubleArray = doubleArrayOf(0.0, 1.0, 0.0)
 ) {
 

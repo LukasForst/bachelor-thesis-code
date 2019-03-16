@@ -1,4 +1,4 @@
-package pw.forst.olb.core.evaluator.leastsquares
+package pw.forst.olb.core.predict.leastsquares
 
 /**
  * Credit - https://github.com/odinsbane/least-squares-in-java/blob/master/src/main/java/org/orangepalantir/leastsquares/Function.java

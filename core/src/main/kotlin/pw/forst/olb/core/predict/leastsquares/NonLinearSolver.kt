@@ -1,13 +1,17 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "PrivatePropertyName", "SpellCheckingInspection", "LocalVariableName", "unused")
 
-package pw.forst.olb.core.evaluator.leastsquares
+package pw.forst.olb.core.predict.leastsquares
 
 import Jama.Matrix
+import mu.KLogging
 
 /**
  * Credits - https://github.com/odinsbane/least-squares-in-java/blob/master/src/main/java/org/orangepalantir/leastsquares/fitters/NonLinearSolver.java converted into Kotlin
  * */
 class NonLinearSolver(private var FUNCTION: Function) {
+
+    private companion object : KLogging()
+
     /**
      * Ignores second derivatives, not very good.
      * for solving non-linear least squares fit of f(x:A) = z with sets of x,z data points.
@@ -164,7 +168,7 @@ class NonLinearSolver(private var FUNCTION: Function) {
                 break
             }
             if (e > last_error) {
-                System.err.println("Error increased: consider smaller step size.")
+                logger.error { "Error increased: consider smaller step size." }
                 break
             }
             last_error = e
@@ -180,7 +184,7 @@ class NonLinearSolver(private var FUNCTION: Function) {
             i++
         }
         if (i.toDouble() == MAX_ITERATIONS) {
-            System.err.println("Warning: Maximum iteration reached.")
+            logger.error { "Warning: Maximum iteration reached." }
         }
 
 
