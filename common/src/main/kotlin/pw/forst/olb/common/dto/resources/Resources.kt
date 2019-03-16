@@ -1,76 +1,37 @@
 package pw.forst.olb.common.dto.resources
 
-import pw.forst.olb.common.dto.Cost
-import java.util.UUID
+sealed class Resources
 
-interface ResourcesProvider {
-    val name: String
-
-    val uuid: UUID
-
-    val cpuCost: CpuCost
-
-    val memoryCost: MemoryCost
-
-    val initialPool: ResourcesPool
-
-    operator fun times(other: CpuResources) = cpuCost * other.cpuValue
-
-    operator fun times(other: MemoryResources) = memoryCost * other.memoryInMegaBytes
-}
-
-interface ResourcesPool {
-
-    val provider: ResourcesProvider
-
-    val cpuResources: CpuResources
-
-    val memoryResources: MemoryResources
-
-    operator fun minus(other: MemoryResources): ResourcesPool
-
-    operator fun minus(other: CpuResources): ResourcesPool
-
-}
-
-interface ResourcesAllocation : ResourcesPool {
-
+data class CpuResources(
     /**
-     * Allocation cost -> memory + cpu
+     * 2.5 represents two wholes cores and half of the power of one core
      * */
-    val cost: Cost
+    val cpuValue: Double,
 
-    operator fun plus(other: MemoryResources): ResourcesAllocation
+    val type: CpuPowerType
+) : Resources() {
 
-    override operator fun minus(other: MemoryResources): ResourcesAllocation
+    operator fun plus(other: CpuResources) = assertSameType(other) { copy(cpuValue = this.cpuValue + other.cpuValue) }
 
-    operator fun plus(other: CpuResources): ResourcesAllocation
+    operator fun minus(other: CpuResources) = assertSameType(other) { copy(cpuValue = this.cpuValue - other.cpuValue) }
 
-    override operator fun minus(other: CpuResources): ResourcesAllocation
+
+    private fun <T> assertSameType(other: CpuResources, block: () -> T): T =
+        if (this.type != other.type) throw IllegalArgumentException("It is not possible to operate with different CPU type! this: [$this], other: [$other]")
+        else block()
 }
 
-//data class ResourcesProvider(
-//    override val name: String,
-//    override val cpuCost: CpuCost,
-//    override val memoryCost: MemoryCost,
-//    override val uuid: UUID = UUID.randomUUID()
-//
-//) : ResourcesStackInfo
-//
-//data class ResourcesPool(
-//    val provider: ResourcesProvider,
-//    val cpuResources: CpuResources,
-//    val memoryResources: MemoryResources
-//
-//) {
-//    operator fun plus(other: MemoryResources) = copy(memoryResources = this.memoryResources + other)
-//    operator fun minus(other: MemoryResources) = copy(memoryResources = this.memoryResources - other)
-//
-//    operator fun plus(other: CpuResources) = copy(cpuResources = this.cpuResources + other)
-//    operator fun minus(other: CpuResources) = copy(cpuResources = this.cpuResources - other)
-//}
-//
-//data class ResourcesAllocation(
-//    val provider: ResourcesProvider,
-//
-//    )
+enum class CpuPowerType {
+    SINGLE_CORE,
+    MULTI_CORE
+}
+
+data class MemoryResources(
+
+    val memoryInMegaBytes: Long
+
+) : Resources() {
+    operator fun plus(other: MemoryResources) = copy(memoryInMegaBytes = this.memoryInMegaBytes + other.memoryInMegaBytes)
+
+    operator fun minus(other: MemoryResources) = copy(memoryInMegaBytes = this.memoryInMegaBytes - other.memoryInMegaBytes)
+}

@@ -4,6 +4,11 @@ data class Time(
     val seconds: Long
 ) : Comparable<Time> {
 
+    companion object {
+
+        val zero = Time(0)
+    }
+
     init {
         //TODO enable this check
 //        if (seconds < 0) throw IllegalArgumentException("It is not possible have negative time!")
