@@ -1,11 +1,10 @@
-package pw.forst.olb.core.evaluator
+package pw.forst.olb.core.predict.job
 
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.JobValue
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.scheduling.JobPlanView
 import pw.forst.olb.core.predict.IterationPredict
-import pw.forst.olb.core.predict.job.PredictionSelector
 
 class JobAssignmentValueProviderImpl(
     private val predictionSelector: PredictionSelector,

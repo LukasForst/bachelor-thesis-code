@@ -1,4 +1,4 @@
-package pw.forst.olb.core.evaluator
+package pw.forst.olb.core.predict.job
 
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.JobValue
