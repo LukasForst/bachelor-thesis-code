@@ -1,7 +1,6 @@
 import csv
-import os
-
 import matplotlib.pyplot as plt
+import os
 
 
 def mean(numbers):
@@ -36,7 +35,7 @@ def read_file(dir, file):
     return {'idx': idxs, 'elapsed': elapsed_time, 'iter_len': lengths, 'costs': costs}
 
 
-def go(input_dir, output_dir):
+def go(input_dir, output_dir, save):
     iteration_length = []
     for file in get_file_names(input_dir):
         data = read_file(input_dir, file)
@@ -45,15 +44,18 @@ def go(input_dir, output_dir):
 
         plt.title(file)
         plt.plot(data['idx'], data['costs'])
-        plt.savefig(output_dir + file + '.png')
+        if save:
+            plt.savefig(output_dir + file + '.png')
         plt.show()
 
     plt.figure(dpi=680)
     plt.title("Mean: " + str(mean(iteration_length)))
     pts = plt.scatter(range(0, len(iteration_length)), iteration_length, marker='o', c='b', s=1)
     plt.setp(pts, color='r', linewidth=0.1)
-    plt.savefig(output_dir + 'iteration_len.png')
+    if save:
+        plt.savefig(output_dir + 'iteration_len.png')
+    plt.show()
 
 
 if __name__ == '__main__':
-    go("/home/lukas/repos/bp/job-data/input/", "/home/lukas/repos/bp/job-data/graphs/")
+    go("/home/lukas/repos/bp/job-data/input/", "/home/lukas/repos/bp/job-data/graphs/", False)

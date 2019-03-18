@@ -13,7 +13,7 @@ class JobValuePredictor<T>(
 ) : JobValuePrediction {
 
     override fun predict(view: JobPlanView, iteration: Iteration): JobValue? {
-        val predictionSet = view.values.mapKeysAndValues({ (key, _) -> key.position.toDouble() }, { (_, job) -> job.value })
+        val predictionSet = view.jobMeta.values.mapKeysAndValues({ (key, _) -> key.position.toDouble() }, { (_, job) -> job.value })
         return prediction.predict(predictionSet, iteration.position.toDouble(), predictionParameter)?.let { JobValueImpl(it) }
     }
 }

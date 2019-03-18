@@ -6,7 +6,10 @@ import mu.KLogging
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.Iteration
+import pw.forst.olb.common.dto.job.Job
+import pw.forst.olb.common.dto.job.JobMetaData
 import pw.forst.olb.common.dto.job.JobValue
 import pw.forst.olb.common.dto.job.impl.JobValueImpl
 import pw.forst.olb.common.dto.scheduling.JobPlanView
@@ -90,8 +93,10 @@ internal class HyperbolaFittingTest {
         data.mapKeysAndValues({ key -> SimpleIteration(position = key.key) }, { JobValueImpl(it.value) })
 
     private fun obtainView(lowestX: Long, highestX: Long, function: (Long) -> Double): JobPlanView = mock {
-        on { values } doReturn generateObjects(
-            generateSequence(lowestX) { (it + 1).takeIf { result -> result < highestX } }.associate { it to function(it) }
+        on { jobMeta } doReturn SimpleJobMeta(
+            values = generateObjects(
+                generateSequence(lowestX) { (it + 1).takeIf { result -> result < highestX } }.associate { it to function(it) }
+            )
         )
     }
 
@@ -102,6 +107,13 @@ internal class HyperbolaFittingTest {
         }
         logger.info { "Diff: $diff OK - Expected: $expected, Actual: $actual" }
     }
+
+    private data class SimpleJobMeta(
+        override val job: Job = mock(),
+        override val iterationTime: Map<Time, Collection<Iteration>> = emptyMap(),
+        override val values: Map<Iteration, JobValue> = emptyMap()
+
+    ) : JobMetaData
 
     private data class SimpleIteration(
         override val position: Long = 0L,

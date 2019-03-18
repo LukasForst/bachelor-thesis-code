@@ -7,4 +7,6 @@ interface JobMetaData {
     val job: Job
 
     val iterationTime: Map<Time, Collection<Iteration>>
+
+    val values: Map<Iteration, JobValue>
 }
