@@ -256,3 +256,24 @@ internal fun mapCapacity(expectedSize: Int): Int {
  */
 @PublishedApi
 internal fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) this.size else default
+
+/**
+ * Returns average of collection
+ * */
+inline fun <T> Collection<T>.averageByDouble(selector: (T) -> Double): Double = this.map(selector).average()
+
+
+/**
+ * Returns average of collection
+ * */
+inline fun <T> Collection<T>.averageByInt(selector: (T) -> Int): Double = this.map(selector).average()
+
+/**
+ * Returns average of collection
+ * */
+inline fun <T> Collection<T>.averageByLong(selector: (T) -> Long): Double = this.map(selector).average()
+
+/**
+ * Returns average of collection
+ * */
+inline fun <T> Collection<T>.averageByFloat(selector: (T) -> Float): Double = this.map(selector).average()

@@ -1,14 +1,16 @@
 package pw.forst.olb.common.dto.job
 
+import pw.forst.olb.common.dto.Cost
 import pw.forst.olb.common.dto.Time
-import pw.forst.olb.common.dto.resources.CpuResources
-import pw.forst.olb.common.dto.resources.MemoryResources
-import pw.forst.olb.common.dto.resources.ResourcesStackInfo
+import pw.forst.olb.common.dto.resources.ResourcesAllocation
 
-data class JobAssignment(
-    val job: Job,
-    val time: Time,
-    val cpu: CpuResources,
-    val memory: MemoryResources,
-    val resourcesStack: ResourcesStackInfo
-)
+interface JobAssignment {
+
+    val job: Job
+
+    val time: Time
+
+    val allocation: ResourcesAllocation
+
+    val cost: Cost
+}
