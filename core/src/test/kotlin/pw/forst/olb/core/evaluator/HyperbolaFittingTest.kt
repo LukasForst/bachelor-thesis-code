@@ -12,7 +12,7 @@ import pw.forst.olb.common.dto.job.impl.JobValueImpl
 import pw.forst.olb.common.dto.scheduling.JobPlanView
 import pw.forst.olb.common.extensions.mapKeysAndValues
 import pw.forst.olb.core.predict.job.JobValuePrediction
-import pw.forst.olb.core.predict.job.JobValuePredictionFactory
+import pw.forst.olb.core.predict.job.JobValuePredictorFactory
 import kotlin.test.assertNotNull
 import kotlin.test.fail
 
@@ -23,9 +23,9 @@ internal class HyperbolaFittingTest {
         @Suppress("unused") //used as parameter
         @JvmStatic
         fun generatePredictions(): Collection<Arguments> = listOf(
-            Arguments.of(JobValuePredictionFactory.nonLinearHyperbolaRegression(), 0.0001),
-            Arguments.of(JobValuePredictionFactory.linearRegression(), Double.MAX_VALUE), //not necessary tested on hyperbolas
-            Arguments.of(JobValuePredictionFactory.polynomialRegression(), Double.MAX_VALUE) //not necessary tested on hyperbolas
+            Arguments.of(JobValuePredictorFactory.nonLinearHyperbolaRegression(), 0.0001),
+            Arguments.of(JobValuePredictorFactory.linearRegression(), Double.MAX_VALUE), //not necessary tested on hyperbolas
+            Arguments.of(JobValuePredictorFactory.polynomialRegression(), Double.MAX_VALUE) //not necessary tested on hyperbolas
         )
     }
 
@@ -87,7 +87,7 @@ internal class HyperbolaFittingTest {
 
 
     private fun generateObjects(data: Map<Long, Double>): Map<Iteration, JobValue> =
-        data.mapKeysAndValues({ key -> SimpleIteration(position = key) }, { JobValueImpl(it) })
+        data.mapKeysAndValues({ key -> SimpleIteration(position = key.key) }, { JobValueImpl(it.value) })
 
     private fun obtainView(lowestX: Long, highestX: Long, function: (Long) -> Double): JobPlanView = mock {
         on { values } doReturn generateObjects(

@@ -4,16 +4,18 @@ import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.JobValue
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.scheduling.JobPlanView
+import pw.forst.olb.core.predict.IterationPredict
 import pw.forst.olb.core.predict.job.PredictionSelector
 
 class JobAssignmentValueProviderImpl(
-    private val predictionSelector: PredictionSelector
+    private val predictionSelector: PredictionSelector,
+    private val iterationConverter: IterationPredict
 ) : JobAssignmentValueProvider {
 
     override fun jobAssignmentValue(jobView: JobPlanView, allocation: ResourcesAllocation, time: Time): JobValue? {
-        //here transform time into iteration and send it to the actual fitting function
+        val finalIteration = iterationConverter.getIteration(jobView.jobMeta, time, allocation)
 
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return predictionSelector.getPredictor(jobView).predict(jobView, finalIteration)
     }
 
 }

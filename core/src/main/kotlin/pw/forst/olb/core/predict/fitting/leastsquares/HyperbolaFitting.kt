@@ -1,4 +1,4 @@
-package pw.forst.olb.core.predict.leastsquares
+package pw.forst.olb.core.predict.fitting.leastsquares
 
 import mu.KLogging
 

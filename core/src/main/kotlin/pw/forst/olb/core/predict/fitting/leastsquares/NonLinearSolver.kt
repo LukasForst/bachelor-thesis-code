@@ -1,6 +1,6 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "PrivatePropertyName", "SpellCheckingInspection", "LocalVariableName", "unused")
 
-package pw.forst.olb.core.predict.leastsquares
+package pw.forst.olb.core.predict.fitting.leastsquares
 
 import Jama.Matrix
 import mu.KLogging

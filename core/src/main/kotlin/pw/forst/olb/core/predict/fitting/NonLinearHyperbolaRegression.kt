@@ -1,7 +1,7 @@
 package pw.forst.olb.core.predict.fitting
 
 import mu.KLogging
-import pw.forst.olb.core.predict.leastsquares.HyperbolaFitting
+import pw.forst.olb.core.predict.fitting.leastsquares.HyperbolaFitting
 
 class NonLinearHyperbolaRegression : AbstractPrediction<DoubleArray>() {
 

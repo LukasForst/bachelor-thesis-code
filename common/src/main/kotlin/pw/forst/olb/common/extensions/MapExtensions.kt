@@ -226,10 +226,10 @@ fun <K, V : Any> Iterable<Map<K, List<V>>>.flatMerge(): Map<K, List<V>> {
 /**
  * Applies transformation to key and to value
  * */
-inline fun <K1, V1, K2, V2> Map<K1, V1>.mapKeysAndValues(keyTransform: (K1) -> K2, valueTransform: (V1) -> V2): Map<K2, V2> {
+inline fun <K1, V1, K2, V2> Map<K1, V1>.mapKeysAndValues(keyTransform: (Map.Entry<K1, V1>) -> K2, valueTransform: (Map.Entry<K1, V1>) -> V2): Map<K2, V2> {
     val map = mutableMapOf<K2, V2>()
-    for ((key, value) in this) {
-        map[keyTransform(key)] = valueTransform(value)
+    for (entry in this) {
+        map[keyTransform(entry)] = valueTransform(entry)
     }
     return map
 }
