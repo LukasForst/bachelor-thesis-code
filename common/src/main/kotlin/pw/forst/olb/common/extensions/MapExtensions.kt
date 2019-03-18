@@ -30,14 +30,14 @@ fun <T> Map<T, Double>.getKeysInWeightedRandomOrder(normalizer: Double, rand: Ra
 }
 
 /**
- * Merges two maps together using the given [reduce] function. By default, the reduce function keeps the value from [this] map.
+ * Merges two maps together using the given [reduce] function. By default, the reduce function keeps the value from [this] mapKeysAndValues.
  */
 fun <K, V> Map<K, V>.mergeReduce(other: Map<K, V>, reduce: (V, V) -> V = { a, _ -> a }): Map<K, V> {
     return mergeReduceTo(LinkedHashMap(this.size + other.size), other, reduce)
 }
 
 /**
- * Merges two maps together using the given [reduce] function into the given [destination]. By default, the reduce function keeps the value from [this] map.
+ * Merges two maps together using the given [reduce] function into the given [destination]. By default, the reduce function keeps the value from [this] mapKeysAndValues.
  */
 fun <K, V, M : MutableMap<K, V>> Map<K, V>.mergeReduceTo(destination: M, other: Map<K, V>, reduce: (V, V) -> V = { a, _ -> a }): M {
     destination.putAll(this)
@@ -66,14 +66,14 @@ fun <K, V1, V2, VR, M : MutableMap<K, VR>> Map<K, V1>.joinTo(destination: M, oth
 }
 
 /**
- * Swaps dimensions in two dimensional map. The returned map has keys from the second dimension as primary keys and primary keys are used in the second
+ * Swaps dimensions in two dimensional mapKeysAndValues. The returned mapKeysAndValues has keys from the second dimension as primary keys and primary keys are used in the second
  * dimension.
  */
 fun <K1, K2, V> Map<K1, Map<K2, V>>.swapKeys(): Map<K2, Map<K1, V>> = swapKeysTo(LinkedHashMap()) { LinkedHashMap<K1, V>() }
 
 /**
- * Swaps dimensions in two dimensional map. The returned map has keys from the second dimension as primary keys and primary keys are stored in the second
- * dimension. [topDestination] specifies which map should be used to store the new primary keys and [bottomDestination] is used to store the new secondary keys.
+ * Swaps dimensions in two dimensional mapKeysAndValues. The returned mapKeysAndValues has keys from the second dimension as primary keys and primary keys are stored in the second
+ * dimension. [topDestination] specifies which mapKeysAndValues should be used to store the new primary keys and [bottomDestination] is used to store the new secondary keys.
  */
 fun <K1, K2, V, M2 : MutableMap<K1, V>, M1 : MutableMap<K2, M2>> Map<K1, Map<K2, V>>.swapKeysTo(topDestination: M1, bottomDestination: () -> M2): M1 {
     for ((key1, map) in this) {
@@ -85,15 +85,15 @@ fun <K1, K2, V, M2 : MutableMap<K1, V>, M1 : MutableMap<K2, M2>> Map<K1, Map<K2,
 }
 
 /**
- * Works similarly as [swapKeys] but the final map has three levels. [transform] specifies how the keys should be swapped (or modified) in the newly created
- * map.
+ * Works similarly as [swapKeys] but the final mapKeysAndValues has three levels. [transform] specifies how the keys should be swapped (or modified) in the newly created
+ * mapKeysAndValues.
  */
 fun <K1, K2, K3, KR1, KR2, KR3, V> Map<K1, Map<K2, Map<K3, V>>>.swapKeys(transform: (K1, K2, K3) -> Triple<KR1, KR2, KR3>):
         Map<KR1, Map<KR2, Map<KR3, V>>> = this.swapKeysTo(LinkedHashMap(), { LinkedHashMap<KR2, MutableMap<KR3, V>>() }, { LinkedHashMap() }, transform)
 
 /**
- * Works similarly as [swapKeys] but the final map has three levels. [transform] specifies how the keys should be swapped (or modified) in the newly created
- * map. [topDestination] specifies which map should be used to store the new primary keys, [middleDestination] is used to store the new secondary keys and
+ * Works similarly as [swapKeys] but the final mapKeysAndValues has three levels. [transform] specifies how the keys should be swapped (or modified) in the newly created
+ * mapKeysAndValues. [topDestination] specifies which mapKeysAndValues should be used to store the new primary keys, [middleDestination] is used to store the new secondary keys and
  * [bottomDestination] is used to store the new tertiary keys.
  */
 fun <K1, K2, K3, KR1, KR2, KR3, V, M3 : MutableMap<KR3, V>, M2 : MutableMap<KR2, M3>, M1 : MutableMap<KR1, M2>> Map<K1, Map<K2, Map<K3, V>>>.swapKeysTo(
@@ -114,14 +114,14 @@ fun <K1, K2, K3, KR1, KR2, KR3, V, M3 : MutableMap<KR3, V>, M2 : MutableMap<KR2,
 }
 
 /**
- * Transforms map of pairs as a keys into two dimensional map where the first elements in the pair are used as primary keys and second elements as secondary
+ * Transforms mapKeysAndValues of pairs as a keys into two dimensional mapKeysAndValues where the first elements in the pair are used as primary keys and second elements as secondary
  * keys.
  */
 fun <K1, K2, V> Map<Pair<K1, K2>, V>.toTwoLevelMap(): Map<K1, Map<K2, V>> = toTwoLevelMap(LinkedHashMap()) { LinkedHashMap<K2, V>() }
 
 /**
- * Transforms map of pairs as a keys into two dimensional map where the first elements in the pair are used as primary keys and second elements as secondary
- * keys. [topDestination] specifies which map should be used to store the new primary keys and [bottomDestination] is used to store the new secondary keys.
+ * Transforms mapKeysAndValues of pairs as a keys into two dimensional mapKeysAndValues where the first elements in the pair are used as primary keys and second elements as secondary
+ * keys. [topDestination] specifies which mapKeysAndValues should be used to store the new primary keys and [bottomDestination] is used to store the new secondary keys.
  */
 fun <K1, K2, V, M2 : MutableMap<K2, V>, M1 : MutableMap<K1, M2>> Map<Pair<K1, K2>, V>.toTwoLevelMap(topDestination: M1, bottomDestination: () -> M2): M1 {
     for ((key, value) in this) {
@@ -132,14 +132,14 @@ fun <K1, K2, V, M2 : MutableMap<K2, V>, M1 : MutableMap<K1, M2>> Map<Pair<K1, K2
 }
 
 /**
- * Transforms list of pairs, where the first element consists of pairs into two dimensional map where the first elements from the inner pair are used as
+ * Transforms list of pairs, where the first element consists of pairs into two dimensional mapKeysAndValues where the first elements from the inner pair are used as
  * primary keys and second elements as secondary keys.
  */
 fun <K1, K2, V> List<Pair<Pair<K1, K2>, V>>.toTwoLevelMap(): Map<K1, Map<K2, V>> = toTwoLevelMap(LinkedHashMap()) { LinkedHashMap<K2, V>() }
 
 /**
- * Transforms list of pairs, where the first element consists of pairs into two dimensional map where the first elements from the inner pair are used as
- * primary keys and second elements as secondary keys. [topDestination] specifies which map should be used to store the new primary keys and
+ * Transforms list of pairs, where the first element consists of pairs into two dimensional mapKeysAndValues where the first elements from the inner pair are used as
+ * primary keys and second elements as secondary keys. [topDestination] specifies which mapKeysAndValues should be used to store the new primary keys and
  * [bottomDestination] is used to store the new secondary keys.
  */
 fun <K1, K2, V, M2 : MutableMap<K2, V>, M1 : MutableMap<K1, M2>> List<Pair<Pair<K1, K2>, V>>.toTwoLevelMap(
@@ -154,13 +154,13 @@ fun <K1, K2, V, M2 : MutableMap<K2, V>, M1 : MutableMap<K1, M2>> List<Pair<Pair<
 }
 
 /**
- * Works similarly as [toTwoLevelMap] but the final map has three levels.
+ * Works similarly as [toTwoLevelMap] but the final mapKeysAndValues has three levels.
  */
 fun <K1, K2, K3, V> Map<Triple<K1, K2, K3>, V>.toThreeLevelMap(): Map<K1, Map<K2, Map<K3, V>>> =
     toThreeLevelMap(LinkedHashMap(), { LinkedHashMap<K2, MutableMap<K3, V>>() }, { LinkedHashMap() })
 
 /**
- * Works similarly as [toTwoLevelMap] but the final map has three levels. [topDestination] specifies which map should be used to store the new primary keys,
+ * Works similarly as [toTwoLevelMap] but the final mapKeysAndValues has three levels. [topDestination] specifies which mapKeysAndValues should be used to store the new primary keys,
  * [middleDestination] is used to store the new secondary keys and [bottomDestination] is used to store the new tertiary keys.
  */
 fun <K1, K2, K3, V, M3 : MutableMap<K3, V>, M2 : MutableMap<K2, M3>, M1 : MutableMap<K1, M2>> Map<Triple<K1, K2, K3>, V>.toThreeLevelMap(
@@ -223,4 +223,13 @@ fun <K, V : Any> Iterable<Map<K, List<V>>>.flatMerge(): Map<K, List<V>> {
     return keys.associateWith { key -> this.flatMap { map -> map[key] ?: emptyList() } }
 }
 
-
+/**
+ * Applies transformation to key and to value
+ * */
+inline fun <K1, V1, K2, V2> Map<K1, V1>.mapKeysAndValues(keyTransform: (K1) -> K2, valueTransform: (V1) -> V2): Map<K2, V2> {
+    val map = mutableMapOf<K2, V2>()
+    for ((key, value) in this) {
+        map[keyTransform(key)] = valueTransform(value)
+    }
+    return map
+}

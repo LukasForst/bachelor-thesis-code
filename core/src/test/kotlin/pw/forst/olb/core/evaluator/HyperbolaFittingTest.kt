@@ -6,15 +6,13 @@ import mu.KLogging
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import pw.forst.olb.common.dto.Time
+import pw.forst.olb.common.dto.job.Iteration
 import pw.forst.olb.common.dto.job.JobValue
 import pw.forst.olb.common.dto.job.impl.JobValueImpl
 import pw.forst.olb.common.dto.scheduling.JobPlanView
-import pw.forst.olb.core.predict.LinearRegression
-import pw.forst.olb.core.predict.NonLinearHyperbolaRegression
-import pw.forst.olb.core.predict.PolynomialRegression
-import pw.forst.olb.core.predict.Prediction
-import java.util.stream.Stream
+import pw.forst.olb.common.extensions.mapKeysAndValues
+import pw.forst.olb.core.predict.job.JobValuePrediction
+import pw.forst.olb.core.predict.job.JobValuePredictionFactory
 import kotlin.test.assertNotNull
 import kotlin.test.fail
 
@@ -24,22 +22,22 @@ internal class HyperbolaFittingTest {
 
         @Suppress("unused") //used as parameter
         @JvmStatic
-        fun generatePredictions(): Stream<Arguments> = Stream.of(
-            Arguments.of(NonLinearHyperbolaRegression(), 0.0001),
-            Arguments.of(LinearRegression(), Double.MAX_VALUE), //not necessary tested on hyperbolas
-            Arguments.of(PolynomialRegression(), Double.MAX_VALUE) //not necessary tested on hyperbolas
+        fun generatePredictions(): Collection<Arguments> = listOf(
+            Arguments.of(JobValuePredictionFactory.nonLinearHyperbolaRegression(), 0.0001),
+            Arguments.of(JobValuePredictionFactory.linearRegression(), Double.MAX_VALUE), //not necessary tested on hyperbolas
+            Arguments.of(JobValuePredictionFactory.polynomialRegression(), Double.MAX_VALUE) //not necessary tested on hyperbolas
         )
     }
 
     @ParameterizedTest
     @MethodSource("generatePredictions")
-    fun `simple hyperbole`(prediction: Prediction, allowedDifference: Double) {
-        val function: (Int) -> Double = { 1.0 / it }
+    fun `simple hyperbole`(prediction: JobValuePrediction, allowedDifference: Double) {
+        val function: (Long) -> Double = { 1.0 / it }
 
         val view = obtainView(1, 100, function)
 
-        val predictedX = 300
-        val result = prediction.predict(view, Time(predictedX.toLong()))
+        val predictedX = 300L
+        val result = prediction.predict(view, mock { on { it.position } doReturn predictedX })
 
         assertNotNull(result)
         assertResult(function(predictedX), result.value, allowedDifference)
@@ -47,13 +45,13 @@ internal class HyperbolaFittingTest {
 
     @ParameterizedTest
     @MethodSource("generatePredictions")
-    fun `y shifted hyperbole`(prediction: Prediction, allowedDifference: Double) {
-        val function: (Int) -> Double = { 1 + 1.0 / it }
+    fun `y shifted hyperbole`(prediction: JobValuePrediction, allowedDifference: Double) {
+        val function: (Long) -> Double = { 1 + 1.0 / it }
 
         val view = obtainView(1, 100, function)
 
-        val predictedX = 100
-        val result = prediction.predict(view, Time(predictedX.toLong()))
+        val predictedX = 100L
+        val result = prediction.predict(view, mock { on { it.position } doReturn predictedX })
 
         assertNotNull(result)
         assertResult(function(predictedX), result.value, allowedDifference)
@@ -61,13 +59,13 @@ internal class HyperbolaFittingTest {
 
     @ParameterizedTest
     @MethodSource("generatePredictions")
-    fun `x shifted hyperbole`(prediction: Prediction, allowedDifference: Double) {
-        val function: (Int) -> Double = { 1.0 / (it + 1) }
+    fun `x shifted hyperbole`(prediction: JobValuePrediction, allowedDifference: Double) {
+        val function: (Long) -> Double = { 1.0 / (it + 1) }
 
         val view = obtainView(1, 100, function)
 
-        val predictedX = 100
-        val result = prediction.predict(view, Time(predictedX.toLong()))
+        val predictedX = 100L
+        val result = prediction.predict(view, mock { on { it.position } doReturn predictedX })
 
         assertNotNull(result)
         assertResult(function(predictedX), result.value, allowedDifference)
@@ -75,25 +73,23 @@ internal class HyperbolaFittingTest {
 
     @ParameterizedTest
     @MethodSource("generatePredictions")
-    fun `upper shifted hyperbole`(prediction: Prediction, allowedDifference: Double) {
-        val function: (Int) -> Double = { 1 + (50 * 1.0) / (it) }
+    fun `upper shifted hyperbole`(prediction: JobValuePrediction, allowedDifference: Double) {
+        val function: (Long) -> Double = { 1 + (50 * 1.0) / (it) }
 
         val view = obtainView(1, 100, function)
 
-        val predictedX = 300
-        val result = prediction.predict(view, Time(predictedX.toLong()))
+        val predictedX = 300L
+        val result = prediction.predict(view, mock { on { it.position } doReturn predictedX })
 
         assertNotNull(result)
         assertResult(function(predictedX), result.value, allowedDifference)
     }
 
 
-    private fun generateObjects(data: Map<Int, Double>): Map<Time, JobValue> =
-        data
-            .mapKeys { (x, _) -> Time(x.toLong()) }
-            .mapValues { (_, y) -> JobValueImpl(y) }
+    private fun generateObjects(data: Map<Long, Double>): Map<Iteration, JobValue> =
+        data.mapKeysAndValues({ key -> SimpleIteration(position = key) }, { JobValueImpl(it) })
 
-    private fun obtainView(lowestX: Int, highestX: Int, function: (Int) -> Double): JobPlanView = mock {
+    private fun obtainView(lowestX: Long, highestX: Long, function: (Long) -> Double): JobPlanView = mock {
         on { values } doReturn generateObjects(
             generateSequence(lowestX) { (it + 1).takeIf { result -> result < highestX } }.associate { it to function(it) }
         )
@@ -106,4 +102,10 @@ internal class HyperbolaFittingTest {
         }
         logger.info { "Diff: $diff OK - Expected: $expected, Actual: $actual" }
     }
+
+    private data class SimpleIteration(
+        override val position: Long = 0L,
+        override val iterationLengthInMls: Int = 0
+
+    ) : Iteration
 }
