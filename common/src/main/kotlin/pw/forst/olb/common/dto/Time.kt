@@ -1,42 +1,32 @@
 package pw.forst.olb.common.dto
 
-data class Time(
-    val seconds: Long
-) : Comparable<Time> {
+interface Time : Comparable<Time> {
+    val position: Long
+
+    override fun compareTo(other: Time): Int = this.position.compareTo(other.position)
+
+
+    operator fun plus(other: Time): Time
+
+    operator fun minus(other: Time): Time
+
+    operator fun times(times: Long): Time
+
+    operator fun times(times: Int): Time
+}
+
+data class TimeImpl(
+    override val position: Long
+) : Time {
 
     companion object {
-
-        val zero = Time(0)
+        val default: Time = TimeImpl(-1)
     }
 
-    init {
-        //TODO enable this check
-//        if (seconds < 0) throw IllegalArgumentException("It is not possible have negative time!")
-    }
-
-    override fun compareTo(other: Time): Int = this.seconds.compareTo(other.seconds)
-
-    operator fun plus(other: Time) = Time(this.seconds + other.seconds)
-
-    operator fun minus(other: Time) = Time(this.seconds - other.seconds)
-
-    operator fun times(times: Long) = Time(this.seconds * times)
-    operator fun times(times: Int) = Time(this.seconds * times)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Time
-
-        if (seconds != other.seconds) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return seconds.hashCode()
-    }
+    override operator fun plus(other: Time) = copy(position = this.position + other.position)
+    override operator fun minus(other: Time) = copy(position = this.position - other.position)
+    override operator fun times(times: Long) = copy(position = this.position * times)
+    override operator fun times(times: Int) = copy(position = this.position * times)
 }
 
 

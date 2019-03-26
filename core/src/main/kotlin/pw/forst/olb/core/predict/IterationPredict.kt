@@ -2,9 +2,9 @@ package pw.forst.olb.core.predict
 
 import mu.KLogging
 import pw.forst.olb.common.dto.Time
+import pw.forst.olb.common.dto.impl.createIteration
 import pw.forst.olb.common.dto.job.Iteration
 import pw.forst.olb.common.dto.job.JobMetaData
-import pw.forst.olb.common.dto.job.impl.createIteration
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.extensions.averageByInt
 import pw.forst.olb.common.extensions.mapKeysAndValues
@@ -50,11 +50,11 @@ class IterationPredict(
     @Suppress("UNUSED_PARAMETER") // will be implemented in the future
     private fun getMagicConstant(metadata: JobMetaData, time: Time, resourcesAllocation: ResourcesAllocation): Double = 1 / resourcesAllocation.cpuResources.cpuValue
 
-    private fun iterationPosition(length: Double, last: Time): Long = (last.seconds * length * 1000).toLong()
+    private fun iterationPosition(length: Double, last: Time): Long = (last.position * length * 1000).toLong()
 
     private fun tryPredictLength(metadata: JobMetaData, time: Time, iterationAvg: Map<Time, Double>): Double? = metadata.iterationTime
-        .mapKeysAndValues({ it.key.seconds.toDouble() }, { iterationAvg.getValue(it.key) })
-        .let { prediction.predict(it, time.seconds.toDouble()) }
+        .mapKeysAndValues({ it.key.position.toDouble() }, { iterationAvg.getValue(it.key) })
+        .let { prediction.predict(it, time.position.toDouble()) }
 
 
 }

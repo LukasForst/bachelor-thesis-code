@@ -14,6 +14,8 @@ interface Cost : Comparable<Cost> {
     operator fun times(other: Double): Cost
 }
 
+fun invalidCost(): Cost = CostImpl(Double.MAX_VALUE)
+
 fun createCost(cost: Cost): Cost = CostImpl(cost.value)
 
 fun createCost(value: Double): Cost = CostImpl(value)
@@ -26,15 +28,11 @@ data class CostImpl constructor(override val value: Double) : Cost {
 
     override fun times(other: Double): Cost = copy(value = this.value * other)
 
-    init {
-        if (value < 0) throw IllegalArgumentException("It is not possible to create negative cost!")
-    }
-
     override fun compareTo(other: Cost): Int = this.value.compareTo(other.value)
 
-    override operator fun plus(other: Cost): Cost = CostImpl(this.value + other.value)
+    override operator fun plus(other: Cost): Cost = copy(value = this.value + other.value)
 
-    override operator fun minus(other: Cost): Cost = CostImpl(this.value - other.value)
+    override operator fun minus(other: Cost): Cost = copy(value = this.value - other.value)
 }
 
 
