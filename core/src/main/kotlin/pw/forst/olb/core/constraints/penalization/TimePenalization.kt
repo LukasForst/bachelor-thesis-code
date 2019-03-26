@@ -1,4 +1,4 @@
-package pw.forst.olb.core.constraints
+package pw.forst.olb.core.constraints.penalization
 
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.extensions.minMaxBy

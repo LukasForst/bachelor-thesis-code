@@ -1,6 +1,7 @@
 package pw.forst.olb.core.domain
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity
+import org.optaplanner.core.api.domain.solution.drools.ProblemFactProperty
 import org.optaplanner.core.api.domain.variable.PlanningVariable
 import pw.forst.olb.common.dto.Cost
 import pw.forst.olb.common.dto.Time
@@ -10,27 +11,28 @@ import pw.forst.olb.common.dto.job.CompleteJobAssignment
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.job.JobAssignment
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
+import pw.forst.olb.core.constraints.filter.ResourcesSelectionFilter
 
-@PlanningEntity
+@PlanningEntity(
+    movableEntitySelectionFilter = ResourcesSelectionFilter::class
+)
 data class PlanJobAssignment(
 
-    @field:PlanningVariable(valueRangeProviderRefs = ["jobRange"])
+    @field:PlanningVariable(valueRangeProviderRefs = ["jobRange"], nullable = true)
     override val job: Job? = null,
 
-    @field:PlanningVariable(valueRangeProviderRefs = ["resourcesRange"])
+    @field:ProblemFactProperty
     override val allocation: ResourcesAllocation? = null,
 
-    @field:PlanningVariable(valueRangeProviderRefs = ["timeRange"])
+    @field:ProblemFactProperty
     override val time: Time? = null
-
-
 ) : JobAssignment {
 
     override val isValid: Boolean
         get() = job != null && time != null && allocation != null
 
     override val cost: Cost
-        get() = if (isValid) allocation!!.cost else invalidCost()
+        get() = allocation?.cost ?: invalidCost()
 
     override fun toCompleteAssignment(): CompleteJobAssignment? = if (isValid) completeJobAssignment(job!!, time!!, allocation!!) else null
 }

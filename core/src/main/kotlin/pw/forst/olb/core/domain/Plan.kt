@@ -13,6 +13,12 @@ import pw.forst.olb.common.dto.resources.ResourcesAllocation
 @PlanningSolution
 data class Plan(
 
+    val startTime: Time? = null,
+
+    val endTime: Time? = null,
+
+    val timeIncrement: Time? = null,
+
     @field:PlanningEntityCollectionProperty
     val assignments: Collection<PlanJobAssignment> = emptyList(),
 
@@ -20,11 +26,9 @@ data class Plan(
     @field:ProblemFactCollectionProperty
     val jobDomain: Collection<Job> = emptyList(),
 
-    @field:ValueRangeProvider(id = "resourcesRange")
     @field:ProblemFactCollectionProperty
     val resourcesStackDomain: Collection<ResourcesAllocation> = emptyList(),
 
-    @field:ValueRangeProvider(id = "timeRange")
     @field:ProblemFactCollectionProperty
     val times: Collection<Time> = emptyList(),
 

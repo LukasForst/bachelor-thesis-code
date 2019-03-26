@@ -3,12 +3,11 @@ package pw.forst.olb.core.evaluation
 import mu.KLogging
 import org.optaplanner.core.api.score.buildin.hardsoftbigdecimal.HardSoftBigDecimalScore
 import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator
-import pw.forst.olb.core.constraints.CostPenalization
-import pw.forst.olb.core.constraints.MultipleStacksPenalization
-import pw.forst.olb.core.constraints.NoAssignmentPenalty
-import pw.forst.olb.core.constraints.PlanPenalization
-import pw.forst.olb.core.constraints.ReallocationPenalization
-import pw.forst.olb.core.constraints.TimePenalization
+import pw.forst.olb.core.constraints.penalization.CostPenalization
+import pw.forst.olb.core.constraints.penalization.NoAssignmentPenalization
+import pw.forst.olb.core.constraints.penalization.PlanPenalization
+import pw.forst.olb.core.constraints.penalization.ReallocationPenalization
+import pw.forst.olb.core.constraints.penalization.TimePenalization
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.extensions.sum
 import pw.forst.olb.core.extensions.toJobPlanViews
@@ -23,8 +22,8 @@ class BigDecimalScoreCalculation : EasyScoreCalculator<Plan> {
         CostPenalization(),
         TimePenalization(),
         ReallocationPenalization(),
-        MultipleStacksPenalization(),
-        NoAssignmentPenalty()
+//        MultipleStacksPenalization(),
+        NoAssignmentPenalization()
     )
 
     override fun calculateScore(solution: Plan?): HardSoftBigDecimalScore {

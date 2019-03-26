@@ -22,6 +22,7 @@ import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesProvider
 import pw.forst.olb.common.dto.sum
 import pw.forst.olb.common.extensions.duration
+import pw.forst.olb.common.extensions.minMaxBy
 import pw.forst.olb.common.extensions.minMaxValueBy
 import pw.forst.olb.core.constraints.dto.JobPlanView
 import pw.forst.olb.core.domain.Plan
@@ -39,15 +40,13 @@ fun main(args: Array<String>) {
     )
     val solver = solverFactory.buildSolver()
 
-    val plan = generatePlan(jobsCount = 4, resourcesStacksCount = 100, timeCount = 100L)
+    val plan = generatePlan(jobsCount = 5, resourcesStacksCount = 200, timeCount = 100L)
     val result = solver.solve(plan)
     val finalPlan = result.asCompletePlan() ?: throw Exception("Invalid plan returned!")
 
     println("Plan computed!\n")
 
     val finalScore = LoggingPlanEvaluator().calculateScore(result)
-
-//    println(finalPlan)
 
     println("\n\n******\nFinal score:")
 
@@ -75,9 +74,14 @@ fun generatePlan(
     val resources = generateResourcesDomain(resourcesStacksCount)
     val times = generateTime(timeCount)
     val jobs = generateJobs(jobsCount, times.max()!!.position - times.min()!!.position)
-    val assignments = generateAssignments(jobs.size * resources.size * times.size)
+    val assignments = generateAssignments(times, resources)
+
+    val (minTime, maxTime) = times.minMaxBy { it.position }!!
 
     return Plan(
+        timeIncrement = TimeImpl(1),
+        startTime = minTime,
+        endTime = maxTime,
         assignments = assignments,
         jobDomain = jobs,
         resourcesStackDomain = resources,
@@ -143,4 +147,14 @@ fun randomParameters(seed: Int, totalTimeRunning: Long): JobParameters {
 
 fun randomClient(seed: Int): Client = SimpleClient(name = "Random client $seed", uuid = UUID.randomUUID())
 
-fun generateAssignments(count: Int) = (0 until count).map { PlanJobAssignment() }
+
+fun generateAssignments(times: Collection<Time>, resources: Collection<ResourcesAllocation>) =
+    times.flatMap { time ->
+        resources.map { resource ->
+            PlanJobAssignment(
+                time = time,
+                allocation = resource
+            )
+        }
+
+    }

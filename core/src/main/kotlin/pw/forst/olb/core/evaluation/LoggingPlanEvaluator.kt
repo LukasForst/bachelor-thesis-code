@@ -3,11 +3,11 @@ package pw.forst.olb.core.evaluation
 import mu.KLogging
 import org.optaplanner.core.api.score.buildin.hardsoftbigdecimal.HardSoftBigDecimalScore
 import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator
-import pw.forst.olb.core.constraints.CostPenalization
-import pw.forst.olb.core.constraints.MultipleStacksPenalization
-import pw.forst.olb.core.constraints.ReallocationPenalization
-import pw.forst.olb.core.constraints.TimePenalization
 import pw.forst.olb.core.constraints.dto.JobPlanView
+import pw.forst.olb.core.constraints.penalization.CostPenalization
+import pw.forst.olb.core.constraints.penalization.MultipleStacksPenalization
+import pw.forst.olb.core.constraints.penalization.ReallocationPenalization
+import pw.forst.olb.core.constraints.penalization.TimePenalization
 import pw.forst.olb.core.constraints.penalty.Penalty
 import pw.forst.olb.core.constraints.penalty.PenaltyFactory
 import pw.forst.olb.core.domain.Plan

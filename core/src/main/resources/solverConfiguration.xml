@@ -23,7 +23,7 @@
     <!-- Optimization algorithms configuration -->
     <termination>
         <!--<minutesSpentLimit>1</minutesSpentLimit>-->
-        <secondsSpentLimit>60</secondsSpentLimit>
+        <secondsSpentLimit>20</secondsSpentLimit>
     </termination>
 
     <!-- Power tweaked optimization algorithms configuration -->
