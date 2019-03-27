@@ -5,7 +5,7 @@ import pw.forst.olb.core.constraints.dto.JobPlanView
 import pw.forst.olb.core.constraints.penalty.Penalty
 import pw.forst.olb.core.constraints.penalty.PenaltyBuilder
 
-class MultipleStacksPenalization : PlanPenalization {
+class MultipleStacksPenalization : CompletePlanPenalization {
 
     override fun calculatePenalty(jobView: JobPlanView): Penalty = PenaltyBuilder.create()
         .apply {

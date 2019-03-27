@@ -3,9 +3,9 @@ package pw.forst.olb.core.evaluation
 import mu.KLogging
 import org.optaplanner.core.api.score.buildin.hardsoftbigdecimal.HardSoftBigDecimalScore
 import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator
+import pw.forst.olb.core.constraints.penalization.CompletePlanPenalization
 import pw.forst.olb.core.constraints.penalization.CostPenalization
 import pw.forst.olb.core.constraints.penalization.NoAssignmentPenalization
-import pw.forst.olb.core.constraints.penalization.PlanPenalization
 import pw.forst.olb.core.constraints.penalization.ReallocationPenalization
 import pw.forst.olb.core.constraints.penalization.TimePenalization
 import pw.forst.olb.core.domain.Plan
@@ -18,7 +18,7 @@ class BigDecimalScoreCalculation : EasyScoreCalculator<Plan> {
 
     private companion object : KLogging()
 
-    private val penalties: Collection<PlanPenalization> = listOf(
+    private val penalties: Collection<CompletePlanPenalization> = listOf(
         CostPenalization(),
         TimePenalization(),
         ReallocationPenalization(),

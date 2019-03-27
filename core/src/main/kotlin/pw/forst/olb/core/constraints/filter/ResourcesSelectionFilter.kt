@@ -19,15 +19,15 @@ class ResourcesSelectionFilter : SelectionFilter<Plan, PlanJobAssignment> {
         val selectionTime = selection.time!!
         val selectionJob = selection.job!!
 
-        val jobFiltered = plan.assignments.asSequence().filter { it.job == selectionJob }
+        val jobFiltered = plan.assignments.filter { it.job == selectionJob }
 
         // it is not possible to use different allocation provider at one time
-        if (jobFiltered.filter { it.time == selectionTime }.any { it.allocation?.provider != selectionProvider }) return false
+        if (jobFiltered.any { it.time == selectionTime && it.allocation?.provider != selectionProvider }) return false
 
         val previousTime = selectionTime - plan.timeIncrement!!.also { if (it.position < 0) return true }
 
         // it is not possible to use different allocation provider between times, there must be turn off
-        if (jobFiltered.filter { it.time == previousTime }.any { it.allocation?.provider != selectionProvider }) return false
+        if (jobFiltered.any { it.time == previousTime && it.allocation?.provider != selectionProvider }) return false
 
         return true
     }

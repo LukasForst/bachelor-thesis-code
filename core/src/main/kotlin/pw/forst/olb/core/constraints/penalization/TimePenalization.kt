@@ -7,7 +7,7 @@ import pw.forst.olb.core.constraints.penalty.Penalty
 import pw.forst.olb.core.constraints.penalty.PenaltyBuilder
 import pw.forst.olb.core.constraints.penalty.PenaltyFactory
 
-class TimePenalization : PlanPenalization {
+class TimePenalization : CompletePlanPenalization {
 
     override fun calculatePenalty(jobView: JobPlanView): Penalty {
         val maxTime = jobView.job.parameters.maxTime
