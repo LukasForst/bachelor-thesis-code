@@ -11,8 +11,6 @@ interface ResourcesProvider {
 
     val memoryCost: MemoryCost
 
-    val initialPool: ResourcesPool
-
     operator fun times(other: CpuResources) = cpuCost * other.cpuValue
 
     operator fun times(other: MemoryResources) = memoryCost * other.memoryInMegaBytes

@@ -277,3 +277,33 @@ inline fun <T> Collection<T>.averageByLong(selector: (T) -> Long): Double = this
  * Returns average of collection
  * */
 inline fun <T> Collection<T>.averageByFloat(selector: (T) -> Float): Double = this.map(selector).average()
+
+/**
+ * Returns min and max or null
+ * */
+inline fun <T, R : Comparable<R>> Collection<T>.minMaxBy(selector: (T) -> R): Pair<T, T>? = minMaxBy(selector, selector)
+
+
+/**
+ * Returns min and max or null
+ * */
+inline fun <T, R : Comparable<R>> Collection<T>.minMaxBy(minSelector: (T) -> R, maxSelector: (T) -> R): Pair<T, T>? {
+    if (this.isEmpty()) return null
+
+    val min = this.minBy(minSelector) ?: return null
+    val max = this.maxBy(maxSelector) ?: return null
+    return min to max
+}
+
+inline fun <T, R : Comparable<R>> Collection<T>.minMaxValueBy(selector: (T) -> R): Pair<R, R>? = minMaxValueBy(selector, selector)
+
+/**
+ * Returns min and max or null
+ * */
+inline fun <T, R : Comparable<R>> Collection<T>.minMaxValueBy(minSelector: (T) -> R, maxSelector: (T) -> R): Pair<R, R>? {
+    if (this.isEmpty()) return null
+
+    val min = this.minValueBy(minSelector) ?: return null
+    val max = this.maxValueBy(maxSelector) ?: return null
+    return min to max
+}

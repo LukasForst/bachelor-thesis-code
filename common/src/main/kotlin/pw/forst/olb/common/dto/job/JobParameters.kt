@@ -5,7 +5,8 @@ import pw.forst.olb.common.dto.Time
 
 interface JobParameters {
     val maxTime: Time
+
     val maxCost: Cost
+
     val jobType: JobType
-    val algorithmType: AlgorithmType
 }

@@ -52,7 +52,7 @@ class NonLinearSolver(private var FUNCTION: Function) {
     fun setData(xvalues: Array<DoubleArray>, zvalues: DoubleArray) {
 
         if (xvalues.size != zvalues.size)
-            throw IllegalArgumentException("there must be 1 z value for each set of x values")
+            throw IllegalArgumentException("there must be 1 z hard for each set of x values")
         else if (xvalues[0].size != FUNCTION.nInputs)
             throw IllegalArgumentException("The length of parameters is longer that the parameters accepted by the function")
         X = xvalues
@@ -98,7 +98,7 @@ class NonLinearSolver(private var FUNCTION: Function) {
 
     /**
      * Takes the current error, and the current parameter set and calculates the
-     * changes, then returns the maximum changed value
+     * changes, then returns the maximum changed hard
      */
     fun iterateValues(): Double {
         val matrix = Array(A.size) { DoubleArray(A.size) }

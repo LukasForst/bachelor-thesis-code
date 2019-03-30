@@ -1,5 +1,6 @@
 package pw.forst.olb.common.extensions
 
+import pw.forst.olb.common.dto.Time
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -53,3 +54,5 @@ fun <T : Comparable<T>> ClosedRange<T>.intersects(other: ClosedRange<T>): Boolea
  */
 fun Date.toLocalDate(): LocalDate = LocalDate.from(Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault()))
 
+
+fun Pair<Time, Time>.duration(): Time = this.second - this.first

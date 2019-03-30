@@ -5,4 +5,5 @@ dependencies {
 
     implementation 'gov.nist.math:jama:1.0.3'
 
+    implementation 'org.optaplanner:optaplanner-core:7.19.0.Final'
 }

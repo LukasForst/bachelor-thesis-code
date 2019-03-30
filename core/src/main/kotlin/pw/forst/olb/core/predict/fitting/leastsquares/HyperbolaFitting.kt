@@ -4,17 +4,20 @@ import mu.KLogging
 
 
 class HyperbolaFitting(
-    private val parameters: DoubleArray = doubleArrayOf(0.0, 1.0, 0.0)
+    private val parameters: DoubleArray? = null
 ) {
 
-    private companion object : KLogging()
+    private companion object : KLogging() {
+        val defaultParameters = doubleArrayOf(0.0, 1.0, 0.0)
+    }
 
-    fun predict(xs: List<Double>, ys: List<Double>, x: Double, params: DoubleArray = parameters): Double? =
+
+    fun predict(xs: List<Double>, ys: List<Double>, x: Double, params: DoubleArray = parameters ?: defaultParameters): Double? =
         runCatching { predict(xs.prepareTwoLevel(), ys.prepareOneLevel(), x, params) }
             .onFailure { logger.error(it) { "Exception during prediction!" } }
             .getOrNull()
 
-    fun fit(xs: List<Double>, ys: List<Double>, params: DoubleArray = parameters): List<Double>? =
+    fun fit(xs: List<Double>, ys: List<Double>, params: DoubleArray = parameters ?: defaultParameters): List<Double>? =
         runCatching { fit(xs.prepareTwoLevel(), ys.prepareOneLevel(), params).toList() }
             .onFailure { logger.error(it) { "Exception during fitting!" } }
             .getOrNull()
