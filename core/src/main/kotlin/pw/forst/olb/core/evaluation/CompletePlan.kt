@@ -9,6 +9,12 @@ import pw.forst.olb.common.dto.resources.ResourcesAllocation
 
 data class CompletePlan(
 
+    val startTime: Time,
+
+    val endTime: Time,
+
+    val timeIncrement: Time,
+
     val assignments: Collection<CompleteJobAssignment>,
 
     val jobDomain: Collection<Job>,
