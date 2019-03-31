@@ -4,6 +4,9 @@ import mu.KLogging
 import pw.forst.olb.core.predict.fitting.leastsquares.HyperbolaFitting
 
 class NonLinearHyperbolaRegression : AbstractPrediction<DoubleArray>() {
+    override fun getParameters(data: Map<X, Y>): List<Double> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private companion object : KLogging()
 

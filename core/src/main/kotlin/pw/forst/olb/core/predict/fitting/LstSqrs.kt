@@ -24,18 +24,18 @@ class LstSqrs : AbstractPrediction<Int>() {
 
     private fun modelFunction(parameters: Parameters, x: Double, y: Double): Double {
         val (a, b, c) = parameters
-        return a + (b / (x + c))
+        return a * c + a * x + b - y * c
     }
 
     private fun jacobianFunction(parameters: Parameters, x: Double, y: Double): DoubleArray {
         val (a, _, c) = parameters
-        return doubleArrayOf(x + c, 1.0, a)
+        return doubleArrayOf(x + c, 1.0, a - y)
     }
 
 
-    fun getParameters(data: Map<X, Y>): DoubleArray {
+    override fun getParameters(data: Map<X, Y>): List<Double> {
 
-        val observedPoints = data.filter { (x, _) -> x != 0.0 }.map { (x, y) -> Observation(x = x, y = y) }
+        val observedPoints = data.map { (x, y) -> Observation(x = x, y = y) }
 
         val criterialFunction = MultivariateJacobianFunction { point ->
 
@@ -57,7 +57,7 @@ class LstSqrs : AbstractPrediction<Int>() {
             .start(oneFreeVariable(data))
 //            .start(doubleArrayOf(0.0, 1.0, 0.0))
             .model(criterialFunction)
-            .target(observedPoints.map { it.y }.toDoubleArray())
+            .target(observedPoints.map { it.x * it.y }.toDoubleArray())
             .lazyEvaluation(false)
             .maxEvaluations(1000)
             .maxIterations(1000)
@@ -69,7 +69,7 @@ class LstSqrs : AbstractPrediction<Int>() {
 
         val finalParameters = Parameters(a = optimum.point.getEntry(0), b = optimum.point.getEntry(1), c = optimum.point.getEntry(2))
 
-        return doubleArrayOf(finalParameters.a, finalParameters.b, finalParameters.c)
+        return listOf(finalParameters.a, finalParameters.b, finalParameters.c)
     }
 
     private fun oneFreeVariable(data: Map<X, Y>): DoubleArray {

@@ -54,8 +54,9 @@ def go(input_dir, output_dir, save):
         plt.title(file)
 
         plt.plot(data['costs'], label='cost')
-        plt.scatter(range(0, len(data['pred_hyper'])), data['pred_hyper'], label='fin_math', marker='o', s=1, c='r')
-        plt.scatter(range(0, len(data['pred_poly'])), data['pred_poly'], label='lst_sqrs', marker='o', s=1, c='y')
+        plt.plot(data['pred_hyper'], label='fin_math')
+        # plt.scatter(range(0, len(data['pred_hyper'])), data['pred_hyper'], label='fin_math', marker='o', s=1, c='r')
+        # plt.scatter(range(0, len(data['pred_poly'])), data['pred_poly'], label='lst_sqrs', marker='o', s=1, c='y')
         # plt.plot(data['pred_poly'], label='lst_sqrs')
         # plt.plot(data['pred_poly'], label='pred_poly')
         # plt.plot(data['pred_linear'], label='pred_linear')
@@ -64,6 +65,8 @@ def go(input_dir, output_dir, save):
 
         if save:
             plt.savefig(output_dir + '/' + file + '.png')
+
+        plt.figure(dpi=250)
         plt.show()
 
     # plt.figure(dpi=680)

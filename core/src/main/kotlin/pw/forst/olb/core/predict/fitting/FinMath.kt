@@ -4,22 +4,28 @@ import net.finmath.optimizer.LevenbergMarquardt
 
 
 class FinMathOptimization : AbstractPrediction<Int>() {
-    override fun predictUnSafe(data: Map<X, Y>, toPredict: X, params: Int?): Y? {
-        if (data.size < 10) return null
+    private fun List<Double>.normalize(): List<Double> {
+        val sum = this.sum()
+        return this.map { it / sum }
+    }
 
-        val keys = data.keys.filter { it != 0.0 }.toList()
+    override fun getParameters(data: Map<X, Y>): List<Double> {
+        val keys = data.keys.toList().sorted()
         val values = keys.map { data.getValue(it) }
 
-        val (a, b, c) = FinMath(params ?: 4, keys)
+        return FinMath(4, keys, values)
             .setInitialParameters(oneFreeVariable(data))
-//            .setInitialParameters(doubleArrayOf(0.0,1.0,0.0))
-            .setWeights(keys.map { 1.0 }.toDoubleArray())
+            .setWeights(keys.normalize().toDoubleArray())
             .setMaxIteration(1000)
-            .setTargetValues(values.toDoubleArray())
+            .setTargetValues(keys.zip(values) { x, y -> x * y }.toDoubleArray())
             .also { it.run() }
             .bestFitParameters
-            .let { Parameters(it) }
+            .toList()
+    }
 
+    override fun predictUnSafe(data: Map<X, Y>, toPredict: X, params: Int?): Y? {
+        if (data.size < 10) return null
+        val (a, b, c) = Parameters(getParameters(data).toDoubleArray())
         return (a + (b / (toPredict + c)))
     }
 
@@ -42,22 +48,23 @@ data class Parameters(val a: Double, val b: Double, val c: Double) {
 
 class FinMath(
     threads: Int,
-    private val xs: List<Double>
+    private val xs: List<Double>,
+    private val ys: List<Double>
 ) : LevenbergMarquardt(threads) {
 
     override fun setDerivatives(parameters: DoubleArray, derivatives: Array<out DoubleArray>) {
         val (a, _, c) = Parameters(parameters)
-        xs.forEachIndexed { i, x ->
+        xs.zip(ys).forEachIndexed { i, (x, y) ->
             derivatives[0][i] = c + x
             derivatives[1][i] = 1.0
-            derivatives[2][i] = a
+            derivatives[2][i] = a - y
         }
     }
 
     override fun setValues(parameters: DoubleArray, values: DoubleArray) {
         val (a, b, c) = Parameters(parameters)
-        xs.forEachIndexed { i, x ->
-            values[i] = a + (b / (x + c))
+        xs.zip(ys).forEachIndexed { i, (x, y) ->
+            values[i] = a * c + a * x + b - y * c
         }
     }
 

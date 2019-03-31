@@ -7,6 +7,9 @@ import java.lang.Math.pow
 
 
 class PolynomialRegression : AbstractPrediction<Int>() {
+    override fun getParameters(data: Map<X, Y>): List<Double> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     private companion object : KLogging()
 
