@@ -7,18 +7,14 @@ class HyperbolaFunction {
         return a * c + a * x + b - y * c
     }
 
-    fun modelFunction(parameters: HyperbolicParameters, x: Int, y: Double): Double = modelFunction(parameters, x.toDouble(), y)
-
     fun hyperbolicDerivatives(parameters: HyperbolicParameters, x: Double, y: Double): HyperbolicDerivatives {
-        val (a, b, c) = parameters
+        val (a, _, c) = parameters
         return HyperbolicDerivatives(
             da = c + x,
             db = 1.0,
             dc = a - y
         )
     }
-
-    fun hyperbolicDerivatives(parameters: HyperbolicParameters, x: Int, y: Double): HyperbolicDerivatives = hyperbolicDerivatives(parameters, x, y)
 
     fun getY(parameters: HyperbolicParameters, x: Double): Double = parameters.a + parameters.b / (x + parameters.c)
 

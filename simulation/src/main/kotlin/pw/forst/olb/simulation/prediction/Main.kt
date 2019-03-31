@@ -1,7 +1,7 @@
 package pw.forst.olb.simulation.prediction
 
 import pw.forst.olb.core.predict.fitting.HyperbolaPredictionBuilder
-import pw.forst.olb.core.predict.fitting.LstSqrs
+import pw.forst.olb.core.predict.fitting.NoExtrapolation
 
 fun main() {
     val inputFolder = "/home/lukas/repos/bp/job-data/test-input2"
@@ -13,7 +13,7 @@ fun main() {
     val predictionAlgorithms = listOf(
         builder.buildWithFinMath(),
         builder.buildWithApache(),
-        LstSqrs()
+        NoExtrapolation()
     )
     val simulations = PredictionSimulation()
 
