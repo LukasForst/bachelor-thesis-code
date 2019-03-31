@@ -13,7 +13,7 @@ abstract class AbstractPrediction<T> : PredictionWithParameter<T> {
             .getOrNull()
 
 
-    protected open val logFailure: (Throwable) -> Unit = { logger.error(it) { "Error while running polynomial prediction!" } }
+    protected open val logFailure: (Throwable) -> Unit = { logger.error(it) { "Error while running prediction!" } }
 
     protected abstract fun predictUnSafe(data: Map<X, Y>, toPredict: X, params: T?): Y?
 
