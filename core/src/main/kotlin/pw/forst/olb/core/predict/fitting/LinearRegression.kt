@@ -4,9 +4,6 @@ import mu.KLogging
 import org.apache.commons.math3.stat.regression.SimpleRegression
 
 class LinearRegression : AbstractPrediction<Nothing>() {
-    override fun getParameters(data: Map<X, Y>): List<Double> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     private companion object : KLogging()
 

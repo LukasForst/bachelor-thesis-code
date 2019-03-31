@@ -1,24 +1,25 @@
 package pw.forst.olb.core.predict.fitting
 
+import mu.KLogging
 import net.finmath.optimizer.LevenbergMarquardt
-
+import pw.forst.olb.common.extensions.normalize
+import pw.forst.olb.core.predict.reduceDistribution
 
 class FinMathOptimization : AbstractPrediction<Int>() {
-    private fun List<Double>.normalize(): List<Double> {
-        val sum = this.sum()
-        return this.map { it / sum }
-    }
+    private companion object : KLogging()
 
-    override fun getParameters(data: Map<X, Y>): List<Double> {
-        val keys = data.keys.toList().sorted()
-        val values = keys.map { data.getValue(it) }
+    fun getParameters(data: Map<X, Y>): List<Double> {
+        val reduced = data.reduceDistribution()
+//        val reduced = data
+        val keys = reduced.keys.toList().sorted()
+        val values = keys.map { reduced.getValue(it) }
 
         return FinMath(4, keys, values)
-            .setInitialParameters(oneFreeVariable(data))
-            .setWeights(keys.normalize().toDoubleArray())
+            .setInitialParameters(oneFreeVariable(reduced))
+            .setWeights(keys.map { it * it }.normalize().toDoubleArray())
             .setMaxIteration(1000)
             .setTargetValues(keys.zip(values) { x, y -> x * y }.toDoubleArray())
-            .also { it.run() }
+            .also { it.run(); logger.info { "Finished in ${it.iterations} iterations!" } }
             .bestFitParameters
             .toList()
     }
@@ -38,8 +39,6 @@ class FinMathOptimization : AbstractPrediction<Int>() {
         val b = ys[0] * (xs[0] + c) - a * (xs[0] + c)
         return doubleArrayOf(a, b, c)
     }
-
-
 }
 
 data class Parameters(val a: Double, val b: Double, val c: Double) {

@@ -7,11 +7,18 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix
 import org.apache.commons.math3.linear.ArrayRealVector
 import org.apache.commons.math3.linear.RealMatrix
 import org.apache.commons.math3.linear.RealVector
+import pw.forst.olb.core.predict.reduceDistribution
 import org.apache.commons.math3.util.Pair as ApachePair
 
 
-class LstSqrs : AbstractPrediction<Int>() {
-    override fun predictUnSafe(data: Map<X, Y>, toPredict: X, params: Int?): Y? {
+class LstSqrs : HyperbolicRegression(
+    DefaultHyperbolaConfiguration.hyperbolaFunction(),
+    DefaultHyperbolaConfiguration.initialGuessLambda,
+    null
+) {
+    override fun obtainParametersUnsafe(data: Map<X, Y>, initialGuess: HyperbolicParameters?): HyperbolicParameters? = getParameters(data).toHyperbolicParameters()
+
+    override fun predictUnSafe(data: Map<X, Y>, toPredict: X, params: HyperbolicParameters?): Y? {
         if (data.size < 10) return null
 
         val prms = getParameters(data)
@@ -33,9 +40,9 @@ class LstSqrs : AbstractPrediction<Int>() {
     }
 
 
-    override fun getParameters(data: Map<X, Y>): List<Double> {
-
-        val observedPoints = data.map { (x, y) -> Observation(x = x, y = y) }
+    fun getParameters(data: Map<X, Y>): List<Double> {
+        val reducedData = data.reduceDistribution()
+        val observedPoints = reducedData.map { (x, y) -> Observation(x = x, y = y) }
 
         val criterialFunction = MultivariateJacobianFunction { point ->
 
@@ -54,7 +61,7 @@ class LstSqrs : AbstractPrediction<Int>() {
 
         // least squares problem to solve : modeled radius should be close to target radius
         val problem = LeastSquaresBuilder()
-            .start(oneFreeVariable(data))
+            .start(oneFreeVariable(reducedData))
 //            .start(doubleArrayOf(0.0, 1.0, 0.0))
             .model(criterialFunction)
             .target(observedPoints.map { it.x * it.y }.toDoubleArray())
@@ -64,7 +71,6 @@ class LstSqrs : AbstractPrediction<Int>() {
             .build()
 
         val optimum = LevenbergMarquardtOptimizer()
-            .withRankingThreshold(1.0e-12)
             .optimize(problem)
 
         val finalParameters = Parameters(a = optimum.point.getEntry(0), b = optimum.point.getEntry(1), c = optimum.point.getEntry(2))

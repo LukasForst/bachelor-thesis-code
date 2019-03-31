@@ -1,17 +1,19 @@
 package pw.forst.olb.simulation.prediction
 
-import pw.forst.olb.core.predict.fitting.FinMathOptimization
-import pw.forst.olb.core.predict.fitting.NoExtrapolation
+import pw.forst.olb.core.predict.fitting.HyperbolaPredictionBuilder
+import pw.forst.olb.core.predict.fitting.LstSqrs
 
 fun main() {
     val inputFolder = "/home/lukas/repos/bp/job-data/test-input2"
     val outputFolder = "/home/lukas/repos/bp/job-data/fitted-out2"
 
+    val builder = HyperbolaPredictionBuilder.create()
+//        .setDataPreprocessor { it.reduceDistribution() }
+
     val predictionAlgorithms = listOf(
-        FinMathOptimization(),
-        NoExtrapolation(),
-//        LstSqrs(),
-        NoExtrapolation()
+        builder.buildWithFinMath(),
+        builder.buildWithApache(),
+        LstSqrs()
     )
     val simulations = PredictionSimulation()
 

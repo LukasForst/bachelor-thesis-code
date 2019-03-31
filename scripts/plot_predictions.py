@@ -57,11 +57,11 @@ def go(input_dir, output_dir, save):
         plt.plot(data['pred_hyper'], label='fin_math')
         # plt.scatter(range(0, len(data['pred_hyper'])), data['pred_hyper'], label='fin_math', marker='o', s=1, c='r')
         # plt.scatter(range(0, len(data['pred_poly'])), data['pred_poly'], label='lst_sqrs', marker='o', s=1, c='y')
-        # plt.plot(data['pred_poly'], label='lst_sqrs')
+        plt.plot(data['pred_poly'], label='apache')
         # plt.plot(data['pred_poly'], label='pred_poly')
-        # plt.plot(data['pred_linear'], label='pred_linear')
+        plt.plot(data['pred_linear'], label='old apache')
 
-        plt.gca().legend(('cost', 'fin_math', 'lst_sqrs', 'linear'))
+        plt.gca().legend(('cost', 'fin_math', 'apache', 'old apache'))
 
         if save:
             plt.savefig(output_dir + '/' + file + '.png')

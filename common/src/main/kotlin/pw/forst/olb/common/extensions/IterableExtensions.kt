@@ -307,3 +307,17 @@ inline fun <T, R : Comparable<R>> Collection<T>.minMaxValueBy(minSelector: (T) -
     val max = this.maxValueBy(maxSelector) ?: return null
     return min to max
 }
+
+fun <T> List<T>.middleElement(): T? = if (size == 0) null else get(size / 2)
+
+fun <T> Collection<T>.middleElement(): T? =
+    when {
+        this is List -> this.middleElement()
+        this.isEmpty() -> null
+        else -> this.elementAt(size / 2)
+    }
+
+fun Collection<Double>.normalize(): Collection<Double> {
+    val sum = this.sum()
+    return this.map { it / sum }
+}
