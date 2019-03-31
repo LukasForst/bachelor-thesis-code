@@ -54,26 +54,24 @@ def go(input_dir, output_dir, save):
         plt.title(file)
 
         plt.plot(data['costs'], label='cost')
-        plt.scatter(range(0, len(data['pred_hyper'])), data['pred_hyper'], label='fin_math', marker='o', s=1, c='r')
-        plt.scatter(range(0, len(data['pred_poly'])), data['pred_poly'], label='lst_sqrs', marker='o', s=1, c='y')
-        # plt.plot(data['pred_poly'], label='lst_sqrs')
-        # plt.plot(data['pred_poly'], label='pred_poly')
-        # plt.plot(data['pred_linear'], label='pred_linear')
+        plt.plot(data['pred_hyper'], label='pred_hyper')
+        plt.plot(data['pred_poly'], label='pred_poly')
+        plt.plot(data['pred_linear'], label='pred_linear')
 
-        plt.gca().legend(('cost', 'fin_math', 'lst_sqrs', 'linear'))
+        plt.gca().legend(('cost', 'hyper', 'poly', 'linear'))
 
         if save:
             plt.savefig(output_dir + '/' + file + '.png')
         plt.show()
 
-    # plt.figure(dpi=680)
-    # plt.title("Mean: " + str(mean(iteration_length)))
-    # pts = plt.scatter(range(0, len(iteration_length)), iteration_length, marker='o', c='b', s=1)
-    # plt.setp(pts, color='r', linewidth=0.1)
-    # if save:
-    #     plt.savefig(output_dir + 'iteration_len.png')
-    # plt.show()
+    plt.figure(dpi=680)
+    plt.title("Mean: " + str(mean(iteration_length)))
+    pts = plt.scatter(range(0, len(iteration_length)), iteration_length, marker='o', c='b', s=1)
+    plt.setp(pts, color='r', linewidth=0.1)
+    if save:
+        plt.savefig(output_dir + 'iteration_len.png')
+    plt.show()
 
 
 if __name__ == '__main__':
-    go("/home/lukas/repos/bp/job-data/fitted-out2", "/home/lukas/repos/bp/job-data/fitted-out2", False)
+    go("/home/lukas/repos/bp/job-data/fitted-out2", "/home/lukas/repos/bp/job-data/fitted-out3", True)

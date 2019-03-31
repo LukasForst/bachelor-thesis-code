@@ -1,17 +1,17 @@
 package pw.forst.olb.simulation.prediction
 
-import pw.forst.olb.core.predict.fitting.LinearRegression
-import pw.forst.olb.core.predict.fitting.NonLinearHyperbolaRegression
-import pw.forst.olb.core.predict.fitting.PolynomialRegression
+import pw.forst.olb.core.predict.fitting.FinMathOptimization
+import pw.forst.olb.core.predict.fitting.LstSqrs
+import pw.forst.olb.core.predict.fitting.NoExtrapolation
 
 fun main() {
-    val inputFolder = "/home/lukas/repos/bp/job-data/test-input"
-    val outputFolder = "/home/lukas/repos/bp/job-data/fitted-out"
+    val inputFolder = "/home/lukas/repos/bp/job-data/test-input2"
+    val outputFolder = "/home/lukas/repos/bp/job-data/fitted-out2"
 
     val predictionAlgorithms = listOf(
-        NonLinearHyperbolaRegression(),
-        PolynomialRegression(),
-        LinearRegression()
+        FinMathOptimization(),
+        LstSqrs(),
+        NoExtrapolation()
     )
     val simulations = PredictionSimulation()
 

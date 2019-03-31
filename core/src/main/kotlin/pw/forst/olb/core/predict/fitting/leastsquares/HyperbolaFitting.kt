@@ -29,7 +29,7 @@ class HyperbolaFitting(
         fitParameters(xs, ys, params).toList()
 
     private fun fitParameters(xs: Array<Array<Double>>, ys: Array<Double>, params: DoubleArray) =
-        with(NonLinearSolver(HyperbolaFunction())) {
+        with(MarquardtFitter(HyperbolaFunction())) {
             setData(xs.map { it.toDoubleArray() }.toTypedArray(), ys.toDoubleArray())
             parameters = params
             fitData()
