@@ -1,8 +1,11 @@
-package pw.forst.olb.core.predict.fitting
+package pw.forst.olb.core.predict.fitting.predictors
 
 import mu.KLogging
 import org.apache.commons.math3.fitting.PolynomialCurveFitter
 import org.apache.commons.math3.fitting.WeightedObservedPoints
+import pw.forst.olb.core.predict.fitting.AbstractPrediction
+import pw.forst.olb.core.predict.fitting.parametrization.X
+import pw.forst.olb.core.predict.fitting.parametrization.Y
 import java.lang.Math.pow
 
 

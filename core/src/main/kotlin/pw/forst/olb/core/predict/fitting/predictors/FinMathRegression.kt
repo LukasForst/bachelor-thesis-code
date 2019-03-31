@@ -1,8 +1,16 @@
-package pw.forst.olb.core.predict.fitting
+package pw.forst.olb.core.predict.fitting.predictors
 
 import mu.KLogging
 import net.finmath.optimizer.LevenbergMarquardt
 import pw.forst.olb.common.extensions.normalize
+import pw.forst.olb.core.predict.fitting.HyperbolaFunction
+import pw.forst.olb.core.predict.fitting.HyperbolicParameters
+import pw.forst.olb.core.predict.fitting.HyperbolicRegression
+import pw.forst.olb.core.predict.fitting.parametrization.DefaultHyperbolaConfiguration
+import pw.forst.olb.core.predict.fitting.parametrization.X
+import pw.forst.olb.core.predict.fitting.parametrization.Y
+import pw.forst.olb.core.predict.fitting.toDoubleArray
+import pw.forst.olb.core.predict.fitting.toHyperbolicParameters
 
 
 class FinMathRegression(
@@ -44,7 +52,8 @@ class FinMathRegression(
                 it.run()
                 logger.info { "Finished in ${it.iterations} iterations!" }
             }
-            .bestFitParameters.toHyperbolicParameters()
+            .bestFitParameters
+            .toHyperbolicParameters()
     }
 
 
@@ -56,7 +65,8 @@ class FinMathRegression(
         private var threads: Int = DefaultHyperbolaConfiguration.defaultThreads
 
         companion object {
-            fun create(): HyperbolaOptimizerBuilder = HyperbolaOptimizerBuilder()
+            fun create(): HyperbolaOptimizerBuilder =
+                HyperbolaOptimizerBuilder()
         }
 
         fun setXs(xs: List<Double>): HyperbolaOptimizerBuilder {

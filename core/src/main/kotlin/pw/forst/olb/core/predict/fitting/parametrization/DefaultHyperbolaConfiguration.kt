@@ -1,6 +1,9 @@
-package pw.forst.olb.core.predict.fitting
+package pw.forst.olb.core.predict.fitting.parametrization
 
 import pw.forst.olb.common.extensions.middleElement
+import pw.forst.olb.core.predict.KeySelectionStrategy
+import pw.forst.olb.core.predict.fitting.HyperbolaFunction
+import pw.forst.olb.core.predict.fitting.HyperbolicParameters
 import pw.forst.olb.core.predict.reduceDistribution
 
 object DefaultHyperbolaConfiguration {
@@ -11,11 +14,12 @@ object DefaultHyperbolaConfiguration {
 
     const val defaultThreads = 2
 
-    val initialGuessLambda: (Map<X, Y>) -> HyperbolicParameters = ::oneFreeVariableInitialGuess
+    val initialGuessLambda: (Map<X, Y>) -> HyperbolicParameters =
+        DefaultHyperbolaConfiguration::oneFreeVariableInitialGuess
 
     val hyperbolaFunction: () -> HyperbolaFunction = { HyperbolaFunction() }
 
-    val dataPreprocessor: (Map<X, Y>) -> Map<X, Y> = { it.reduceDistribution() }
+    val dataPreprocessor: (Map<X, Y>) -> Map<X, Y> = { it.reduceDistribution(KeySelectionStrategy.MIN) }
 
     private fun oneFreeVariableInitialGuess(data: Map<X, Y>): HyperbolicParameters {
         val xs = data.keys.filter { it != 0.0 }.shuffled().take(2)

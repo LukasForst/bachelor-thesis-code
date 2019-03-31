@@ -1,4 +1,4 @@
-package pw.forst.olb.core.predict.fitting
+package pw.forst.olb.core.predict.fitting.predictors
 
 import mu.KLogging
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder
@@ -9,6 +9,13 @@ import org.apache.commons.math3.linear.ArrayRealVector
 import org.apache.commons.math3.linear.RealMatrix
 import org.apache.commons.math3.linear.RealVector
 import org.apache.commons.math3.util.Pair
+import pw.forst.olb.core.predict.fitting.HyperbolaFunction
+import pw.forst.olb.core.predict.fitting.HyperbolicDerivatives
+import pw.forst.olb.core.predict.fitting.HyperbolicParameters
+import pw.forst.olb.core.predict.fitting.HyperbolicRegression
+import pw.forst.olb.core.predict.fitting.parametrization.X
+import pw.forst.olb.core.predict.fitting.parametrization.Y
+import pw.forst.olb.core.predict.fitting.toDoubleArray
 
 class ApacheHyperbolicRegression(
     private val maxIterations: Int,

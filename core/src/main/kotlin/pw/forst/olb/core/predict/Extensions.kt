@@ -21,15 +21,27 @@ inline fun <K : Comparable<K>, V : Any> Map<K, V>.reduceDistribution(reducedChun
         .map { (value, keys) -> keys.associate { it to value } }
         .merge()
         .mapValues { (_, v) -> v.single() }
-
 }
 
-fun <K : Comparable<K>, V : Any> Map<K, V>.reduceDistribution(): Map<K, V> =
+fun <K : Comparable<K>, V : Any> Map<K, V>.reduceDistribution(): Map<K, V> = reduceDistribution(KeySelectionStrategy.MIDDLE)
+
+fun <K : Comparable<K>, V : Any> Map<K, V>.reduceDistribution(selectionStrategy: KeySelectionStrategy): Map<K, V> =
+    when (selectionStrategy) {
+        KeySelectionStrategy.MIDDLE -> this.reduceDistribution { it.middleElement() }
+        KeySelectionStrategy.MIN -> this.reduceDistribution { it.min() }
+        KeySelectionStrategy.MAX -> this.reduceDistribution { it.max() }
+    }
+
+inline fun <K : Comparable<K>, V : Any> Map<K, V>.reduceDistribution(newKeySelectionStrategy: (List<K>) -> K?): Map<K, V> =
     this.entries
         .groupBy({ (_, value) -> value }, { (key, _) -> key })
-        .mapValues { (_, keys) -> keys.max()!! }
-        .map { (value, keys) -> keys to value }.toMap()
+        .mapValues { (_, keys) -> newKeySelectionStrategy(keys) }
+        .mapNotNull { (value, key) -> key?.to(value) }
+        .toMap()
 
-
-enum class KeySelectionStrategy { MIDDLE, MIN, MAX }
+enum class KeySelectionStrategy {
+    MIDDLE,
+    MIN,
+    MAX
+}
 

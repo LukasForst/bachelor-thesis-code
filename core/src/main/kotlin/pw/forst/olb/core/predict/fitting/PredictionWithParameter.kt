@@ -1,5 +1,8 @@
 package pw.forst.olb.core.predict.fitting
 
+import pw.forst.olb.core.predict.fitting.parametrization.X
+import pw.forst.olb.core.predict.fitting.parametrization.Y
+
 
 interface PredictionWithParameter<T> : Prediction {
 

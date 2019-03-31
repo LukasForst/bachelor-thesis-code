@@ -1,8 +1,8 @@
 //package pw.forst.olb.core.predict.job
 //
-//import pw.forst.olb.core.predict.fitting.LinearRegression
+//import pw.forst.olb.core.predict.fitting.predictors.LinearRegression
 //import pw.forst.olb.core.predict.fitting.NonLinearHyperbolaRegression
-//import pw.forst.olb.core.predict.fitting.PolynomialRegression
+//import pw.forst.olb.core.predict.fitting.predictors.PolynomialRegression
 //
 //object JobValuePredictorFactory {
 //
