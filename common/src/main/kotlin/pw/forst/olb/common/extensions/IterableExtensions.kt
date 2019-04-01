@@ -321,3 +321,19 @@ fun Collection<Double>.normalize(): Collection<Double> {
     val sum = this.sum()
     return this.map { it / sum }
 }
+
+inline fun <T, R> Iterable<T>.foldWithNext(initial: R, operation: (acc: R, a: T, b: T) -> R): R {
+    var accumulator = initial
+
+    val iterator = iterator()
+    if (!iterator.hasNext()) return accumulator
+
+    var current = iterator.next()
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        accumulator = operation(accumulator, current, next)
+        current = next
+    }
+
+    return accumulator
+}

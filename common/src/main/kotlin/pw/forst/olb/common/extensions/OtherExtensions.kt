@@ -1,6 +1,10 @@
 package pw.forst.olb.common.extensions
 
 import pw.forst.olb.common.dto.Time
+import pw.forst.olb.common.dto.impl.completeJobAssignment
+import pw.forst.olb.common.dto.impl.createEmptyResourcesAllocation
+import pw.forst.olb.common.dto.job.CompleteJobAssignment
+import pw.forst.olb.common.dto.job.toCpuResources
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -56,3 +60,14 @@ fun Date.toLocalDate(): LocalDate = LocalDate.from(Instant.ofEpochMilli(this.tim
 
 
 fun Pair<Time, Time>.duration(): Time = this.second - this.first
+
+fun Collection<CompleteJobAssignment>.flattenAssignments(): Collection<CompleteJobAssignment> =
+    this.groupBy { it.job to it.time }
+        .map { (job, asg) ->
+            val first = asg.first()
+            val init = createEmptyResourcesAllocation(first.allocation.provider, first.job.parameters.jobType.toCpuResources())
+            val finalAllocation = asg.fold(init) { acc, jobAssignment -> acc + jobAssignment.allocation }
+            completeJobAssignment(job = job.first, time = job.second, allocation = finalAllocation)
+        }
+
+

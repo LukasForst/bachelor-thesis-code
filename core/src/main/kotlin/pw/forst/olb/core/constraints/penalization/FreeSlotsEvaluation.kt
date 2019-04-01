@@ -7,7 +7,7 @@ import pw.forst.olb.core.domain.Plan
 /**
  * Aim is to fill each computer in full
  * */
-class FreeSlotsPenalization : PlanPenalization {
+class FreeSlotsEvaluation : PlanEvaluation {
     override fun calculatePenalty(plan: Plan): Penalty = PenaltyBuilder.create().apply {
         soft(
             -plan.assignments.filter { !it.isValid }.size

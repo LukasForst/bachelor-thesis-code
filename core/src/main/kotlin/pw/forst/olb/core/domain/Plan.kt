@@ -6,12 +6,16 @@ import org.optaplanner.core.api.domain.solution.PlanningSolution
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider
 import org.optaplanner.core.api.score.buildin.hardsoftbigdecimal.HardSoftBigDecimalScore
+import pw.forst.olb.common.dto.GenericPlan
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
+import java.util.UUID
 
 @PlanningSolution
 data class Plan(
+
+    override val uuid: UUID = UUID.randomUUID(),
 
     val startTime: Time? = null,
 
@@ -34,4 +38,4 @@ data class Plan(
 
     @PlanningScore
     val cost: HardSoftBigDecimalScore? = null
-)
+) : GenericPlan

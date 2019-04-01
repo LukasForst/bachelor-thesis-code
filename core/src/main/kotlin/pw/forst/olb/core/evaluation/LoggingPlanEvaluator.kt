@@ -4,10 +4,10 @@ import mu.KLogging
 import org.optaplanner.core.api.score.buildin.hardsoftbigdecimal.HardSoftBigDecimalScore
 import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator
 import pw.forst.olb.core.constraints.dto.JobPlanView
-import pw.forst.olb.core.constraints.penalization.CostPenalization
-import pw.forst.olb.core.constraints.penalization.MultipleStacksPenalization
-import pw.forst.olb.core.constraints.penalization.ReallocationPenalization
-import pw.forst.olb.core.constraints.penalization.TimePenalization
+import pw.forst.olb.core.constraints.penalization.CostEvaluation
+import pw.forst.olb.core.constraints.penalization.MultipleStacksEvaluation
+import pw.forst.olb.core.constraints.penalization.ReallocationEvaluation
+import pw.forst.olb.core.constraints.penalization.TimeEvaluation
 import pw.forst.olb.core.constraints.penalty.Penalty
 import pw.forst.olb.core.constraints.penalty.PenaltyFactory
 import pw.forst.olb.core.domain.Plan
@@ -34,25 +34,25 @@ class LoggingPlanEvaluator : EasyScoreCalculator<Plan> {
     }
 
     private fun multipleStacks(views: Collection<JobPlanView>): Penalty {
-        val penalization = MultipleStacksPenalization()
+        val penalization = MultipleStacksEvaluation()
         return verifyPenalization(views, "MULTIPLE STACKS") { penalization.calculatePenalty(it) }
     }
 
 
     private fun timePenalty(views: Collection<JobPlanView>): Penalty {
-        val penalization = TimePenalization()
+        val penalization = TimeEvaluation()
         return verifyPenalization(views, "TIME") { penalization.calculatePenalty(it) }
     }
 
 
     private fun reallocationPenalty(views: Collection<JobPlanView>): Penalty {
-        val penalization = ReallocationPenalization()
+        val penalization = ReallocationEvaluation()
         return verifyPenalization(views, "REALLOCATION") { penalization.calculatePenalty(it) }
     }
 
 
     private fun costPenalty(views: Collection<JobPlanView>): Penalty {
-        val penalization = CostPenalization()
+        val penalization = CostEvaluation()
         return verifyPenalization(views, "COST") { penalization.calculatePenalty(it) }
     }
 

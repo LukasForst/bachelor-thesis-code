@@ -11,6 +11,19 @@ data class CpuResources(
     val type: CpuPowerType
 ) : Resources() {
 
+    companion object {
+        val ZERO_MULT: CpuResources
+            get() = CpuResources(0.0, CpuPowerType.MULTI_CORE)
+
+        val ZERO_SING: CpuResources
+            get() = CpuResources(0.0, CpuPowerType.SINGLE_CORE)
+
+        fun getZero(powerType: CpuPowerType): CpuResources = when (powerType) {
+            CpuPowerType.SINGLE_CORE -> ZERO_SING
+            CpuPowerType.MULTI_CORE -> ZERO_MULT
+        }
+    }
+
     operator fun plus(other: CpuResources) = assertSameType(other) { copy(cpuValue = this.cpuValue + other.cpuValue) }
 
     operator fun minus(other: CpuResources) = assertSameType(other) { copy(cpuValue = this.cpuValue - other.cpuValue) }
@@ -31,6 +44,12 @@ data class MemoryResources(
     val memoryInMegaBytes: Long
 
 ) : Resources() {
+
+    companion object {
+        val ZERO: MemoryResources
+            get() = MemoryResources(0L)
+    }
+
     operator fun plus(other: MemoryResources) = copy(memoryInMegaBytes = this.memoryInMegaBytes + other.memoryInMegaBytes)
 
     operator fun minus(other: MemoryResources) = copy(memoryInMegaBytes = this.memoryInMegaBytes - other.memoryInMegaBytes)

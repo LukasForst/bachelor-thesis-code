@@ -9,6 +9,10 @@ interface ResourcesAllocation : ResourcesPool {
      * */
     val cost: Cost
 
+    operator fun plus(other: ResourcesAllocation): ResourcesAllocation
+
+    operator fun minus(other: ResourcesAllocation): ResourcesAllocation
+
     operator fun plus(other: MemoryResources): ResourcesAllocation
 
     override operator fun minus(other: MemoryResources): ResourcesAllocation

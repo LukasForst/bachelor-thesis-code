@@ -4,7 +4,7 @@ import pw.forst.olb.core.constraints.dto.JobPlanView
 import pw.forst.olb.core.constraints.penalty.Penalty
 import pw.forst.olb.core.constraints.penalty.PenaltyFactory
 
-class ReallocationPenalization : CompletePlanPenalization {
+class ReallocationEvaluation : CompletePlanEvaluation {
 
     override fun calculatePenalty(jobView: JobPlanView): Penalty {
         //TODO

@@ -31,7 +31,7 @@ class ApacheHyperbolicRegression(
     }
 
     override fun obtainParametersUnsafe(data: Map<X, Y>, initialGuess: HyperbolicParameters?): HyperbolicParameters? {
-        if (data.size < 4)
+        if (data.size < dimension + 1)
             return null.also { logger.error { "It is not possible to run hyperbolic prediction because there are no data! Data size: ${data.size}" } }
 
         val xs = data.keys.toList().sorted()
