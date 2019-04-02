@@ -17,8 +17,8 @@ class InputToDomainConverter {
 
     fun convert(input: SchedulingInput): Plan {
         val times = (input.startTime until input.endTime step input.timeStep).toList()
-        val resourcesAllocation = input.resources.flatMap { it.splitToGranularity() }
-        val assignments = generateAssignments(times, resourcesAllocation)
+        val resourcesAllocation = input.resources.flatMap { it.splitToGranularity() }.sortedBy { it.cost }
+        val assignments = generateAssignments(times, resourcesAllocation).sortedBy { it.cost }
 
         return Plan(
             uuid = UUID.randomUUID(),

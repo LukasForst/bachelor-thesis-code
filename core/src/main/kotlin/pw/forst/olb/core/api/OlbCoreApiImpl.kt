@@ -22,12 +22,14 @@ import pw.forst.olb.common.extensions.assert
 import pw.forst.olb.common.extensions.mapToSet
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.evaluation.CompletePlan
+import pw.forst.olb.core.evaluation.LoggingPlanEvaluator
 import pw.forst.olb.core.extensions.asCompletePlan
 import pw.forst.olb.core.solver.OptaplannerSolverFactory
 
 class OlbCoreApiImpl(
     private val inputToDomainConverter: InputToDomainConverter,
-    private val solverFactory: OptaplannerSolverFactory
+    private val solverFactory: OptaplannerSolverFactory,
+    private val finalLogEnabled: Boolean = false
 ) : OlbCoreApi {
 
     private companion object {
@@ -39,6 +41,7 @@ class OlbCoreApiImpl(
         val domain = inputToDomainConverter.convert(input)
         val solver = solverFactory.create<Plan>(input.toSolverConfiguration())
         val solution = solver.solve(domain)
+        if (finalLogEnabled) LoggingPlanEvaluator().calculateScore(solution)
 
         return solution.asCompletePlan().toAllocationPlan()
     }

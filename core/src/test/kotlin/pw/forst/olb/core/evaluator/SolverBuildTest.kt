@@ -35,10 +35,10 @@ class SolverBuildTest {
     fun run() {
         val api = buildApi()
         val input = createSchedulingInput(
-            25,
-            60,
-            TimeImpl(20, TimeUnit.SECONDS),
-            2
+            15,
+            120,
+            TimeImpl(50, TimeUnit.SECONDS),
+            4
         )
 
         val result = api.createNewPlan(input)
@@ -68,19 +68,19 @@ class SolverBuildTest {
 
     private fun resourcePools(): Collection<ResourcesPool> = listOf(
         InputResourcesPool(
-            name = "Cost: 1.5 + 0.02",
-            uuid = UUID.randomUUID(),
-            cpuCost = CpuCostImpl(1.5),
-            memoryCost = MemoryCostImpl(0.02),
-            cpuResources = CpuResources(15.0, CpuPowerType.MULTI_CORE),
-            memoryResources = MemoryResources(1024 * 64)
-        ),
-        InputResourcesPool(
             name = "Cost: 10.0 + 0.05",
             uuid = UUID.randomUUID(),
             cpuCost = CpuCostImpl(10.0),
             memoryCost = MemoryCostImpl(0.05),
             cpuResources = CpuResources(10.0, CpuPowerType.MULTI_CORE),
+            memoryResources = MemoryResources(1024 * 64)
+        ),
+        InputResourcesPool(
+            name = "Cost: 1.5 + 0.02",
+            uuid = UUID.randomUUID(),
+            cpuCost = CpuCostImpl(1.5),
+            memoryCost = MemoryCostImpl(0.02),
+            cpuResources = CpuResources(15.0, CpuPowerType.MULTI_CORE),
             memoryResources = MemoryResources(1024 * 64)
         ),
         InputResourcesPool(
@@ -116,6 +116,6 @@ class SolverBuildTest {
 
     private fun randomClient(seed: Int): Client = SimpleClient(name = "Random client $seed", uuid = UUID.randomUUID())
 
-    private fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory())
+    private fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true)
 
 }

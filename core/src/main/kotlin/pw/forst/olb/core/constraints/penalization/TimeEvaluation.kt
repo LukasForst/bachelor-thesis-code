@@ -10,7 +10,7 @@ import pw.forst.olb.core.constraints.penalty.PenaltyFactory
 class TimeEvaluation : CompletePlanEvaluation {
 
     override fun calculatePenalty(jobView: JobPlanView): Penalty {
-        val maxTime = jobView.job.parameters.maxTime
+        val maxTime = jobView.job.parameters.maxTime + jobView.plan.startTime
         val lastAssignment = jobView.assignments.maxValueBy { it.time } ?: return PenaltyFactory.noPenalty
         return createPenaltyForTimeDifference(lastAssignment - jobView.plan.startTime, maxTime)
     }
@@ -21,7 +21,7 @@ class TimeEvaluation : CompletePlanEvaluation {
         return PenaltyBuilder
             .create()
             .hardIf(diff) { diff < 0.0 }
-            .softIf(-diff) { diff > 0 }
+//            .softIf(-diff) { diff > 0 } // is this soft penalization necessary?
             .get()
     }
 
