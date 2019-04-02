@@ -1,19 +1,23 @@
 package pw.forst.olb.core.evaluation
 
 import org.optaplanner.core.api.score.buildin.hardsoftbigdecimal.HardSoftBigDecimalScore
+import pw.forst.olb.common.dto.GenericPlan
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.CompleteJobAssignment
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
+import java.util.UUID
 
 
 data class CompletePlan(
 
-    val startTime: Time,
+    override val uuid: UUID,
 
-    val endTime: Time,
+    override val startTime: Time,
 
-    val timeIncrement: Time,
+    override val endTime: Time,
+
+    override val timeIncrement: Time,
 
     val assignments: Collection<CompleteJobAssignment>,
 
@@ -24,4 +28,4 @@ data class CompletePlan(
     val times: Collection<Time>,
 
     val cost: HardSoftBigDecimalScore
-)
+) : GenericPlan

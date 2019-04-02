@@ -1,5 +1,11 @@
 package pw.forst.olb.core.predict.fitting
 
+import pw.forst.olb.core.predict.fitting.parametrization.DefaultHyperbolaConfiguration
+import pw.forst.olb.core.predict.fitting.parametrization.X
+import pw.forst.olb.core.predict.fitting.parametrization.Y
+import pw.forst.olb.core.predict.fitting.predictors.ApacheHyperbolicRegression
+import pw.forst.olb.core.predict.fitting.predictors.FinMathRegression
+
 class HyperbolaPredictionBuilder private constructor() {
     private var maxThreads: Int = DefaultHyperbolaConfiguration.defaultThreads
     private var maxIterations: Int = DefaultHyperbolaConfiguration.defaultIterations

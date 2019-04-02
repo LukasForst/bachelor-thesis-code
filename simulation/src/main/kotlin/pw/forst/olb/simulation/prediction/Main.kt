@@ -1,7 +1,7 @@
 package pw.forst.olb.simulation.prediction
 
 import pw.forst.olb.core.predict.fitting.HyperbolaPredictionBuilder
-import pw.forst.olb.core.predict.fitting.NoExtrapolation
+import pw.forst.olb.core.predict.fitting.predictors.NoExtrapolation
 
 fun main() {
     val inputFolder = "/home/lukas/repos/bp/job-data/test-input2"
