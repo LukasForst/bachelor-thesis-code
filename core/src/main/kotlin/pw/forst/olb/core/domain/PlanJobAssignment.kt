@@ -1,6 +1,7 @@
 package pw.forst.olb.core.domain
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity
+import org.optaplanner.core.api.domain.lookup.PlanningId
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactProperty
 import org.optaplanner.core.api.domain.variable.PlanningVariable
 import pw.forst.olb.common.dto.Cost
@@ -19,7 +20,7 @@ import java.util.UUID
     movableEntitySelectionFilter = ResourcesSelectionFilter::class
 )
 data class PlanJobAssignment(
-
+    @field:PlanningId
     val uuid: UUID,
 
     @field:PlanningVariable(valueRangeProviderRefs = ["jobRange"], nullable = true)
@@ -42,4 +43,21 @@ data class PlanJobAssignment(
         get() = allocation?.cost ?: invalidCost()
 
     override fun toCompleteAssignment(): CompleteJobAssignment? = if (isValid) completeJobAssignment(job!!, time, allocation!!) else null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PlanJobAssignment
+
+        if (uuid != other.uuid) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return uuid.hashCode()
+    }
+
+
 }

@@ -1,7 +1,7 @@
 package pw.forst.olb.core.constraints.penalization
 
 import pw.forst.olb.common.dto.Time
-import pw.forst.olb.common.extensions.minMaxBy
+import pw.forst.olb.common.extensions.maxValueBy
 import pw.forst.olb.core.constraints.dto.JobPlanView
 import pw.forst.olb.core.constraints.penalty.Penalty
 import pw.forst.olb.core.constraints.penalty.PenaltyBuilder
@@ -11,8 +11,8 @@ class TimeEvaluation : CompletePlanEvaluation {
 
     override fun calculatePenalty(jobView: JobPlanView): Penalty {
         val maxTime = jobView.job.parameters.maxTime
-        val (firstAssignment, lastAssignment) = jobView.assignments.minMaxBy { it.time } ?: return PenaltyFactory.noPenalty
-        return createPenaltyForTimeDifference(lastAssignment.time - firstAssignment.time, maxTime)
+        val lastAssignment = jobView.assignments.maxValueBy { it.time } ?: return PenaltyFactory.noPenalty
+        return createPenaltyForTimeDifference(lastAssignment - jobView.plan.startTime, maxTime)
     }
 
     private fun createPenaltyForTimeDifference(actualTime: Time, jobMaxTime: Time): Penalty {

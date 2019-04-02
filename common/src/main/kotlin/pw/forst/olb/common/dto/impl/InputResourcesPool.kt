@@ -22,4 +22,21 @@ data class InputResourcesPool(
     override fun minus(other: MemoryResources): ResourcesPool = copy(memoryResources = memoryResources - other)
 
     override fun minus(other: CpuResources): ResourcesPool = copy(cpuResources = cpuResources - other)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as InputResourcesPool
+
+        if (uuid != other.uuid) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return uuid.hashCode()
+    }
+
+
 }

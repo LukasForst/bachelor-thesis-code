@@ -6,7 +6,8 @@ import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator
 import pw.forst.olb.core.constraints.penalization.AssignmentsEvaluation
 import pw.forst.olb.core.constraints.penalization.CompletePlanEvaluation
 import pw.forst.olb.core.constraints.penalization.CostEvaluation
-import pw.forst.olb.core.constraints.penalization.NoAssignmentEvaluation
+import pw.forst.olb.core.constraints.penalization.FreeSlotsEvaluation
+import pw.forst.olb.core.constraints.penalization.PlanEvaluation
 import pw.forst.olb.core.constraints.penalization.ReallocationEvaluation
 import pw.forst.olb.core.constraints.penalization.TimeEvaluation
 import pw.forst.olb.core.domain.Plan
@@ -19,19 +20,26 @@ class BigDecimalScoreCalculation : EasyScoreCalculator<Plan> {
 
     private companion object : KLogging()
 
-    private val penalties: Collection<CompletePlanEvaluation> = listOf(
+    private val jobPenalties: Collection<CompletePlanEvaluation> = listOf(
         CostEvaluation(),
         TimeEvaluation(),
         ReallocationEvaluation(),
-        NoAssignmentEvaluation(),
+//        NoAssignmentEvaluation(),
         AssignmentsEvaluation(PredictionStoreFactory.getStore())
     )
 
+    private val planPenalties: Collection<PlanEvaluation> = listOf(
+        FreeSlotsEvaluation()
+    )
+
     override fun calculateScore(solution: Plan): HardSoftBigDecimalScore {
-        return solution.toJobPlanViews()
-            .flatMap { planView -> penalties.map { it.calculatePenalty(planView) } }
+        val planPenalties = planPenalties.map { it.calculatePenalty(solution) }.sum()
+
+        val jobPenalties = solution.toJobPlanViews()
+            .flatMap { planView -> jobPenalties.map { it.calculatePenalty(planView) } }
             .sum()
-            .toScore()
+
+        return (planPenalties + jobPenalties).toScore()
     }
 
 

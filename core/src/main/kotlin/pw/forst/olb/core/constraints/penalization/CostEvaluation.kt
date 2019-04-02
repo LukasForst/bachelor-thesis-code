@@ -21,6 +21,7 @@ class CostEvaluation : CompletePlanEvaluation {
             .create()
             .hardIf(diff) { diff < 0.0 }
             .softIf(-diff) { diff > 0 }
+            .soft(-actualCost.value)
             .get()
     }
 }

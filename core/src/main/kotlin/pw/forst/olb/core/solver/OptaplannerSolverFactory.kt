@@ -13,7 +13,7 @@ class OptaplannerSolverFactory {
 
     fun <T> create(configuration: SolverConfiguration): Solver<T> {
         return SolverFactory.createFromXmlResource<T>(DEFAULT_CONFIG_XML).apply {
-            //            solverConfig.moveThreadCount = configuration.threads.toString()
+            solverConfig.moveThreadCount = configuration.threads.toString()
             solverConfig.terminationConfig.secondsSpentLimit = configuration.maxTimeInSeconds
         }.buildSolver()
     }

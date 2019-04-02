@@ -10,7 +10,6 @@ import pw.forst.olb.common.dto.impl.InputResourcesPool
 import pw.forst.olb.common.dto.impl.MemoryCostImpl
 import pw.forst.olb.common.dto.impl.SchedulingInputImpl
 import pw.forst.olb.common.dto.impl.SimpleClient
-import pw.forst.olb.common.dto.impl.SimpleJob
 import pw.forst.olb.common.dto.impl.SimpleJobParameters
 import pw.forst.olb.common.dto.job.Client
 import pw.forst.olb.common.dto.job.Job
@@ -23,6 +22,8 @@ import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.core.api.InputToDomainConverter
 import pw.forst.olb.core.api.OlbCoreApi
 import pw.forst.olb.core.api.OlbCoreApiImpl
+import pw.forst.olb.core.domain.PlanningJob
+import pw.forst.olb.core.extensions.prettyFormat
 import pw.forst.olb.core.solver.OptaplannerSolverFactory
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -34,14 +35,14 @@ class SolverBuildTest {
     fun run() {
         val api = buildApi()
         val input = createSchedulingInput(
-            15,
-            400,
+            25,
+            60,
             TimeImpl(20, TimeUnit.SECONDS),
             2
         )
 
         val result = api.createNewPlan(input)
-        print(result)
+        println("\n\n${result.prettyFormat()}\n")
     }
 
     @Suppress("SameParameterValue") //because it is integration test
@@ -67,7 +68,7 @@ class SolverBuildTest {
 
     private fun resourcePools(): Collection<ResourcesPool> = listOf(
         InputResourcesPool(
-            name = "Big cheap resources provider",
+            name = "Cost: 1.5 + 0.02",
             uuid = UUID.randomUUID(),
             cpuCost = CpuCostImpl(1.5),
             memoryCost = MemoryCostImpl(0.02),
@@ -75,7 +76,7 @@ class SolverBuildTest {
             memoryResources = MemoryResources(1024 * 64)
         ),
         InputResourcesPool(
-            name = "Expensive resources provider",
+            name = "Cost: 10.0 + 0.05",
             uuid = UUID.randomUUID(),
             cpuCost = CpuCostImpl(10.0),
             memoryCost = MemoryCostImpl(0.05),
@@ -83,10 +84,10 @@ class SolverBuildTest {
             memoryResources = MemoryResources(1024 * 64)
         ),
         InputResourcesPool(
-            name = "Small resources provider",
+            name = "Cost: 1 + 0.02",
             uuid = UUID.randomUUID(),
             cpuCost = CpuCostImpl(1.0),
-            memoryCost = MemoryCostImpl(0.01),
+            memoryCost = MemoryCostImpl(0.02),
             cpuResources = CpuResources(4.0, CpuPowerType.MULTI_CORE),
             memoryResources = MemoryResources(1024 * 32)
         )
@@ -94,7 +95,7 @@ class SolverBuildTest {
 
     private fun generateJobs(count: Int, totalTimeRunning: Long): List<Job> =
         (0 until count).map {
-            SimpleJob(
+            PlanningJob(
                 parameters = randomParameters(it, totalTimeRunning),
                 client = randomClient(it),
                 uuid = UUID.randomUUID(),
