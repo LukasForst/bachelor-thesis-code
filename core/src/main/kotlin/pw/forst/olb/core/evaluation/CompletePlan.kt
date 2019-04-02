@@ -13,11 +13,11 @@ data class CompletePlan(
 
     override val uuid: UUID,
 
-    val startTime: Time,
+    override val startTime: Time,
 
-    val endTime: Time,
+    override val endTime: Time,
 
-    val timeIncrement: Time,
+    override val timeIncrement: Time,
 
     val assignments: Collection<CompleteJobAssignment>,
 

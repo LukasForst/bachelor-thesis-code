@@ -9,5 +9,5 @@ interface SchedulingProperties {
 
     val maxTimePlanningSpend: Time
 
-    val cores: Int
+    val cores: Int?
 }

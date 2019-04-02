@@ -9,25 +9,20 @@ data class CpuResources(
     val cpuValue: Double,
 
     val type: CpuPowerType
-) : Resources() {
+) : Resources(), Comparable<CpuResources> {
 
     companion object {
-        val ZERO_MULT: CpuResources
-            get() = CpuResources(0.0, CpuPowerType.MULTI_CORE)
 
-        val ZERO_SING: CpuResources
-            get() = CpuResources(0.0, CpuPowerType.SINGLE_CORE)
+        fun getSmallest(powerType: CpuPowerType) = CpuResources(1.0, powerType)
 
-        fun getZero(powerType: CpuPowerType): CpuResources = when (powerType) {
-            CpuPowerType.SINGLE_CORE -> ZERO_SING
-            CpuPowerType.MULTI_CORE -> ZERO_MULT
-        }
+        fun getZero(powerType: CpuPowerType): CpuResources = CpuResources(0.0, powerType)
     }
 
     operator fun plus(other: CpuResources) = assertSameType(other) { copy(cpuValue = this.cpuValue + other.cpuValue) }
 
     operator fun minus(other: CpuResources) = assertSameType(other) { copy(cpuValue = this.cpuValue - other.cpuValue) }
 
+    override fun compareTo(other: CpuResources): Int = this.cpuValue.compareTo(other.cpuValue)
 
     private fun <T> assertSameType(other: CpuResources, block: () -> T): T =
         if (this.type != other.type) throw IllegalArgumentException("It is not possible to operate with different CPU type! this: [$this], other: [$other]")
@@ -43,9 +38,11 @@ data class MemoryResources(
 
     val memoryInMegaBytes: Long
 
-) : Resources() {
+) : Resources(), Comparable<MemoryResources> {
 
     companion object {
+        fun getSmallest() = MemoryResources(128L)
+
         val ZERO: MemoryResources
             get() = MemoryResources(0L)
     }
@@ -53,4 +50,6 @@ data class MemoryResources(
     operator fun plus(other: MemoryResources) = copy(memoryInMegaBytes = this.memoryInMegaBytes + other.memoryInMegaBytes)
 
     operator fun minus(other: MemoryResources) = copy(memoryInMegaBytes = this.memoryInMegaBytes - other.memoryInMegaBytes)
+
+    override fun compareTo(other: MemoryResources): Int = this.memoryInMegaBytes.compareTo(other.memoryInMegaBytes)
 }

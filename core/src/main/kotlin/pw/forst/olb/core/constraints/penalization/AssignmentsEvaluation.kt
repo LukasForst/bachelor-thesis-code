@@ -21,7 +21,7 @@ class AssignmentsEvaluation(private val predictionStore: PredictionStore) : Comp
 
     override fun calculatePenalty(jobView: JobPlanView): Penalty {
         val cachedPrediction = predictionStore.predictionFor(planId = jobView.plan.uuid, jobId = jobView.job.uuid)
-            ?: return PenaltyFactory.noPenalty.also { logger.warn { "It is not possible to calculate prediction penalty, because there are no prediction data available!" } }
+            ?: return PenaltyFactory.noPenalty
         val sorted = jobView.assignments
             .flattenAssignments()
             .sortedBy { it.time }

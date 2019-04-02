@@ -8,22 +8,17 @@ import pw.forst.olb.core.constraints.dto.JobPlanViewImpl
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.evaluation.CompletePlan
 
-fun Plan.isConvertible(): Boolean = startTime != null && endTime != null && timeIncrement != null && cost != null
-
-fun Plan.asCompletePlan(): CompletePlan? =
-    if (isConvertible())
-        CompletePlan(
-            uuid = uuid,
-            startTime = startTime!!,
-            endTime = endTime!!,
-            timeIncrement = timeIncrement!!,
-            assignments = assignments.mapNotNull { it.toCompleteAssignment() },
-            jobDomain = jobDomain,
-            resourcesStackDomain = resourcesStackDomain,
-            times = times,
-            cost = cost!!
-        )
-    else null
+fun Plan.asCompletePlan(): CompletePlan = CompletePlan(
+    uuid = uuid,
+    startTime = startTime,
+    endTime = endTime,
+    timeIncrement = timeIncrement,
+    assignments = assignments.mapNotNull { it.toCompleteAssignment() },
+    jobDomain = jobDomain,
+    resourcesStackDomain = resourcesStackDomain,
+    times = times,
+    cost = cost
+)
 
 
 fun Plan.toJobPlanViews(): Collection<JobPlanView> = createJobPlanViews(assignments.mapNotNull { it.toCompleteAssignment() }, jobDomain, this)

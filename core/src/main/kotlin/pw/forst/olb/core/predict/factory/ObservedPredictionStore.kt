@@ -12,6 +12,10 @@ data class ObservedPredictionStore(
         observers.add(observer)
     }
 
+    override fun hasPlan(planId: UUID): Boolean = data.containsKey(planId)
+
+    override fun hasJob(planId: UUID, jobId: UUID): Boolean = data[planId]?.containsKey(jobId) ?: false
+
     override fun predictionFor(planId: UUID, jobId: UUID): CachedPrediction? = data[planId]?.get(jobId)
 
     override fun predictionFor(planId: UUID): Map<UUID, CachedPrediction>? = data[planId]

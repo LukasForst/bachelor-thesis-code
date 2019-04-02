@@ -8,6 +8,7 @@ import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider
 import org.optaplanner.core.api.score.buildin.hardsoftbigdecimal.HardSoftBigDecimalScore
 import pw.forst.olb.common.dto.GenericPlan
 import pw.forst.olb.common.dto.Time
+import pw.forst.olb.common.dto.TimeImpl
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import java.util.UUID
@@ -17,25 +18,40 @@ data class Plan(
 
     override val uuid: UUID = UUID.randomUUID(),
 
-    val startTime: Time? = null,
+    override val startTime: Time,
 
-    val endTime: Time? = null,
+    override val endTime: Time,
 
-    val timeIncrement: Time? = null,
+    override val timeIncrement: Time,
 
     @field:PlanningEntityCollectionProperty
-    val assignments: Collection<PlanJobAssignment> = emptyList(),
+    val assignments: Collection<PlanJobAssignment>,
 
     @field:ValueRangeProvider(id = "jobRange")
     @field:ProblemFactCollectionProperty
-    val jobDomain: Collection<Job> = emptyList(),
+    val jobDomain: Collection<Job>,
 
     @field:ProblemFactCollectionProperty
-    val resourcesStackDomain: Collection<ResourcesAllocation> = emptyList(),
+    val resourcesStackDomain: Collection<ResourcesAllocation>,
 
     @field:ProblemFactCollectionProperty
-    val times: Collection<Time> = emptyList(),
+    val times: Collection<Time>,
 
     @PlanningScore
-    val cost: HardSoftBigDecimalScore? = null
-) : GenericPlan
+    val cost: HardSoftBigDecimalScore = HardSoftBigDecimalScore.ZERO
+) : GenericPlan {
+
+    @Suppress("unused") // there has to be empty constructor for optaplanner
+    private constructor() : this(
+        UUID.randomUUID(),
+        TimeImpl.default,
+        TimeImpl.default,
+        TimeImpl.default,
+        emptyList(),
+        emptyList(),
+        emptyList(),
+        emptyList(),
+        HardSoftBigDecimalScore.ZERO
+    )
+}
+

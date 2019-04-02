@@ -31,6 +31,7 @@ import pw.forst.olb.core.evaluation.LoggingPlanEvaluator
 import pw.forst.olb.core.extensions.asCompletePlan
 import pw.forst.olb.core.extensions.toJobPlanViews
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 fun main(args: Array<String>) {
@@ -42,7 +43,7 @@ fun main(args: Array<String>) {
 
     val plan = generatePlan(jobsCount = 5, resourcesStacksCount = 200, timeCount = 100L)
     val result = solver.solve(plan)
-    val finalPlan = result.asCompletePlan() ?: throw Exception("Invalid plan returned!")
+    val finalPlan = result.asCompletePlan()
 
     println("Plan computed!\n")
 
@@ -79,7 +80,8 @@ fun generatePlan(
     val (minTime, maxTime) = times.minMaxBy { it.position }!!
 
     return Plan(
-        timeIncrement = TimeImpl(1),
+        uuid = UUID.randomUUID(),
+        timeIncrement = TimeImpl(1, TimeUnit.SECONDS),
         startTime = minTime,
         endTime = maxTime,
         assignments = assignments,
@@ -89,7 +91,7 @@ fun generatePlan(
     )
 }
 
-fun generateTime(count: Long): List<Time> = (0L until count).map { TimeImpl(it) }
+fun generateTime(count: Long): List<Time> = (0L until count).map { TimeImpl(it, TimeUnit.SECONDS) }
 
 fun generateResourcesDomain(count: Int): List<ResourcesAllocation> = (0 until count).map {
     SimpleResourcesAllocation(
@@ -139,7 +141,7 @@ fun randomParameters(seed: Int, totalTimeRunning: Long): JobParameters {
     val rd = Random(seed)
     val maxRunningTime = (totalTimeRunning * rd.nextDouble(0.2, 0.7)).toLong()
     return SimpleJobParameters(
-        maxTime = TimeImpl(position = maxRunningTime),
+        maxTime = TimeImpl(position = maxRunningTime, units = TimeUnit.SECONDS),
         maxCost = createCost(rd.nextInt(50, 150).toDouble()),
         jobType = JobType.PARALELIZED
     )
@@ -152,6 +154,8 @@ fun generateAssignments(times: Collection<Time>, resources: Collection<Resources
     times.flatMap { time ->
         resources.map { resource ->
             PlanJobAssignment(
+                uuid = UUID.randomUUID(),
+                job = null,
                 time = time,
                 allocation = resource
             )

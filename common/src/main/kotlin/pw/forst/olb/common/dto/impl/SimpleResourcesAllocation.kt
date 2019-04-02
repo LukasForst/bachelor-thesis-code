@@ -18,7 +18,7 @@ data class SimpleResourcesAllocation(
 ) : ResourcesAllocation {
 
     override fun plus(other: ResourcesAllocation): ResourcesAllocation {
-        assert(other.provider == this.provider) { "Providers must be same!" }
+        assert(other.provider == this.provider) { "Providers must be same! Other: ${other.provider}, this: $provider" }
         return copy(cpuResources = this.cpuResources + other.cpuResources, memoryResources = this.memoryResources + other.memoryResources)
     }
 

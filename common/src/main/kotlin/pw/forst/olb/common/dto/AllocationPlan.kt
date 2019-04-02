@@ -3,15 +3,9 @@ package pw.forst.olb.common.dto
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.resources.ResourcesPool
 
-interface AllocationPlan {
+interface AllocationPlan : GenericPlan {
 
-    val start: Time
-
-    val end: Time
-
-    val granularity: Time
-
-    val timeSchedule: Map<Time, JobResourcesAllocation>
+    val timeSchedule: Map<Time, Collection<JobResourcesAllocation>>
 
     val jobs: Collection<Job>
 

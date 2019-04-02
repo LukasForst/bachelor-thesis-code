@@ -4,6 +4,10 @@ import java.util.UUID
 
 interface PredictionStore {
 
+    fun hasPlan(planId: UUID): Boolean
+
+    fun hasJob(planId: UUID, jobId: UUID): Boolean
+
     fun predictionFor(planId: UUID, jobId: UUID): CachedPrediction?
 
     fun predictionFor(planId: UUID): Map<UUID, CachedPrediction>?

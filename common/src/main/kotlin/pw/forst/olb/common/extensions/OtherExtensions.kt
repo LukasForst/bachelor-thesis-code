@@ -70,4 +70,17 @@ fun Collection<CompleteJobAssignment>.flattenAssignments(): Collection<CompleteJ
             completeJobAssignment(job = job.first, time = job.second, allocation = finalAllocation)
         }
 
+@PublishedApi
+internal object Assertions {
+    @JvmField
+    @PublishedApi
+    internal val ENABLED: Boolean = javaClass.desiredAssertionStatus()
+}
 
+inline fun assert(block: () -> Boolean) = assert("Assertion failed!", block)
+
+inline fun assert(message: String, block: () -> Boolean) = assert(block = block, lazyMessage = { message })
+
+inline fun assert(block: () -> Boolean, lazyMessage: () -> String) {
+    if (Assertions.ENABLED) assert(block(), lazyMessage)
+}

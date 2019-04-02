@@ -8,7 +8,7 @@ interface JobAssignment : Comparable<JobAssignment> {
 
     val job: Job?
 
-    val time: Time?
+    val time: Time
 
     val allocation: ResourcesAllocation?
 
@@ -17,15 +17,9 @@ interface JobAssignment : Comparable<JobAssignment> {
     fun toCompleteAssignment(): CompleteJobAssignment?
 
     val isValid: Boolean
-        get() = job != null && time != null && allocation != null
+        get() = job != null && allocation != null
 
-    override fun compareTo(other: JobAssignment): Int =
-        when {
-            time == other.time -> 0
-            time == null -> -1
-            other.time == null -> 1
-            else -> time!!.compareTo(other.time!!)
-        }
+    override fun compareTo(other: JobAssignment): Int = time.compareTo(other.time)
 }
 
 interface CompleteJobAssignment : JobAssignment {
