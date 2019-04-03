@@ -14,7 +14,7 @@ import pw.forst.olb.core.constraints.penalty.Penalty
 import pw.forst.olb.core.constraints.penalty.PenaltyFactory
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.extensions.sum
-import pw.forst.olb.core.extensions.toJobPlanViews
+import pw.forst.olb.core.extensions.toJobPlanViewsInPlanningWindow
 import pw.forst.olb.core.extensions.toScore
 import pw.forst.olb.core.predict.factory.PredictionStoreFactory
 
@@ -23,7 +23,7 @@ class LoggingPlanEvaluator : EasyScoreCalculator<Plan> {
     private companion object : KLogging()
 
     override fun calculateScore(solution: Plan): HardSoftBigDecimalScore {
-        val views = solution.toJobPlanViews()
+        val views = solution.toJobPlanViewsInPlanningWindow()
         var penalty: Penalty = PenaltyFactory.noPenalty
 
         penalty += freeSlotsPenalization(solution)

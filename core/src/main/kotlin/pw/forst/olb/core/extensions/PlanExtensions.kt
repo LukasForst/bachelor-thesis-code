@@ -23,6 +23,12 @@ fun Plan.asCompletePlan(): CompletePlan = CompletePlan(
 
 fun Plan.toJobPlanViews(): Collection<JobPlanView> = createJobPlanViews(assignments.mapNotNull { it.toCompleteAssignment() }, jobDomain, this)
 
+fun Plan.toJobPlanViewsInPlanningWindow(): Collection<JobPlanView> = createJobPlanViews(
+    assignments.mapNotNull { if (it.isInPlanningWindow(this)) it.toCompleteAssignment() else null },
+    jobDomain,
+    this
+)
+
 fun CompletePlan.toJobPlanViews(): Collection<JobPlanView> = createJobPlanViews(assignments, jobDomain, this)
 
 internal fun createJobPlanViews(assignments: Collection<CompleteJobAssignment>, jobDomain: Collection<Job>, plan: GenericPlan): Collection<JobPlanView> {

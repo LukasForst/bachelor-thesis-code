@@ -21,7 +21,7 @@ class TimeEvaluation : CompletePlanEvaluation {
         return PenaltyBuilder
             .create()
             .hardIf(diff) { diff < 0.0 }
-//            .softIf(-diff) { diff > 0 } // is this soft penalization necessary?
+            .softIf(-diff * 10) { diff > 0 } // is this soft penalization necessary?
             .get()
     }
 

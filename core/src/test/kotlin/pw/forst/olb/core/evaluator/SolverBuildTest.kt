@@ -35,9 +35,9 @@ class SolverBuildTest {
     fun run() {
         val api = buildApi()
         val input = createSchedulingInput(
-            15,
-            120,
-            TimeImpl(50, TimeUnit.SECONDS),
+            10,
+            50,
+            TimeImpl(20, TimeUnit.SECONDS),
             4
         )
 
@@ -68,28 +68,28 @@ class SolverBuildTest {
 
     private fun resourcePools(): Collection<ResourcesPool> = listOf(
         InputResourcesPool(
-            name = "Cost: 10.0 + 0.05",
-            uuid = UUID.randomUUID(),
-            cpuCost = CpuCostImpl(10.0),
-            memoryCost = MemoryCostImpl(0.05),
-            cpuResources = CpuResources(10.0, CpuPowerType.MULTI_CORE),
-            memoryResources = MemoryResources(1024 * 64)
-        ),
-        InputResourcesPool(
-            name = "Cost: 1.5 + 0.02",
-            uuid = UUID.randomUUID(),
-            cpuCost = CpuCostImpl(1.5),
-            memoryCost = MemoryCostImpl(0.02),
-            cpuResources = CpuResources(15.0, CpuPowerType.MULTI_CORE),
-            memoryResources = MemoryResources(1024 * 64)
-        ),
-        InputResourcesPool(
             name = "Cost: 1 + 0.02",
             uuid = UUID.randomUUID(),
             cpuCost = CpuCostImpl(1.0),
             memoryCost = MemoryCostImpl(0.02),
             cpuResources = CpuResources(4.0, CpuPowerType.MULTI_CORE),
             memoryResources = MemoryResources(1024 * 32)
+        ),
+        InputResourcesPool(
+            name = "Cost: 1.5 + 0.02",
+            uuid = UUID.randomUUID(),
+            cpuCost = CpuCostImpl(1.5),
+            memoryCost = MemoryCostImpl(0.02),
+            cpuResources = CpuResources(8.0, CpuPowerType.MULTI_CORE),
+            memoryResources = MemoryResources(1024 * 64)
+        ),
+        InputResourcesPool(
+            name = "Cost: 10.0 + 0.05",
+            uuid = UUID.randomUUID(),
+            cpuCost = CpuCostImpl(10.0),
+            memoryCost = MemoryCostImpl(0.05),
+            cpuResources = CpuResources(8.0, CpuPowerType.MULTI_CORE),
+            memoryResources = MemoryResources(1024 * 64)
         )
     )
 
