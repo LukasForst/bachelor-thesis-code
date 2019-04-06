@@ -4,12 +4,16 @@ import pw.forst.olb.common.dto.job.Iteration
 import pw.forst.olb.common.dto.job.LengthAwareIteration
 
 data class LengthAwareIteration(
-    override val position: Long,
+    override val position: Int,
     override val iterationLengthInMls: Int
-) : LengthAwareIteration
+) : LengthAwareIteration {
+    override fun plus(other: Iteration): Iteration = copy(position = this.position + other.position)
+}
 
-data class IterationImpl(override val position: Long) : Iteration
+data class IterationImpl(override val position: Int) : Iteration {
+    override fun plus(other: Iteration): Iteration = copy(position = this.position + other.position)
+}
 
-fun createIteration(position: Long, iterationLength: Int): Iteration = LengthAwareIteration(position, iterationLength)
+fun createIteration(position: Int, iterationLength: Int): Iteration = LengthAwareIteration(position, iterationLength)
 
-fun createIteration(position: Long): Iteration = IterationImpl(position)
+fun createIteration(position: Int): Iteration = IterationImpl(position)

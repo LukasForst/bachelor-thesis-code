@@ -14,7 +14,7 @@ interface JobWithHistory : Job {
 
     val iterationAllocationQuocient: (Iteration, ResourcesAllocation) -> Iteration
 
-    val jobValueDuringIterations: Map<Iteration, Collection<JobValue>>
+    val jobValueDuringIterations: Map<Iteration, JobValue>
 
     val allocationHistory: Map<Time, ResourcesAllocation>
 
