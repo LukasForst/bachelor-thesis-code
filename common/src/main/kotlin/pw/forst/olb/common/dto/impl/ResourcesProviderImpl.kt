@@ -5,7 +5,7 @@ import pw.forst.olb.common.dto.resources.MemoryCost
 import pw.forst.olb.common.dto.resources.ResourcesProvider
 import java.util.UUID
 
-data class SimpleResourcesProvider(
+data class ResourcesProviderImpl(
     override val uuid: UUID,
     override val cpuCost: CpuCost,
     override val memoryCost: MemoryCost,
@@ -15,7 +15,7 @@ data class SimpleResourcesProvider(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as SimpleResourcesProvider
+        other as ResourcesProviderImpl
 
         if (uuid != other.uuid) return false
 

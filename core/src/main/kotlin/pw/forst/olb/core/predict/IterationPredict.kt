@@ -50,7 +50,7 @@ class IterationPredict(
     @Suppress("UNUSED_PARAMETER") // will be implemented in the future
     private fun getMagicConstant(metadata: JobMetaData, time: Time, resourcesAllocation: ResourcesAllocation): Double = 1 / resourcesAllocation.cpuResources.cpuValue
 
-    private fun iterationPosition(length: Double, last: Time): Long = (last.position * length * 1000).toLong()
+    private fun iterationPosition(length: Double, last: Time): Int = (last.position * length * 1000).toInt()
 
     private fun tryPredictLength(metadata: JobMetaData, time: Time, iterationAvg: Map<Time, Double>): Double? = metadata.iterationTime
         .mapKeysAndValues({ it.key.position.toDouble() }, { iterationAvg.getValue(it.key) })

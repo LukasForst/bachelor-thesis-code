@@ -12,7 +12,7 @@ import pw.forst.olb.core.constraints.penalization.ReallocationEvaluation
 import pw.forst.olb.core.constraints.penalization.TimeEvaluation
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.extensions.sum
-import pw.forst.olb.core.extensions.toJobPlanViews
+import pw.forst.olb.core.extensions.toJobPlanViewsInPlanningWindow
 import pw.forst.olb.core.extensions.toScore
 import pw.forst.olb.core.predict.factory.PredictionStoreFactory
 
@@ -23,7 +23,7 @@ class BigDecimalScoreCalculation : EasyScoreCalculator<Plan> {
     private val jobPenalties: Collection<CompletePlanEvaluation> = listOf(
         CostEvaluation(),
         TimeEvaluation(),
-        ReallocationEvaluation(),
+        ReallocationEvaluation(), // this shouldn't be necessary since there is a moves that prohibits it
 //        NoAssignmentEvaluation(),
         AssignmentsEvaluation(PredictionStoreFactory.getStore())
     )
@@ -35,7 +35,7 @@ class BigDecimalScoreCalculation : EasyScoreCalculator<Plan> {
     override fun calculateScore(solution: Plan): HardSoftBigDecimalScore {
         val planPenalties = planPenalties.map { it.calculatePenalty(solution) }.sum()
 
-        val jobPenalties = solution.toJobPlanViews()
+        val jobPenalties = solution.toJobPlanViewsInPlanningWindow()
             .flatMap { planView -> jobPenalties.map { it.calculatePenalty(planView) } }
             .sum()
 

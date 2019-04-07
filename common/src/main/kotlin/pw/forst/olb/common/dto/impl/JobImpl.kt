@@ -5,7 +5,7 @@ import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.job.JobParameters
 import java.util.UUID
 
-data class SimpleJob(
+data class JobImpl(
 
     override val parameters: JobParameters,
 
@@ -19,7 +19,7 @@ data class SimpleJob(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as SimpleJob
+        other as JobImpl
 
         if (uuid != other.uuid) return false
 

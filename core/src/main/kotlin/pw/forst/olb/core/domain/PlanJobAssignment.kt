@@ -13,7 +13,7 @@ import pw.forst.olb.common.dto.job.CompleteJobAssignment
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.job.JobAssignment
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
-import pw.forst.olb.core.constraints.filter.ResourcesSelectionFilter
+import pw.forst.olb.core.constraints.moves.ResourcesSelectionFilter
 import java.util.UUID
 
 @PlanningEntity(
@@ -24,7 +24,7 @@ data class PlanJobAssignment(
     val uuid: UUID,
 
     @field:PlanningVariable(valueRangeProviderRefs = ["jobRange"], nullable = true)
-    override val job: Job? = null,
+    override var job: Job? = null,
 
     @field:ProblemFactProperty
     override val allocation: ResourcesAllocation?,

@@ -7,13 +7,13 @@ import org.optaplanner.core.api.solver.SolverFactory
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.TimeImpl
 import pw.forst.olb.common.dto.createCost
+import pw.forst.olb.common.dto.impl.ClientImpl
 import pw.forst.olb.common.dto.impl.CpuCostImpl
+import pw.forst.olb.common.dto.impl.JobImpl
+import pw.forst.olb.common.dto.impl.JobParametersImpl
 import pw.forst.olb.common.dto.impl.MemoryCostImpl
-import pw.forst.olb.common.dto.impl.SimpleClient
-import pw.forst.olb.common.dto.impl.SimpleJob
-import pw.forst.olb.common.dto.impl.SimpleJobParameters
-import pw.forst.olb.common.dto.impl.SimpleResourcesAllocation
-import pw.forst.olb.common.dto.impl.SimpleResourcesProvider
+import pw.forst.olb.common.dto.impl.ResourcesAllocationImpl
+import pw.forst.olb.common.dto.impl.ResourcesProviderImpl
 import pw.forst.olb.common.dto.job.Client
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.job.JobParameters
@@ -99,7 +99,7 @@ class SolverTest {
     private fun generateTime(count: Long): List<Time> = (0L until count).map { TimeImpl(it, TimeUnit.SECONDS) }
 
     private fun generateResourcesDomain(count: Int): List<ResourcesAllocation> = (0 until count).map {
-        SimpleResourcesAllocation(
+        ResourcesAllocationImpl(
             provider = randomResourcesProvider(it),
             cpuResources = smallestCpuResources(),
             memoryResources = smallestMemoryResources()
@@ -115,13 +115,13 @@ class SolverTest {
     private fun randomCpuResources(seed: Int): CpuResources = CpuResources(cpuValue = 4.0 * Random(seed).nextDouble(1.0, 10.0), type = CpuPowerType.MULTI_CORE)
 
     private val resourcesProviders: Collection<ResourcesProvider> = listOf(
-        SimpleResourcesProvider(
+        ResourcesProviderImpl(
             uuid = UUID.randomUUID(),
             cpuCost = CpuCostImpl(10.0),
             memoryCost = MemoryCostImpl(1.0),
             name = "Expensive resources provider"
         ),
-        SimpleResourcesProvider(
+        ResourcesProviderImpl(
             uuid = UUID.randomUUID(),
             cpuCost = CpuCostImpl(1.0),
             memoryCost = MemoryCostImpl(0.01),
@@ -133,7 +133,7 @@ class SolverTest {
 
     private fun generateJobs(count: Int, totalTimeRunning: Long): List<Job> =
         (0 until count).map {
-            SimpleJob(
+            JobImpl(
                 parameters = randomParameters(it, totalTimeRunning),
                 client = randomClient(it),
                 uuid = UUID.randomUUID(),
@@ -145,14 +145,14 @@ class SolverTest {
     private fun randomParameters(seed: Int, totalTimeRunning: Long): JobParameters {
         val rd = Random(seed)
         val maxRunningTime = (totalTimeRunning * rd.nextDouble(0.2, 0.7)).toLong()
-        return SimpleJobParameters(
+        return JobParametersImpl(
             maxTime = TimeImpl(position = maxRunningTime, units = TimeUnit.SECONDS),
             maxCost = createCost(rd.nextInt(50, 150).toDouble()),
             jobType = JobType.PARALELIZED
         )
     }
 
-    private fun randomClient(seed: Int): Client = SimpleClient(name = "Random client $seed", uuid = UUID.randomUUID())
+    private fun randomClient(seed: Int): Client = ClientImpl(name = "Random client $seed", uuid = UUID.randomUUID())
 
 
     private fun generateAssignments(times: Collection<Time>, resources: Collection<ResourcesAllocation>) =

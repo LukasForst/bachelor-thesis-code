@@ -5,7 +5,7 @@ import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.JobParameters
 import pw.forst.olb.common.dto.job.JobType
 
-data class SimpleJobParameters(
+data class JobParametersImpl(
     override val maxTime: Time,
     override val maxCost: Cost,
     override val jobType: JobType

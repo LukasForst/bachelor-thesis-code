@@ -2,28 +2,35 @@ package pw.forst.olb.core.api
 
 import pw.forst.olb.common.dto.AllocationPlan
 import pw.forst.olb.common.dto.AllocationPlanWithHistory
+import pw.forst.olb.common.dto.Cost
 import pw.forst.olb.common.dto.JobResourcesAllocation
 import pw.forst.olb.common.dto.SchedulingInput
 import pw.forst.olb.common.dto.SchedulingProperties
 import pw.forst.olb.common.dto.SolverConfiguration
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.impl.AllocationPlanImpl
+import pw.forst.olb.common.dto.impl.IterationImpl
 import pw.forst.olb.common.dto.impl.JobResourceAllocationImpl
-import pw.forst.olb.common.dto.impl.SimpleResourcesPool
+import pw.forst.olb.common.dto.impl.ResourcesPoolImpl
 import pw.forst.olb.common.dto.impl.createEmptyResourcesAllocation
 import pw.forst.olb.common.dto.job.CompleteJobAssignment
+import pw.forst.olb.common.dto.job.Iteration
 import pw.forst.olb.common.dto.job.Job
+import pw.forst.olb.common.dto.job.JobWithHistory
 import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.common.dto.sum
+import pw.forst.olb.common.dto.sumOnlyValues
 import pw.forst.olb.common.extensions.assert
 import pw.forst.olb.common.extensions.mapToSet
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.evaluation.CompletePlan
 import pw.forst.olb.core.evaluation.LoggingPlanEvaluator
 import pw.forst.olb.core.extensions.asCompletePlan
+import pw.forst.olb.core.predict.JobPrediction
+import pw.forst.olb.core.predict.factory.PredictionStoreFactory
 import pw.forst.olb.core.solver.OptaplannerSolverFactory
 
 class OlbCoreApiImpl(
@@ -37,19 +44,54 @@ class OlbCoreApiImpl(
     }
 
     override fun createNewPlan(input: SchedulingInput): AllocationPlan {
-
         val domain = inputToDomainConverter.convert(input)
-        val solver = solverFactory.create<Plan>(input.toSolverConfiguration())
-        val solution = solver.solve(domain)
-        if (finalLogEnabled) LoggingPlanEvaluator().calculateScore(solution)
-
-        return solution.asCompletePlan().toAllocationPlan()
+        return solveDomain(domain, input.toSolverConfiguration()).toAllocationPlan()
     }
 
 
     override fun enhancePlan(plan: AllocationPlanWithHistory, properties: SchedulingProperties): AllocationPlan {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val prediction = JobPrediction()
+        val cachedPrediction = plan.jobsData.mapNotNull { prediction.createPrediction(it, getLastIterationPrediction(plan, it)) }
+        PredictionStoreFactory.addToStore(cachedPrediction)
+        val domain = inputToDomainConverter.convert(plan, properties)
+
+        val preStartTime = properties.startTime - properties.timeStep
+        val alreadyPlannedAssignments = plan.timeSchedule.filterKeys { it < preStartTime }
+
+        return solveDomain(domain, properties.toSolverConfiguration())
+            .toAllocationPlan(plan.jobs, alreadyPlannedAssignments)
     }
+
+    private fun solveDomain(domain: Plan, configuration: SolverConfiguration): CompletePlan {
+        val solver = solverFactory.create<Plan>(configuration)
+        val solution = solver.solve(domain)
+        if (finalLogEnabled) LoggingPlanEvaluator().calculateScore(solution)
+
+        return solution.asCompletePlan()
+    }
+
+    private fun getLastIterationPrediction(@Suppress("UNUSED_PARAMETER") plan: AllocationPlanWithHistory, job: JobWithHistory): Iteration {
+        //TODO get correct prediction
+        return (job.jobValueDuringIterations.keys.max() ?: IterationImpl(0)) + IterationImpl(2000)
+
+    }
+
+    private fun CompletePlan.toAllocationPlan(allJobs: Collection<Job>, filtereddTimeSchedule: Map<Time, Collection<JobResourcesAllocation>>): AllocationPlan {
+        val assignments = this.assignments.toTimeSchedule(filtereddTimeSchedule)
+        return AllocationPlanImpl(
+            uuid = this.uuid,
+            startTime = this.startTime,
+            endTime = this.endTime,
+            timeIncrement = this.timeIncrement,
+            timeSchedule = assignments,
+            jobs = allJobs,
+            resourcesPools = this.resourcesStackDomain.toResourcesPools(),
+            cost = assignments.computeCost()
+        )
+    }
+
+    private fun Map<Time, Collection<JobResourcesAllocation>>.computeCost(): Cost = this.flatMap { (_, a) -> a.map { it.allocation.cost } }.sumOnlyValues()
+
 
     private fun CompletePlan.toAllocationPlan(): AllocationPlan =
         AllocationPlanImpl(
@@ -62,6 +104,14 @@ class OlbCoreApiImpl(
             resourcesPools = this.resourcesStackDomain.toResourcesPools(),
             cost = this.assignments.map { it.cost }.sum()
         )
+
+    private fun Collection<CompleteJobAssignment>.toTimeSchedule(dataToAdd: Map<Time, Collection<JobResourcesAllocation>>): Map<Time, Collection<JobResourcesAllocation>> {
+        val newTimeSchedule = this.toTimeSchedule()
+        val allKeys = newTimeSchedule.keys + dataToAdd.keys
+        return allKeys.associate { time ->
+            time to (newTimeSchedule[time] ?: emptyList()) + (dataToAdd[time] ?: emptyList())
+        }
+    }
 
     private fun Collection<CompleteJobAssignment>.toTimeSchedule(): Map<Time, Collection<JobResourcesAllocation>> =
         this.groupBy { it.time }
@@ -92,7 +142,7 @@ class OlbCoreApiImpl(
                 allocations.fold(init) { acc, allocation -> acc.copy(cpu = acc.cpu + allocation.cpuResources, mem = acc.mem + allocation.memoryResources) }
 
             }
-            .map { (provider, sum) -> SimpleResourcesPool(provider = provider, cpuResources = sum.cpu, memoryResources = sum.mem) }
+            .map { (provider, sum) -> ResourcesPoolImpl(provider = provider, cpuResources = sum.cpu, memoryResources = sum.mem) }
 
 
     private fun SchedulingProperties.toSolverConfiguration() =

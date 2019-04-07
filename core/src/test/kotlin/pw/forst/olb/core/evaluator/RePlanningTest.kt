@@ -1,7 +1,9 @@
 package pw.forst.olb.core.evaluator
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import pw.forst.olb.common.dto.SchedulingInput
+import pw.forst.olb.common.dto.AllocationPlanWithHistory
+import pw.forst.olb.common.dto.SchedulingProperties
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.TimeImpl
 import pw.forst.olb.common.dto.createCost
@@ -10,7 +12,7 @@ import pw.forst.olb.common.dto.impl.CpuCostImpl
 import pw.forst.olb.common.dto.impl.InputResourcesPool
 import pw.forst.olb.common.dto.impl.JobParametersImpl
 import pw.forst.olb.common.dto.impl.MemoryCostImpl
-import pw.forst.olb.common.dto.impl.SchedulingInputImpl
+import pw.forst.olb.common.dto.impl.SchedulingPropertiesImpl
 import pw.forst.olb.common.dto.job.Client
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.job.JobParameters
@@ -29,34 +31,38 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
-class SolverBuildTest {
-
+class RePlanningTest {
     @Test
+    @Disabled("Not working yet!")
     fun run() {
         val api = buildApi()
-        val input = createSchedulingInput(
+        val (allocationPlan, properties) = createSchedulingInput(
             10,
             50,
             TimeImpl(20, TimeUnit.SECONDS),
             4
         )
 
-        val result = api.createNewPlan(input)
+        val result = api.enhancePlan(allocationPlan, properties)
         println("\n\n${result.prettyFormat()}\n")
     }
 
     @Suppress("SameParameterValue") //because it is integration test
-    private fun createSchedulingInput(jobsCount: Int, planningHorizon: Long, runningTime: Time, cores: Int? = null): SchedulingInput {
+    private fun createSchedulingInput(jobsCount: Int, planningHorizon: Long, runningTime: Time, cores: Int? = null): Pair<AllocationPlanWithHistory, SchedulingProperties> {
         val (start, end, step) = generateTimes(planningHorizon)
-        return SchedulingInputImpl(
-            resources = resourcePools(),
-            jobs = generateJobs(jobsCount, planningHorizon),
+        val properties = SchedulingPropertiesImpl(
             startTime = start,
             endTime = end,
             timeStep = step,
             maxTimePlanningSpend = runningTime,
             cores = cores
         )
+
+        return generatePlanWithHistory(properties, jobsCount) to properties
+    }
+
+    private fun generatePlanWithHistory(properties: SchedulingProperties, jobsCount: Int): AllocationPlanWithHistory {
+        TODO()
     }
 
     private fun generateTimes(duration: Long): Triple<Time, Time, Time> =
@@ -117,5 +123,4 @@ class SolverBuildTest {
     private fun randomClient(seed: Int): Client = ClientImpl(name = "Random client $seed", uuid = UUID.randomUUID())
 
     private fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true)
-
 }

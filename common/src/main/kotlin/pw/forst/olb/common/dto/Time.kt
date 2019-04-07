@@ -56,4 +56,4 @@ data class TimeRangeBuilder(val from: Time, val to: Time)
 
 infix fun Time.until(to: Time) = TimeRangeBuilder(from = this, to = to)
 
-infix fun TimeRangeBuilder.step(step: Time): TimeIterator = TimeIterator(this.from, this.to, step)
+infix fun TimeRangeBuilder.withStep(step: Time): TimeIterator = TimeIterator(this.from, this.to, step)
