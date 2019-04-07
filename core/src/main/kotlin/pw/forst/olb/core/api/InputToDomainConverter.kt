@@ -5,13 +5,19 @@ import pw.forst.olb.common.dto.JobResourcesAllocation
 import pw.forst.olb.common.dto.SchedulingInput
 import pw.forst.olb.common.dto.SchedulingProperties
 import pw.forst.olb.common.dto.Time
+import pw.forst.olb.common.dto.impl.SimpleJob
+import pw.forst.olb.common.dto.impl.SimpleJobParameters
 import pw.forst.olb.common.dto.impl.SimpleResourcesAllocation
+import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesPool
-import pw.forst.olb.common.dto.step
+import pw.forst.olb.common.dto.sumOnlyValues
 import pw.forst.olb.common.dto.until
+import pw.forst.olb.common.dto.withStep
+import pw.forst.olb.common.extensions.minValueBy
+import pw.forst.olb.common.extensions.swapKeys
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.domain.PlanJobAssignment
 import java.util.UUID
@@ -19,7 +25,7 @@ import java.util.UUID
 class InputToDomainConverter {
 
     fun convert(input: SchedulingInput): Plan {
-        val times = (input.startTime until input.endTime step input.timeStep).toList()
+        val times = (input.startTime until input.endTime withStep input.timeStep).toList()
         val resourcesAllocation = input.resources.flatMap { it.splitToGranularity() }.sortedBy { it.cost }
         val assignments = generateAssignments(times, resourcesAllocation).sortedBy { it.cost }
 
@@ -36,19 +42,46 @@ class InputToDomainConverter {
     }
 
     fun convert(plan: AllocationPlanWithHistory, properties: SchedulingProperties): Plan {
-        val existingAssignments = plan.timeSchedule.toJobAssignments()
-        val times = (properties.startTime until properties.endTime step properties.timeStep).toList()
+        val preStartTime = properties.startTime - properties.timeStep
+        val existingRelevantAssignments = plan.timeSchedule.filterKeys { it >= preStartTime }.toJobAssignments()
+
+        val times = (properties.startTime until properties.endTime withStep properties.timeStep).toList()
         val resources = plan.resourcesPools.flatMap { it.splitToGranularity() }
 
         return Plan(
             startTime = properties.startTime,
             endTime = properties.endTime,
             timeIncrement = properties.timeStep,
-            assignments = generateAssignments(existingAssignments, times, resources),
-            jobDomain = plan.jobs,
+            assignments = generateAssignments(existingRelevantAssignments, times, resources),
+            jobDomain = reduceJobs(plan.timeSchedule.filterKeys { it < preStartTime }, plan.jobs, properties),
             resourcesStackDomain = resources,
             times = times
         )
+    }
+
+    private fun reduceJobs(nonRelevantAssignments: Map<Time, Collection<JobResourcesAllocation>>, jobs: Collection<Job>, properties: SchedulingProperties): Collection<Job> {
+        val jobsData = nonRelevantAssignments.mapValues { (_, all) -> all.groupBy { it.job } }
+            .swapKeys()
+            .mapValues { (job, timeData) ->
+                job.parameters.maxTime - (properties.startTime - timeData.keys.minValueBy { it }!!) to
+                        job.parameters.maxCost - timeData.map { (_, a) -> a.map { it.allocation.cost }.sumOnlyValues() }.sumOnlyValues()
+            }
+
+        return jobs.map {
+            val newData = jobsData[it]
+            if (newData != null) {
+                SimpleJob(
+                    parameters = SimpleJobParameters(
+                        maxTime = newData.first,
+                        maxCost = newData.second,
+                        jobType = it.parameters.jobType
+                    ),
+                    client = it.client,
+                    uuid = it.uuid,
+                    name = it.name
+                )
+            } else it
+        }
     }
 
 
