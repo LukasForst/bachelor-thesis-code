@@ -11,7 +11,7 @@ import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.impl.AllocationPlanImpl
 import pw.forst.olb.common.dto.impl.IterationImpl
 import pw.forst.olb.common.dto.impl.JobResourceAllocationImpl
-import pw.forst.olb.common.dto.impl.SimpleResourcesPool
+import pw.forst.olb.common.dto.impl.ResourcesPoolImpl
 import pw.forst.olb.common.dto.impl.createEmptyResourcesAllocation
 import pw.forst.olb.common.dto.job.CompleteJobAssignment
 import pw.forst.olb.common.dto.job.Iteration
@@ -142,7 +142,7 @@ class OlbCoreApiImpl(
                 allocations.fold(init) { acc, allocation -> acc.copy(cpu = acc.cpu + allocation.cpuResources, mem = acc.mem + allocation.memoryResources) }
 
             }
-            .map { (provider, sum) -> SimpleResourcesPool(provider = provider, cpuResources = sum.cpu, memoryResources = sum.mem) }
+            .map { (provider, sum) -> ResourcesPoolImpl(provider = provider, cpuResources = sum.cpu, memoryResources = sum.mem) }
 
 
     private fun SchedulingProperties.toSolverConfiguration() =

@@ -5,9 +5,9 @@ import pw.forst.olb.common.dto.JobResourcesAllocation
 import pw.forst.olb.common.dto.SchedulingInput
 import pw.forst.olb.common.dto.SchedulingProperties
 import pw.forst.olb.common.dto.Time
-import pw.forst.olb.common.dto.impl.SimpleJob
-import pw.forst.olb.common.dto.impl.SimpleJobParameters
-import pw.forst.olb.common.dto.impl.SimpleResourcesAllocation
+import pw.forst.olb.common.dto.impl.JobImpl
+import pw.forst.olb.common.dto.impl.JobParametersImpl
+import pw.forst.olb.common.dto.impl.ResourcesAllocationImpl
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
@@ -70,8 +70,8 @@ class InputToDomainConverter {
         return jobs.map {
             val newData = jobsData[it]
             if (newData != null) {
-                SimpleJob(
-                    parameters = SimpleJobParameters(
+                JobImpl(
+                    parameters = JobParametersImpl(
                         maxTime = newData.first,
                         maxCost = newData.second,
                         jobType = it.parameters.jobType
@@ -145,7 +145,7 @@ class InputToDomainConverter {
             }
 
             resultCollection.add(
-                SimpleResourcesAllocation(
+                ResourcesAllocationImpl(
                     provider = currentPool.provider,
                     cpuResources = usedCpu,
                     memoryResources = usedMemory

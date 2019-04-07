@@ -7,7 +7,7 @@ import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesProvider
 
-data class SimpleResourcesAllocation(
+data class ResourcesAllocationImpl(
 
     override val provider: ResourcesProvider,
 
@@ -39,4 +39,4 @@ data class SimpleResourcesAllocation(
 }
 
 fun createEmptyResourcesAllocation(provider: ResourcesProvider, cpuPowerType: CpuPowerType): ResourcesAllocation =
-    SimpleResourcesAllocation(provider, CpuResources.getZero(cpuPowerType), MemoryResources.ZERO)
+    ResourcesAllocationImpl(provider, CpuResources.getZero(cpuPowerType), MemoryResources.ZERO)

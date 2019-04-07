@@ -5,7 +5,7 @@ import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.common.dto.resources.ResourcesProvider
 
-data class SimpleResourcesPool(
+data class ResourcesPoolImpl(
     override val provider: ResourcesProvider,
     override val cpuResources: CpuResources, override val memoryResources: MemoryResources
 

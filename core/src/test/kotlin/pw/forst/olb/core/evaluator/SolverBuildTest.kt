@@ -5,12 +5,12 @@ import pw.forst.olb.common.dto.SchedulingInput
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.TimeImpl
 import pw.forst.olb.common.dto.createCost
+import pw.forst.olb.common.dto.impl.ClientImpl
 import pw.forst.olb.common.dto.impl.CpuCostImpl
 import pw.forst.olb.common.dto.impl.InputResourcesPool
+import pw.forst.olb.common.dto.impl.JobParametersImpl
 import pw.forst.olb.common.dto.impl.MemoryCostImpl
 import pw.forst.olb.common.dto.impl.SchedulingInputImpl
-import pw.forst.olb.common.dto.impl.SimpleClient
-import pw.forst.olb.common.dto.impl.SimpleJobParameters
 import pw.forst.olb.common.dto.job.Client
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.job.JobParameters
@@ -107,14 +107,14 @@ class SolverBuildTest {
     private fun randomParameters(seed: Int, totalTimeRunning: Long): JobParameters {
         val rd = Random(seed)
         val maxRunningTime = (totalTimeRunning * rd.nextDouble(0.2, 0.7)).toLong()
-        return SimpleJobParameters(
+        return JobParametersImpl(
             maxTime = TimeImpl(position = maxRunningTime, units = TimeUnit.SECONDS),
             maxCost = createCost(rd.nextInt(50, 250).toDouble()),
             jobType = JobType.PARALELIZED
         )
     }
 
-    private fun randomClient(seed: Int): Client = SimpleClient(name = "Random client $seed", uuid = UUID.randomUUID())
+    private fun randomClient(seed: Int): Client = ClientImpl(name = "Random client $seed", uuid = UUID.randomUUID())
 
     private fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true)
 
