@@ -28,7 +28,12 @@ data class JobWithHistoryImpl(
 
     override fun iterationAllocationQuocient(iteration: Iteration, allocation: ResourcesAllocation): Iteration = _iterationAllocationQuocient.invoke(iteration, allocation, this)
 
+    override fun toString(): String {
+        return "JobWithHistoryImpl(name='$name')"
+    }
+
     override val iterationsInTimes: Map<Time, Collection<Iteration>>
         get() = _iterationsInTimes ?: iterationLengthInTimes
+
 
 }

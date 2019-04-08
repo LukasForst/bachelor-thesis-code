@@ -7,7 +7,6 @@ import pw.forst.olb.core.predict.fitting.parametrization.Y
 abstract class HyperbolicRegression(
     protected val hyperbolaFunction: HyperbolaFunction,
     protected val initialGuessLambda: (Map<X, Y>) -> HyperbolicParameters,
-
     private val dataPreprocessor: ((Map<X, Y>) -> Map<X, Y>)?
 ) : AbstractPrediction<HyperbolicParameters>() {
 

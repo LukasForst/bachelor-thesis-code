@@ -9,4 +9,9 @@ data class JobParametersImpl(
     override val maxTime: Time,
     override val maxCost: Cost,
     override val jobType: JobType
-) : JobParameters
+) : JobParameters {
+
+    override fun toString(): String {
+        return "JobParameters(maxTime=$maxTime, maxCost=$maxCost)"
+    }
+}

@@ -29,6 +29,7 @@ import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.evaluation.CompletePlan
 import pw.forst.olb.core.evaluation.LoggingPlanEvaluator
 import pw.forst.olb.core.extensions.asCompletePlan
+import pw.forst.olb.core.extensions.asSchedulingEntity
 import pw.forst.olb.core.predict.JobPrediction
 import pw.forst.olb.core.predict.factory.PredictionStoreFactory
 import pw.forst.olb.core.solver.OptaplannerSolverFactory
@@ -84,7 +85,7 @@ class OlbCoreApiImpl(
             endTime = this.endTime,
             timeIncrement = this.timeIncrement,
             timeSchedule = assignments,
-            jobs = allJobs,
+            jobs = allJobs.map { it.asSchedulingEntity() },
             resourcesPools = this.resourcesStackDomain.toResourcesPools(),
             cost = assignments.computeCost()
         )
@@ -100,7 +101,7 @@ class OlbCoreApiImpl(
             endTime = this.endTime,
             timeIncrement = this.timeIncrement,
             timeSchedule = this.assignments.toTimeSchedule(),
-            jobs = this.jobDomain,
+            jobs = this.jobDomain.map { it.asSchedulingEntity() },
             resourcesPools = this.resourcesStackDomain.toResourcesPools(),
             cost = this.assignments.map { it.cost }.sumCosts()
         )

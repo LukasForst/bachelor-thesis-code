@@ -15,6 +15,8 @@ data class JobImpl(
 
     override val name: String = uuid.toString()
 ) : Job {
+
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -28,5 +30,9 @@ data class JobImpl(
 
     override fun hashCode(): Int {
         return uuid.hashCode()
+    }
+
+    override fun toString(): String {
+        return "JobImpl(name='$name')"
     }
 }

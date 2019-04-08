@@ -1,5 +1,6 @@
 package pw.forst.olb.simulation.input
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import pw.forst.olb.common.dto.TimeImpl
 import pw.forst.olb.common.dto.impl.SchedulingPropertiesImpl
@@ -13,7 +14,7 @@ import java.util.concurrent.TimeUnit
 
 class DomainBuilderTest {
     @Test
-//    @Disabled("Integration test!")
+    @Disabled("Integration test!")
     fun run() {
         val builder = buildDomainBuilder()
         val plan = builder.build("/home/lukas/repos/bp/job-data/input")

@@ -5,9 +5,9 @@ import java.io.File
 
 class DataParser {
 
-    private fun read(fileName: String): AlgorithmRuntimeInfo =
+    private fun read(fileName: String, name: String? = null): AlgorithmRuntimeInfo =
         AlgorithmRuntimeInfo(
-            name = fileName,
+            name = name ?: fileName,
             data = readData(fileName)
         )
 
@@ -35,5 +35,6 @@ class DataParser {
         }
 
 
-    fun readFolder(folder: String): Collection<AlgorithmRuntimeInfo> = File(folder).listFiles().filter { it.isFile }.map { read("$folder/${it.name}") }
+    fun readFolder(folder: String): Collection<AlgorithmRuntimeInfo> =
+        File(folder).listFiles().filter { it.isFile }.sortedBy { it.name }.mapIndexed { idx, it -> read(it.absolutePath, idx.toString()) }
 }

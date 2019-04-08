@@ -6,4 +6,9 @@ import java.util.UUID
 data class ClientImpl(
     override val uuid: UUID,
     override val name: String = uuid.toString()
-) : Client
+) : Client {
+    override fun toString(): String {
+        return "ClientImpl(name='$name')"
+    }
+}
+

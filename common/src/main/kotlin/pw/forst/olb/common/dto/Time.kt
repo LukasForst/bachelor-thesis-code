@@ -31,6 +31,12 @@ data class TimeImpl(
     override operator fun minus(other: Time) = copy(position = this.position - other.position)
     override operator fun times(times: Long) = copy(position = this.position * times)
     override operator fun times(times: Int) = copy(position = this.position * times)
+
+    override fun toString(): String {
+        return "Time(position=$position)"
+    }
+
+
 }
 
 

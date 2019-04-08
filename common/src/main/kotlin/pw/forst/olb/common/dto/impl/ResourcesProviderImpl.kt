@@ -11,6 +11,7 @@ data class ResourcesProviderImpl(
     override val memoryCost: MemoryCost,
     override val name: String = uuid.toString()
 ) : ResourcesProvider {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -24,5 +25,9 @@ data class ResourcesProviderImpl(
 
     override fun hashCode(): Int {
         return uuid.hashCode()
+    }
+
+    override fun toString(): String {
+        return "ResourcesProviderImpl(name='$name')"
     }
 }
