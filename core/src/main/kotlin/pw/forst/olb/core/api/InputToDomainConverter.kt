@@ -20,6 +20,7 @@ import pw.forst.olb.common.extensions.minValueBy
 import pw.forst.olb.common.extensions.swapKeys
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.domain.PlanJobAssignment
+import pw.forst.olb.core.domain.PlanningJob
 import java.util.UUID
 
 class InputToDomainConverter {
@@ -35,7 +36,7 @@ class InputToDomainConverter {
             endTime = input.endTime,
             timeIncrement = input.timeStep,
             assignments = assignments,
-            jobDomain = input.jobs,
+            jobDomain = input.jobs.map { it.toSchedulingEntity() },
             resourcesStackDomain = resourcesAllocation,
             times = times
         )
@@ -53,7 +54,7 @@ class InputToDomainConverter {
             endTime = properties.endTime,
             timeIncrement = properties.timeStep,
             assignments = generateAssignments(existingRelevantAssignments, times, resources),
-            jobDomain = reduceJobs(plan.timeSchedule.filterKeys { it < preStartTime }, plan.jobs, properties),
+            jobDomain = reduceJobs(plan.timeSchedule.filterKeys { it < preStartTime }, plan.jobs, properties).map { it.toSchedulingEntity() },
             resourcesStackDomain = resources,
             times = times
         )
@@ -84,6 +85,7 @@ class InputToDomainConverter {
         }
     }
 
+    private fun Job.toSchedulingEntity(): PlanningJob = PlanningJob(parameters, client, name, uuid)
 
     private fun Map<Time, Collection<JobResourcesAllocation>>.toJobAssignments(): Collection<PlanJobAssignment> =
         this.flatMap { (time, all) ->
