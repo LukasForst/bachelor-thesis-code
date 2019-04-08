@@ -22,7 +22,7 @@ import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.common.dto.sum
-import pw.forst.olb.common.dto.sumOnlyValues
+import pw.forst.olb.common.dto.sumCosts
 import pw.forst.olb.common.extensions.assert
 import pw.forst.olb.common.extensions.mapToSet
 import pw.forst.olb.core.domain.Plan
@@ -90,7 +90,7 @@ class OlbCoreApiImpl(
         )
     }
 
-    private fun Map<Time, Collection<JobResourcesAllocation>>.computeCost(): Cost = this.flatMap { (_, a) -> a.map { it.allocation.cost } }.sumOnlyValues()
+    private fun Map<Time, Collection<JobResourcesAllocation>>.computeCost(): Cost = this.flatMap { (_, a) -> a.map { it.allocation.cost } }.sum()
 
 
     private fun CompletePlan.toAllocationPlan(): AllocationPlan =
@@ -102,7 +102,7 @@ class OlbCoreApiImpl(
             timeSchedule = this.assignments.toTimeSchedule(),
             jobs = this.jobDomain,
             resourcesPools = this.resourcesStackDomain.toResourcesPools(),
-            cost = this.assignments.map { it.cost }.sum()
+            cost = this.assignments.map { it.cost }.sumCosts()
         )
 
     private fun Collection<CompleteJobAssignment>.toTimeSchedule(dataToAdd: Map<Time, Collection<JobResourcesAllocation>>): Map<Time, Collection<JobResourcesAllocation>> {

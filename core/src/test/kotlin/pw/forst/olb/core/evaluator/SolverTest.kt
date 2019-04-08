@@ -23,7 +23,7 @@ import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesProvider
-import pw.forst.olb.common.dto.sum
+import pw.forst.olb.common.dto.sumCosts
 import pw.forst.olb.common.extensions.duration
 import pw.forst.olb.common.extensions.minMaxBy
 import pw.forst.olb.common.extensions.minMaxValueBy
@@ -69,7 +69,7 @@ class SolverTest {
     private fun formateJobPlanView(view: JobPlanView): String =
         "Job: ${view.job.name}\n" +
                 "Time spent: ${view.assignments.minMaxValueBy { it.time }?.duration()?.position}, Max Time: ${view.job.parameters.maxTime.position}\n" +
-                "Cost paid: ${view.assignments.map { it.cost }.sum().value}, Max Cost: ${view.job.parameters.maxCost.value}\n" +
+                "Cost paid: ${view.assignments.map { it.cost }.sumCosts().value}, Max Cost: ${view.job.parameters.maxCost.value}\n" +
                 "No. of assignments: ${view.assignments.size}\n"
 
     private fun generatePlan(

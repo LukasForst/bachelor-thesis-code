@@ -23,7 +23,7 @@ fun <T, R> Iterable<T>.reduction(initial: R, operation: (acc: R, T) -> R): List<
 }
 
 /**
- * Returns the sum of all values produced by [selector] function applied to each element in the collection.
+ * Returns the sumCosts of all values produced by [selector] function applied to each element in the collection.
  */
 inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
     var sum: Long = 0
@@ -34,7 +34,7 @@ inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
 }
 
 /**
- * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ * Returns the sumCosts of all values produced by [selector] function applied to each element in the sequence.
  *
  * The operation is _terminal_.
  */
@@ -296,6 +296,8 @@ inline fun <T, R : Comparable<R>> Collection<T>.minMaxBy(minSelector: (T) -> R, 
 }
 
 inline fun <T, R : Comparable<R>> Collection<T>.minMaxValueBy(selector: (T) -> R): Pair<R, R>? = minMaxValueBy(selector, selector)
+
+fun <T : Comparable<T>> Collection<T>.minMaxValue(): Pair<T, T>? = minMaxValueBy { it }
 
 /**
  * Returns min and max or null

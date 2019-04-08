@@ -34,7 +34,9 @@ data class TimeImpl(
 }
 
 
-class TimeIterator(private val start: Time, private val endInclusive: Time, private val step: Time) : Iterator<Time> {
+data class TimeIterator(private val start: Time, private val endInclusive: Time, private val step: Time) : Iterator<Time>, Iterable<Time> {
+    override fun iterator(): Iterator<Time> = copy()
+
     private var current: Time? = null
 
     override fun hasNext(): Boolean = getOrNull() != null

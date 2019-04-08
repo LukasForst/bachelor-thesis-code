@@ -2,12 +2,12 @@ package pw.forst.olb.core.extensions
 
 import pw.forst.olb.common.dto.AllocationPlan
 import pw.forst.olb.common.dto.CostImpl
-import pw.forst.olb.common.dto.sumOnlyValues
+import pw.forst.olb.common.dto.sum
 import pw.forst.olb.common.extensions.maxValueBy
 import pw.forst.olb.common.extensions.minMaxBy
 import kotlin.math.max
 
-fun AllocationPlan.prettyFormat(): String {
+fun AllocationPlan.prettyFormat(printJobsData: Boolean = true): String {
     val maxFormatInt = max(this.timeSchedule.keys.max()!!.position.toString().length, this.jobs.maxValueBy { it.name.length }!!)
 
     val poolData = this.resourcesPools.associate { pool ->
@@ -40,13 +40,13 @@ fun AllocationPlan.prettyFormat(): String {
 
     val planCost = "Total plan cost: ${this.cost}$"
 
-    val jobData = this.jobs.joinToString(l) { job ->
+    val jobData = if (printJobsData) this.jobs.joinToString(l) { job ->
         val timeCosts = this.timeSchedule.mapValues { (_, asgs) ->
             val relevant = asgs.filter { it.job == job }.map { it.allocation }
-            relevant.map { it.cost }.sumOnlyValues()
+            relevant.map { it.cost }.sum()
         }
         val (min, max) = timeCosts.filterValues { it != CostImpl(0.0) }.keys.minMaxBy { it.position }!!
-        val totalCost = timeCosts.values.sumOnlyValues()
+        val totalCost = timeCosts.values.sum()
 
         "${job.name} -- $job$l" +
                 "First assignment: ${min.position}$l" +
@@ -55,7 +55,8 @@ fun AllocationPlan.prettyFormat(): String {
                 "Max time allowed: ${job.parameters.maxTime.position}$l" +
                 "Cost: ${totalCost.value}$l" +
                 "Max Cost: ${job.parameters.maxCost.value}$l"
-    }
+    } else ""
+
 
     return "$times$l$separator$l$plan$l$planCost$l$jobData"
 }

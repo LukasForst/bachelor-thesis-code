@@ -13,7 +13,7 @@ import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesPool
-import pw.forst.olb.common.dto.sumOnlyValues
+import pw.forst.olb.common.dto.sum
 import pw.forst.olb.common.dto.until
 import pw.forst.olb.common.dto.withStep
 import pw.forst.olb.common.extensions.minValueBy
@@ -64,7 +64,7 @@ class InputToDomainConverter {
             .swapKeys()
             .mapValues { (job, timeData) ->
                 job.parameters.maxTime - (properties.startTime - timeData.keys.minValueBy { it }!!) to
-                        job.parameters.maxCost - timeData.map { (_, a) -> a.map { it.allocation.cost }.sumOnlyValues() }.sumOnlyValues()
+                        job.parameters.maxCost - timeData.map { (_, a) -> a.map { it.allocation.cost }.sum() }.sum()
             }
 
         return jobs.map {
