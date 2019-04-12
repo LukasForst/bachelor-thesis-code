@@ -48,21 +48,22 @@ class DomainBuilder(
             jobWithHistoryFactory.create(x, plan, randomParameters(idx, totalTime), randomClient(idx))
         }
 
+        val (_, timeSchedule) = generateTimeSchedule(plan, jobs)
         return AllocationPlanWithHistoryImpl(
             jobsData = jobs,
-            timeSchedule = generateTimeSchedule(plan, jobs),
+            timeSchedule = timeSchedule,
             resourcesPools = resourcePools(),
             genericPlan = plan
         )
     }
 
-    private fun generateTimeSchedule(genericPlan: GenericPlan, jobs: Collection<JobWithHistory>): Map<Time, Collection<JobResourcesAllocation>> {
+    private fun generateTimeSchedule(genericPlan: GenericPlan, jobs: Collection<JobWithHistory>): Pair<InputResourcesPool, Map<Time, Collection<JobResourcesAllocation>>> {
         val correctData = (genericPlan.startTime until genericPlan.endTime withStep genericPlan.timeIncrement).associate { time ->
             time to jobs.filter { job -> job.iterationsInTimes[time]?.isNotEmpty() ?: false }
         }
         val maxAllocationInTime = correctData.map { it.value.size }.max()!!
-        val initPool = createInitPool(CpuResources(maxAllocationInTime.toDouble(), CpuPowerType.SINGLE_CORE))
-        return correctData.mapValues { (_, l) -> l.map { JobResourceAllocationImpl(it, defaultAllocation(initPool)) } }
+        val initPool = createInitPool(CpuResources(maxAllocationInTime.toDouble(), CpuPowerType.SINGLE_CORE), MemoryResources.getSmallest() * maxAllocationInTime)
+        return initPool to correctData.mapValues { (_, l) -> l.map { JobResourceAllocationImpl(it, defaultAllocation(initPool)) } }
     }
 
 

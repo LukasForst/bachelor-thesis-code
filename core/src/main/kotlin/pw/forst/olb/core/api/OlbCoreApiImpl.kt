@@ -56,8 +56,7 @@ class OlbCoreApiImpl(
         PredictionStoreFactory.addToStore(cachedPrediction)
         val domain = inputToDomainConverter.convert(plan, properties)
 
-        val preStartTime = properties.startTime - properties.timeStep
-        val alreadyPlannedAssignments = plan.timeSchedule.filterKeys { it < preStartTime }
+        val alreadyPlannedAssignments = plan.timeSchedule.filterKeys { it < properties.startTime }
 
         return solveDomain(domain, properties.toSolverConfiguration())
             .toAllocationPlan(plan.jobs, alreadyPlannedAssignments)
@@ -77,8 +76,8 @@ class OlbCoreApiImpl(
 
     }
 
-    private fun CompletePlan.toAllocationPlan(allJobs: Collection<Job>, filtereddTimeSchedule: Map<Time, Collection<JobResourcesAllocation>>): AllocationPlan {
-        val assignments = this.assignments.toTimeSchedule(filtereddTimeSchedule)
+    private fun CompletePlan.toAllocationPlan(allJobs: Collection<Job>, filteredTimeSchedule: Map<Time, Collection<JobResourcesAllocation>>): AllocationPlan {
+        val assignments = this.assignments.toTimeSchedule(filteredTimeSchedule)
         return AllocationPlanImpl(
             uuid = this.uuid,
             startTime = this.startTime,
