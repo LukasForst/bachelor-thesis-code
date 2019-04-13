@@ -12,13 +12,13 @@ interface JobWithHistory : Job {
 
     val averageIteration: LengthAwareIteration
 
-    val iterationAllocationQuocient: (Iteration, ResourcesAllocation) -> Iteration
-
     val jobValueDuringIterations: Map<Iteration, JobValue>
 
-    val allocationHistory: Map<Time, ResourcesAllocation>
+    val allocationHistory: Map<Time, ResourcesAllocation>?
 
     val iterationsInTimes: Map<Time, Collection<Iteration>>
 
     val iterationLengthInTimes: Map<Time, Collection<LengthAwareIteration>>
+
+    fun iterationAllocationQuocient(iteration: Iteration, allocation: ResourcesAllocation): Iteration
 }

@@ -10,7 +10,7 @@ import pw.forst.olb.core.domain.Plan
 class FreeSlotsEvaluation : PlanEvaluation {
     override fun calculatePenalty(plan: Plan): Penalty = PenaltyBuilder.create().apply {
         soft(
-//            -plan.assignments.filter { !it.isValid }.map { it.cost }.sumOnlyValues().value
+//            -plan.assignments.filter { !it.isValid }.map { it.cost }.sum().value
             -plan.assignments.count { !it.isValid }
         )
     }.get()

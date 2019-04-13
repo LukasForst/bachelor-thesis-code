@@ -13,13 +13,14 @@ import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesPool
-import pw.forst.olb.common.dto.sumOnlyValues
+import pw.forst.olb.common.dto.sum
 import pw.forst.olb.common.dto.until
 import pw.forst.olb.common.dto.withStep
 import pw.forst.olb.common.extensions.minValueBy
 import pw.forst.olb.common.extensions.swapKeys
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.domain.PlanJobAssignment
+import pw.forst.olb.core.extensions.asSchedulingEntity
 import java.util.UUID
 
 class InputToDomainConverter {
@@ -35,7 +36,7 @@ class InputToDomainConverter {
             endTime = input.endTime,
             timeIncrement = input.timeStep,
             assignments = assignments,
-            jobDomain = input.jobs,
+            jobDomain = input.jobs.map { it.asSchedulingEntity() },
             resourcesStackDomain = resourcesAllocation,
             times = times
         )
@@ -53,7 +54,7 @@ class InputToDomainConverter {
             endTime = properties.endTime,
             timeIncrement = properties.timeStep,
             assignments = generateAssignments(existingRelevantAssignments, times, resources),
-            jobDomain = reduceJobs(plan.timeSchedule.filterKeys { it < preStartTime }, plan.jobs, properties),
+            jobDomain = reduceJobs(plan.timeSchedule.filterKeys { it < preStartTime }, plan.jobs, properties).map { it.asSchedulingEntity() },
             resourcesStackDomain = resources,
             times = times
         )
@@ -64,7 +65,7 @@ class InputToDomainConverter {
             .swapKeys()
             .mapValues { (job, timeData) ->
                 job.parameters.maxTime - (properties.startTime - timeData.keys.minValueBy { it }!!) to
-                        job.parameters.maxCost - timeData.map { (_, a) -> a.map { it.allocation.cost }.sumOnlyValues() }.sumOnlyValues()
+                        job.parameters.maxCost - timeData.map { (_, a) -> a.map { it.allocation.cost }.sum() }.sum()
             }
 
         return jobs.map {
@@ -83,7 +84,6 @@ class InputToDomainConverter {
             } else it
         }
     }
-
 
     private fun Map<Time, Collection<JobResourcesAllocation>>.toJobAssignments(): Collection<PlanJobAssignment> =
         this.flatMap { (time, all) ->

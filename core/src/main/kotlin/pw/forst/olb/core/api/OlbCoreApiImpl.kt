@@ -22,13 +22,14 @@ import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.common.dto.sum
-import pw.forst.olb.common.dto.sumOnlyValues
+import pw.forst.olb.common.dto.sumCosts
 import pw.forst.olb.common.extensions.assert
 import pw.forst.olb.common.extensions.mapToSet
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.evaluation.CompletePlan
 import pw.forst.olb.core.evaluation.LoggingPlanEvaluator
 import pw.forst.olb.core.extensions.asCompletePlan
+import pw.forst.olb.core.extensions.asSchedulingEntity
 import pw.forst.olb.core.predict.JobPrediction
 import pw.forst.olb.core.predict.factory.PredictionStoreFactory
 import pw.forst.olb.core.solver.OptaplannerSolverFactory
@@ -55,8 +56,7 @@ class OlbCoreApiImpl(
         PredictionStoreFactory.addToStore(cachedPrediction)
         val domain = inputToDomainConverter.convert(plan, properties)
 
-        val preStartTime = properties.startTime - properties.timeStep
-        val alreadyPlannedAssignments = plan.timeSchedule.filterKeys { it < preStartTime }
+        val alreadyPlannedAssignments = plan.timeSchedule.filterKeys { it < properties.startTime }
 
         return solveDomain(domain, properties.toSolverConfiguration())
             .toAllocationPlan(plan.jobs, alreadyPlannedAssignments)
@@ -76,21 +76,21 @@ class OlbCoreApiImpl(
 
     }
 
-    private fun CompletePlan.toAllocationPlan(allJobs: Collection<Job>, filtereddTimeSchedule: Map<Time, Collection<JobResourcesAllocation>>): AllocationPlan {
-        val assignments = this.assignments.toTimeSchedule(filtereddTimeSchedule)
+    private fun CompletePlan.toAllocationPlan(allJobs: Collection<Job>, filteredTimeSchedule: Map<Time, Collection<JobResourcesAllocation>>): AllocationPlan {
+        val assignments = this.assignments.toTimeSchedule(filteredTimeSchedule)
         return AllocationPlanImpl(
             uuid = this.uuid,
             startTime = this.startTime,
             endTime = this.endTime,
             timeIncrement = this.timeIncrement,
             timeSchedule = assignments,
-            jobs = allJobs,
+            jobs = allJobs.map { it.asSchedulingEntity() },
             resourcesPools = this.resourcesStackDomain.toResourcesPools(),
             cost = assignments.computeCost()
         )
     }
 
-    private fun Map<Time, Collection<JobResourcesAllocation>>.computeCost(): Cost = this.flatMap { (_, a) -> a.map { it.allocation.cost } }.sumOnlyValues()
+    private fun Map<Time, Collection<JobResourcesAllocation>>.computeCost(): Cost = this.flatMap { (_, a) -> a.map { it.allocation.cost } }.sum()
 
 
     private fun CompletePlan.toAllocationPlan(): AllocationPlan =
@@ -100,9 +100,9 @@ class OlbCoreApiImpl(
             endTime = this.endTime,
             timeIncrement = this.timeIncrement,
             timeSchedule = this.assignments.toTimeSchedule(),
-            jobs = this.jobDomain,
+            jobs = this.jobDomain.map { it.asSchedulingEntity() },
             resourcesPools = this.resourcesStackDomain.toResourcesPools(),
-            cost = this.assignments.map { it.cost }.sum()
+            cost = this.assignments.map { it.cost }.sumCosts()
         )
 
     private fun Collection<CompleteJobAssignment>.toTimeSchedule(dataToAdd: Map<Time, Collection<JobResourcesAllocation>>): Map<Time, Collection<JobResourcesAllocation>> {

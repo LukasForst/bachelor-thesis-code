@@ -1,7 +1,7 @@
 package pw.forst.olb.core.constraints.penalization
 
 import pw.forst.olb.common.dto.Cost
-import pw.forst.olb.common.dto.sumOnlyValues
+import pw.forst.olb.common.dto.sum
 import pw.forst.olb.core.constraints.dto.JobPlanView
 import pw.forst.olb.core.constraints.penalty.Penalty
 import pw.forst.olb.core.constraints.penalty.PenaltyBuilder
@@ -10,7 +10,7 @@ class CostEvaluation : CompletePlanEvaluation {
 
     override fun calculatePenalty(jobView: JobPlanView): Penalty {
         val maxCost = jobView.job.parameters.maxCost
-        val assignmentsCost = jobView.assignments.map { it.cost }.sumOnlyValues()
+        val assignmentsCost = jobView.assignments.map { it.cost }.sum()
         return createPenaltyForCost(assignmentsCost, maxCost)
     }
 

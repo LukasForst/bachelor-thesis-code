@@ -47,6 +47,8 @@ data class MemoryResources(
             get() = MemoryResources(0L)
     }
 
+    operator fun times(other: Int) = copy(memoryInMegaBytes = memoryInMegaBytes * other)
+
     operator fun plus(other: MemoryResources) = copy(memoryInMegaBytes = this.memoryInMegaBytes + other.memoryInMegaBytes)
 
     operator fun minus(other: MemoryResources) = copy(memoryInMegaBytes = this.memoryInMegaBytes - other.memoryInMegaBytes)

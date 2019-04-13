@@ -36,7 +36,7 @@ data class CostImpl constructor(override val value: Double) : Cost {
 }
 
 
-fun Collection<Cost>.sum(): Cost = this.fold(createCost(0.0)) { r, t -> r + t }
+fun Collection<Cost>.sumCosts(): Cost = this.sum()
 
-fun Collection<Cost>.sumOnlyValues(): Cost = createCost(this.sumByDouble { it.value })
+fun Collection<Cost>.sum(): Cost = createCost(this.sumByDouble { it.value })
 

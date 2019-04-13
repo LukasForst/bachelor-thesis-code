@@ -10,5 +10,4 @@ interface GenericPlan {
     val endTime: Time
 
     val timeIncrement: Time
-
 }
