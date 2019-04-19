@@ -1,5 +1,12 @@
 dependencies {
     implementation project(":common")
     implementation project(":core")
+
+    apply plugin: 'application'
+
+
+    application {
+        mainClassName = 'pw.forst.olb.simulation.SimulationExecutor'
+    }
 }
 

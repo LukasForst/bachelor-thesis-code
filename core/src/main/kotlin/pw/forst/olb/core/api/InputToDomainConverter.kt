@@ -57,9 +57,9 @@ class InputToDomainConverter {
             startTime = properties.startTime,
             endTime = properties.endTime,
             timeIncrement = properties.timeStep,
-            assignments = generateAssignments(existingRelevantAssignments, times, resources),
+            assignments = generateAssignments(existingRelevantAssignments, times, resources).sortedBy { it.cost },
             jobDomain = reduceJobs(plan.timeSchedule.filterKeys { it < preStartTime }, plan.jobs, properties).map { it.asSchedulingEntity() },
-            resourcesStackDomain = resources,
+            resourcesStackDomain = resources.sortedBy { it.cost },
             times = times
         )
     }

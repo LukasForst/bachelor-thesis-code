@@ -7,6 +7,7 @@ import pw.forst.olb.core.constraints.penalization.AssignmentsEvaluation
 import pw.forst.olb.core.constraints.penalization.CompletePlanEvaluation
 import pw.forst.olb.core.constraints.penalization.CostEvaluation
 import pw.forst.olb.core.constraints.penalization.FreeSlotsEvaluation
+import pw.forst.olb.core.constraints.penalization.NoAssignmentEvaluation
 import pw.forst.olb.core.constraints.penalization.PlanEvaluation
 import pw.forst.olb.core.constraints.penalization.ReallocationEvaluation
 import pw.forst.olb.core.constraints.penalization.TimeEvaluation
@@ -24,7 +25,7 @@ class BigDecimalScoreCalculation : EasyScoreCalculator<Plan> {
         CostEvaluation(),
         TimeEvaluation(),
         ReallocationEvaluation(),
-//        NoAssignmentEvaluation(),
+        NoAssignmentEvaluation(),
         AssignmentsEvaluation(PredictionStoreFactory.getStore())
     )
 

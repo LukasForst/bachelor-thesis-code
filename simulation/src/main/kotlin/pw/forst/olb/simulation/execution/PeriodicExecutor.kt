@@ -24,6 +24,7 @@ import pw.forst.olb.simulation.extensions.createTimesMap
 import pw.forst.olb.simulation.extensions.toLengthAwareIterationData
 import pw.forst.olb.simulation.input.data.AlgorithmRuntimeInfo
 import pw.forst.olb.simulation.input.data.DataParser
+import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -37,6 +38,7 @@ class PeriodicExecutor(
 
     fun startTest(folder: String, numberOfIterations: Int, jobsDomain: Collection<Job>, resourcesPool: Collection<ResourcesPool>): AllocationPlan {
         logger.info { "Reading random job data from $folder" }
+        logger.info { "Currently in folder ${File("./").list()}" }
         val schedulingData = dataParser.readFolder(folder)
             .shuffled()
             .zip(jobsDomain) { data, job -> job to data }
@@ -54,7 +56,7 @@ class PeriodicExecutor(
     }
 
     private fun runIteratively(numberOfIterations: Int, initialPlan: AllocationPlan, schedulingData: Map<Job, AlgorithmRuntimeInfo>): AllocationPlan =
-        (0..numberOfIterations).fold(initialPlan) { plan, idx ->
+        (0..numberOfIterations - 1).fold(initialPlan) { plan, idx ->
             logger.info { "Creating data for $idx iteration!" }
             val (allocationPlan, schedulingProperties) = createNextIteration(plan, schedulingData)
             logger.info { "Executing scheduling for $idx iteration!" }

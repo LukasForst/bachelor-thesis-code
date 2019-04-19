@@ -10,5 +10,4 @@ interface OlbCoreApi {
     fun createNewPlan(input: SchedulingInput): AllocationPlan
 
     fun enhancePlan(plan: AllocationPlanWithHistory, properties: SchedulingProperties): AllocationPlan
-
 }

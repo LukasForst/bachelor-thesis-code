@@ -17,7 +17,7 @@ class DomainBuilderTest {
     @Disabled("Integration test!")
     fun run() {
         val builder = buildDomainBuilder()
-        val plan = builder.build("/home/lukas/repos/bp/job-data/input")
+        val plan = builder.build("./job-data/input")
 
         val result = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true).enhancePlan(
             plan, SchedulingPropertiesImpl(

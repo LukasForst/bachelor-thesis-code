@@ -28,10 +28,19 @@ import kotlin.random.Random
 
 class ExecutionConfiguration {
 
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val configuration = ExecutionConfiguration()
+            val executor = configuration.obtainPeriodicExecutor()
+            executor.startTest("./job-data/input", 10, configuration.generateJobs(10, TimeUnit.MINUTES.toSeconds(10)), configuration.resourcePools())
+        }
+    }
+
     fun obtainPeriodicExecutor(): PeriodicExecutor =
         PeriodicExecutor(
             dataParser = DataParser(),
-            coreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), false),
+            coreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true),
             schedulingProperties = generateSchedulingProperties()
         )
 
@@ -93,10 +102,4 @@ class ExecutionConfiguration {
 
     private fun randomClient(seed: Int): Client = ClientImpl(name = "Random client $seed", uuid = UUID.randomUUID())
 
-}
-
-fun main() {
-    val configuration = ExecutionConfiguration()
-    val executor = configuration.obtainPeriodicExecutor()
-    executor.startTest("./job-data/input", 10, configuration.generateJobs(3, TimeUnit.MINUTES.toSeconds(10)), configuration.resourcePools())
 }
