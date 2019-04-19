@@ -20,8 +20,8 @@ class CostEvaluation : CompletePlanEvaluation {
         return PenaltyBuilder
             .create()
             .hardIf(diff) { diff < 0.0 }
-            .softIf(-diff) { diff > 0 }
-            .soft(-actualCost.value)
+            .softIf(-diff * 5) { diff > 0 }
+            .soft((-actualCost.value) * 0.2)
             .get()
     }
 }

@@ -23,7 +23,7 @@ class BigDecimalScoreCalculation : EasyScoreCalculator<Plan> {
     private val jobPenalties: Collection<CompletePlanEvaluation> = listOf(
         CostEvaluation(),
         TimeEvaluation(),
-        ReallocationEvaluation(), // this shouldn't be necessary since there is a moves that prohibits it
+        ReallocationEvaluation(),
 //        NoAssignmentEvaluation(),
         AssignmentsEvaluation(PredictionStoreFactory.getStore())
     )
@@ -41,6 +41,4 @@ class BigDecimalScoreCalculation : EasyScoreCalculator<Plan> {
 
         return (planPenalties + jobPenalties).toScore()
     }
-
-
 }

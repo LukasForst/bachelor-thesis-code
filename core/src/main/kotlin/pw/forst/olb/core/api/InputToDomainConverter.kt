@@ -9,6 +9,7 @@ import pw.forst.olb.common.dto.impl.JobImpl
 import pw.forst.olb.common.dto.impl.JobParametersImpl
 import pw.forst.olb.common.dto.impl.ResourcesAllocationImpl
 import pw.forst.olb.common.dto.job.Job
+import pw.forst.olb.common.dto.resources.CpuPowerType
 import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
@@ -16,7 +17,10 @@ import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.common.dto.sum
 import pw.forst.olb.common.dto.until
 import pw.forst.olb.common.dto.withStep
+import pw.forst.olb.common.extensions.assert
+import pw.forst.olb.common.extensions.mapToSet
 import pw.forst.olb.common.extensions.minValueBy
+import pw.forst.olb.common.extensions.sumByLong
 import pw.forst.olb.common.extensions.swapKeys
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.domain.PlanJobAssignment
@@ -46,7 +50,7 @@ class InputToDomainConverter {
         val preStartTime = properties.startTime - properties.timeStep
         val existingRelevantAssignments = plan.timeSchedule.filterKeys { it >= preStartTime }.toJobAssignments()
 
-        val times = (properties.startTime until properties.endTime withStep properties.timeStep).toList()
+        val times = (preStartTime until properties.endTime withStep properties.timeStep).toList()
         val resources = plan.resourcesPools.flatMap { it.splitToGranularity() }
 
         return Plan(
@@ -64,8 +68,10 @@ class InputToDomainConverter {
         val jobsData = nonRelevantAssignments.mapValues { (_, all) -> all.groupBy { it.job } }
             .swapKeys()
             .mapValues { (job, timeData) ->
-                job.parameters.maxTime - (properties.startTime - timeData.keys.minValueBy { it }!!) to
-                        job.parameters.maxCost - timeData.map { (_, a) -> a.map { it.allocation.cost }.sum() }.sum()
+                Pair(
+                    job.parameters.maxTime - (properties.startTime - timeData.keys.minValueBy { it }!!),
+                    job.parameters.maxCost - timeData.map { (_, a) -> a.map { it.allocation.cost }.sum() }.sum()
+                )
             }
 
         return jobs.map {
@@ -99,19 +105,35 @@ class InputToDomainConverter {
             }
         }
 
-    private fun generateAssignments(existing: Collection<PlanJobAssignment>, times: Collection<Time>, resources: Collection<ResourcesAllocation>) =
-        times.flatMap { time ->
-            resources.mapNotNull { resource ->
-                if (existing.any { it.time == time && it.allocation == resource }) null
-                else
+    private fun generateAssignments(existing: Collection<PlanJobAssignment>, times: Collection<Time>, resourcePools: Collection<ResourcesPool>): Collection<PlanJobAssignment> {
+        return times.flatMap { time ->
+            val relevantExistingAssignments = existing.filter { it.time == time }.groupBy { it.allocation?.provider }
+            relevantExistingAssignments.values.flatten() + resourcePools.flatMap { pool ->
+                val (usedCpu, usedMemory) = relevantExistingAssignments[pool.provider]?.mapNotNull { it.allocation }.getCpuAndMemorySum()
+                val reducedPool = pool - usedCpu - usedMemory
+                reducedPool.splitToGranularity().map {
                     PlanJobAssignment(
                         uuid = UUID.randomUUID(),
                         job = null,
                         time = time,
-                        allocation = resource
+                        allocation = it
                     )
+                }
             }
         }
+    }
+
+
+    private fun Collection<ResourcesAllocation>?.getCpuAndMemorySum(): Pair<CpuResources, MemoryResources> {
+        if (this == null || this.isEmpty()) return CpuResources(0.0, CpuPowerType.MULTI_CORE) to MemoryResources(0L)
+
+        val cpu = this.map { it.cpuResources }.let { cpu ->
+            assert { cpu.mapToSet { it.type }.size == 1 }
+            CpuResources(cpu.sumByDouble { it.cpuValue }, cpu.first().type)
+        }
+        val memory = MemoryResources(this.map { it.memoryResources }.sumByLong { it.memoryInMegaBytes })
+        return cpu to memory
+    }
 
     private fun generateAssignments(times: Collection<Time>, resources: Collection<ResourcesAllocation>) =
         times.flatMap { time ->
@@ -132,7 +154,7 @@ class InputToDomainConverter {
         val resultCollection = mutableListOf<ResourcesAllocation>()
         var currentPool = this
 
-        while (currentPool.cpuResources > smallestCpu && currentPool.memoryResources > smallestMemory) {
+        while (currentPool.cpuResources >= smallestCpu && currentPool.memoryResources >= smallestMemory) {
             var usedCpu = smallestCpu.copy()
             var usedMemory = smallestMemory.copy()
 

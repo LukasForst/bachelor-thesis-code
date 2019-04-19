@@ -84,3 +84,8 @@ inline fun assert(message: String, block: () -> Boolean) = assert(block = block,
 inline fun assert(block: () -> Boolean, lazyMessage: () -> String) {
     if (Assertions.ENABLED) assert(block(), lazyMessage)
 }
+
+/**
+ * New line character
+ * */
+val newLine: String = System.lineSeparator()

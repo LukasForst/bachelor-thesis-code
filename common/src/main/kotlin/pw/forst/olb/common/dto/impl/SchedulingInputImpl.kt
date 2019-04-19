@@ -1,6 +1,7 @@
 package pw.forst.olb.common.dto.impl
 
 import pw.forst.olb.common.dto.SchedulingInput
+import pw.forst.olb.common.dto.SchedulingProperties
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.resources.ResourcesPool
@@ -13,4 +14,15 @@ data class SchedulingInputImpl(
     override val timeStep: Time,
     override val maxTimePlanningSpend: Time,
     override val cores: Int?
-) : SchedulingInput
+) : SchedulingInput {
+    constructor(resources: Collection<ResourcesPool>, jobs: Collection<Job>, schedulingProperties: SchedulingProperties) :
+            this(
+                resources,
+                jobs,
+                schedulingProperties.startTime,
+                schedulingProperties.endTime,
+                schedulingProperties.timeStep,
+                schedulingProperties.maxTimePlanningSpend,
+                schedulingProperties.cores
+            )
+}

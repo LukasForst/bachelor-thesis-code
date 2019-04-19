@@ -4,6 +4,7 @@ import pw.forst.olb.common.dto.GenericPlan
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.job.Client
 import pw.forst.olb.common.dto.job.Iteration
+import pw.forst.olb.common.dto.job.Job
 import pw.forst.olb.common.dto.job.JobParameters
 import pw.forst.olb.common.dto.job.JobValue
 import pw.forst.olb.common.dto.job.JobWithHistory
@@ -26,6 +27,31 @@ data class JobWithHistoryImpl(
     private val _iterationsInTimes: Map<Time, Collection<Iteration>>? = null
 ) : JobWithHistory {
 
+    constructor(
+        plan: GenericPlan,
+        schedulingStartedTime: Time,
+        averageIteration: LengthAwareIteration,
+        jobValueDuringIterations: Map<Iteration, JobValue>,
+        iterationLengthInTimes: Map<Time, Collection<LengthAwareIteration>>,
+        job: Job,
+        allocationHistory: Map<Time, ResourcesAllocation>? = null,
+        _iterationAllocationQuotient: (Iteration, ResourcesAllocation, JobWithHistory) -> Iteration,
+        _iterationsInTimes: Map<Time, Collection<Iteration>>? = null
+    ) : this(
+        plan,
+        schedulingStartedTime,
+        averageIteration,
+        jobValueDuringIterations,
+        iterationLengthInTimes,
+        job.parameters,
+        job.client,
+        job.name,
+        job.uuid,
+        allocationHistory,
+        _iterationAllocationQuotient,
+        _iterationsInTimes
+    )
+
     override fun iterationAllocationQuocient(iteration: Iteration, allocation: ResourcesAllocation): Iteration = _iterationAllocationQuocient.invoke(iteration, allocation, this)
 
     override fun toString(): String {
@@ -34,6 +60,4 @@ data class JobWithHistoryImpl(
 
     override val iterationsInTimes: Map<Time, Collection<Iteration>>
         get() = _iterationsInTimes ?: iterationLengthInTimes
-
-
 }

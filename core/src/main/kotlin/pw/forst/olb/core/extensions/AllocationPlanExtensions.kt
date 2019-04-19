@@ -8,6 +8,8 @@ import pw.forst.olb.common.extensions.minMaxBy
 import kotlin.math.max
 
 fun AllocationPlan.prettyFormat(printJobsData: Boolean = true): String {
+    if (this.timeSchedule.isEmpty()) throw IllegalStateException("No plan produced! Check your constraints!")
+
     val maxFormatInt = max(this.timeSchedule.keys.max()!!.position.toString().length, this.jobs.maxValueBy { it.name.length }!!)
 
     val poolData = this.resourcesPools.associate { pool ->

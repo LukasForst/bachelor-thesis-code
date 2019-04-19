@@ -67,11 +67,11 @@ class DomainBuilder(
     }
 
 
-    private fun generatePlan(maxTimePointInMs: Int): GenericPlan =
+    private fun generatePlan(maxTimePointInMs: Time): GenericPlan =
         GenericPlanImpl(
             uuid = UUID.randomUUID(),
             startTime = TimeImpl(0, TimeUnit.SECONDS),
-            endTime = TimeImpl(TimeUnit.MILLISECONDS.toSeconds(maxTimePointInMs.toLong()), TimeUnit.SECONDS),
+            endTime = maxTimePointInMs,
             timeIncrement = TimeImpl(1, TimeUnit.SECONDS)
         )
 

@@ -1,6 +1,8 @@
 package pw.forst.olb.simulation.input.data
 
+import pw.forst.olb.common.dto.TimeImpl
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 
 class DataParser {
@@ -25,7 +27,7 @@ class DataParser {
                 resultList.add(
                     AlgorithmRunData(
                         index = spited[0].toInt(),
-                        timePoint = spited[1].toInt(),
+                        timePoint = TimeImpl(position = spited[1].toLong(), units = TimeUnit.MILLISECONDS),
                         iterationLength = spited[2].toInt(),
                         cost = spited[3].toDouble()
                     )

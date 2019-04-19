@@ -1,5 +1,6 @@
 package pw.forst.olb.common.dto.impl
 
+import pw.forst.olb.common.dto.AllocationPlan
 import pw.forst.olb.common.dto.AllocationPlanWithHistory
 import pw.forst.olb.common.dto.Cost
 import pw.forst.olb.common.dto.GenericPlan
@@ -27,6 +28,20 @@ data class AllocationPlanWithHistoryImpl(
         resourcesPools: Collection<ResourcesPool>,
         genericPlan: GenericPlan
     ) : this(jobsData, timeSchedule, resourcesPools, genericPlan.uuid, genericPlan.startTime, genericPlan.endTime, genericPlan.timeIncrement)
+
+    constructor(
+        jobsData: Collection<JobWithHistory>,
+        allocationPlant: AllocationPlan
+    ) : this(
+        jobsData,
+        allocationPlant.timeSchedule,
+        allocationPlant.resourcesPools,
+        allocationPlant.uuid,
+        allocationPlant.startTime,
+        allocationPlant.endTime,
+        allocationPlant.timeIncrement
+    )
+
 
     override val cost: Cost by lazy { timeSchedule.values.flatMap { allocations -> allocations.map { it.allocation.cost } }.sum() }
 

@@ -7,7 +7,7 @@ interface Time : Comparable<Time> {
 
     val units: TimeUnit
 
-    override fun compareTo(other: Time): Int = this.position.compareTo(other.position)
+    override fun compareTo(other: Time): Int = units.toMillis(position).compareTo(other.units.toMillis(other.position))
 
     operator fun plus(other: Time): Time
 
@@ -27,16 +27,14 @@ data class TimeImpl(
         val default: Time = TimeImpl(-1, TimeUnit.SECONDS)
     }
 
-    override operator fun plus(other: Time) = copy(position = this.position + other.position)
-    override operator fun minus(other: Time) = copy(position = this.position - other.position)
+    override operator fun plus(other: Time) = copy(position = this.units.toSeconds(position) + other.units.toSeconds(other.position), units = TimeUnit.SECONDS)
+    override operator fun minus(other: Time) = copy(position = this.units.toSeconds(position) - other.units.toSeconds(other.position), units = TimeUnit.SECONDS)
     override operator fun times(times: Long) = copy(position = this.position * times)
     override operator fun times(times: Int) = copy(position = this.position * times)
 
     override fun toString(): String {
         return "Time(position=$position)"
     }
-
-
 }
 
 

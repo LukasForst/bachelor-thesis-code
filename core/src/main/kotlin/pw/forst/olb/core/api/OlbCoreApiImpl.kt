@@ -1,5 +1,6 @@
 package pw.forst.olb.core.api
 
+import mu.KLogging
 import pw.forst.olb.common.dto.AllocationPlan
 import pw.forst.olb.common.dto.AllocationPlanWithHistory
 import pw.forst.olb.common.dto.Cost
@@ -26,6 +27,7 @@ import pw.forst.olb.common.dto.sumCosts
 import pw.forst.olb.common.extensions.assert
 import pw.forst.olb.common.extensions.mapToSet
 import pw.forst.olb.core.domain.Plan
+import pw.forst.olb.core.evaluation.BigDecimalScoreCalculation
 import pw.forst.olb.core.evaluation.CompletePlan
 import pw.forst.olb.core.evaluation.LoggingPlanEvaluator
 import pw.forst.olb.core.extensions.asCompletePlan
@@ -40,7 +42,7 @@ class OlbCoreApiImpl(
     private val finalLogEnabled: Boolean = false
 ) : OlbCoreApi {
 
-    private companion object {
+    private companion object : KLogging() {
         const val DEFAULT_THREADS = 1
     }
 
@@ -59,11 +61,16 @@ class OlbCoreApiImpl(
         val alreadyPlannedAssignments = plan.timeSchedule.filterKeys { it < properties.startTime }
 
         return solveDomain(domain, properties.toSolverConfiguration())
-            .toAllocationPlan(plan.jobs, alreadyPlannedAssignments)
+            .toAllocationPlan(plan.jobs, alreadyPlannedAssignments).also {
+                assert { it.resourcesPools.size == plan.resourcesPools.size }
+            }
     }
 
     private fun solveDomain(domain: Plan, configuration: SolverConfiguration): CompletePlan {
         val solver = solverFactory.create<Plan>(configuration)
+
+        logger.info { "Starting solving plan: ${BigDecimalScoreCalculation().calculateScore(domain)}" }
+
         val solution = solver.solve(domain)
         if (finalLogEnabled) LoggingPlanEvaluator().calculateScore(solution)
 
