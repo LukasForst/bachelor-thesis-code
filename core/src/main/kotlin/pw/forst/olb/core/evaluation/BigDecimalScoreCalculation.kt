@@ -11,6 +11,7 @@ import pw.forst.olb.core.constraints.penalization.NoAssignmentEvaluation
 import pw.forst.olb.core.constraints.penalization.PlanEvaluation
 import pw.forst.olb.core.constraints.penalization.ReallocationEvaluation
 import pw.forst.olb.core.constraints.penalization.TimeEvaluation
+import pw.forst.olb.core.constraints.penalization.WrongTimeAssignedPenalization
 import pw.forst.olb.core.domain.Plan
 import pw.forst.olb.core.extensions.sum
 import pw.forst.olb.core.extensions.toJobPlanViewsInPlanningWindow
@@ -26,7 +27,8 @@ class BigDecimalScoreCalculation : EasyScoreCalculator<Plan> {
         TimeEvaluation(),
         ReallocationEvaluation(),
         NoAssignmentEvaluation(),
-        AssignmentsEvaluation(PredictionStoreFactory.getStore())
+        AssignmentsEvaluation(PredictionStoreFactory.getStore()),
+        WrongTimeAssignedPenalization()
     )
 
     private val planPenalties: Collection<PlanEvaluation> = listOf(

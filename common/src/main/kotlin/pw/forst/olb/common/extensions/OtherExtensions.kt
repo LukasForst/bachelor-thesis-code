@@ -1,6 +1,7 @@
 package pw.forst.olb.common.extensions
 
 import pw.forst.olb.common.dto.Time
+import pw.forst.olb.common.dto.TimeImpl
 import pw.forst.olb.common.dto.impl.completeJobAssignment
 import pw.forst.olb.common.dto.impl.createEmptyResourcesAllocation
 import pw.forst.olb.common.dto.job.CompleteJobAssignment
@@ -10,6 +11,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
 import java.util.Optional
+import java.util.concurrent.TimeUnit
 
 /**
  * Returns value or null from Optional. Useful when using kotlin-like T? and Optional<T>
@@ -89,3 +91,7 @@ inline fun assert(block: () -> Boolean, lazyMessage: () -> String) {
  * New line character
  * */
 val newLine: String = System.lineSeparator()
+
+fun Time.inSeconds(): Time = if (this.units == TimeUnit.SECONDS) this else TimeImpl(this.units.toSeconds(this.position), TimeUnit.SECONDS)
+
+fun Time.seconds() = this.units.toSeconds(this.position)

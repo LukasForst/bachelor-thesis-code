@@ -162,7 +162,8 @@ class SolverTest {
                     uuid = UUID.randomUUID(),
                     job = null,
                     time = time,
-                    allocation = resource
+                    allocation = resource,
+                    isMovable = true
                 )
             }
 

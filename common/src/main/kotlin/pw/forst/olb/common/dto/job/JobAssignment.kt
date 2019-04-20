@@ -14,6 +14,8 @@ interface JobAssignment : Comparable<JobAssignment> {
 
     val cost: Cost
 
+    val isMovable: Boolean
+
     fun toCompleteAssignment(): CompleteJobAssignment?
 
     val isValid: Boolean

@@ -30,11 +30,13 @@ data class PlanJobAssignment(
     override val allocation: ResourcesAllocation?,
 
     @field:ProblemFactProperty
-    override val time: Time
+    override val time: Time,
+
+    override val isMovable: Boolean
 ) : JobAssignment {
 
     @Suppress("unused") // there has to be empty constructor for optaplanner
-    private constructor() : this(UUID.randomUUID(), null, null, TimeImpl.default)
+    private constructor() : this(UUID.randomUUID(), null, null, TimeImpl.default, true)
 
     override val isValid: Boolean
         get() = job != null && allocation != null
@@ -58,6 +60,4 @@ data class PlanJobAssignment(
     override fun hashCode(): Int {
         return uuid.hashCode()
     }
-
-
 }

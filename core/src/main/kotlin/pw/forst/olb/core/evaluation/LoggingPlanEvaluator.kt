@@ -10,6 +10,7 @@ import pw.forst.olb.core.constraints.penalization.FreeSlotsEvaluation
 import pw.forst.olb.core.constraints.penalization.MultipleStacksEvaluation
 import pw.forst.olb.core.constraints.penalization.ReallocationEvaluation
 import pw.forst.olb.core.constraints.penalization.TimeEvaluation
+import pw.forst.olb.core.constraints.penalization.WrongTimeAssignedPenalization
 import pw.forst.olb.core.constraints.penalty.Penalty
 import pw.forst.olb.core.constraints.penalty.PenaltyFactory
 import pw.forst.olb.core.domain.Plan
@@ -27,14 +28,19 @@ class LoggingPlanEvaluator : EasyScoreCalculator<Plan> {
         var penalty: Penalty = PenaltyFactory.noPenalty
 
         penalty += freeSlotsPenalization(solution)
-
         penalty += multipleStacks(views)
         penalty += timePenalty(views)
         penalty += reallocationPenalty(views)
         penalty += costPenalty(views)
         penalty += assignmentPrediction(views)
+        penalty += wrongAssignments(views)
 
         return penalty.toScore()
+    }
+
+    private fun wrongAssignments(views: Collection<JobPlanView>): Penalty {
+        val penalization = WrongTimeAssignedPenalization()
+        return verifyPenalization(views, "WRONG ASSIGNMENTS") { penalization.calculatePenalty(it) }
     }
 
     private fun multipleStacks(views: Collection<JobPlanView>): Penalty {

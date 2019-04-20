@@ -57,7 +57,7 @@ class InputToDomainConverter {
             startTime = properties.startTime,
             endTime = properties.endTime,
             timeIncrement = properties.timeStep,
-            assignments = generateAssignments(existingRelevantAssignments, times, resources).sortedBy { it.cost },
+            assignments = generateAssignments(existingRelevantAssignments, times, resources, properties.startTime).sortedBy { it.cost },
             jobDomain = reduceJobs(plan.timeSchedule.filterKeys { it < preStartTime }, plan.jobs, properties).map { it.asSchedulingEntity() },
             resourcesStackDomain = resources.sortedBy { it.cost },
             times = times
@@ -99,16 +99,24 @@ class InputToDomainConverter {
                         uuid = UUID.randomUUID(),
                         job = jobResourcesAllocation.job,
                         time = time,
-                        allocation = it
+                        allocation = it,
+                        isMovable = true
                     )
                 }
             }
         }
 
-    private fun generateAssignments(existing: Collection<PlanJobAssignment>, times: Collection<Time>, resourcePools: Collection<ResourcesPool>): Collection<PlanJobAssignment> {
+    private fun generateAssignments(
+        existing: Collection<PlanJobAssignment>,
+        times: Collection<Time>,
+        resourcePools: Collection<ResourcesPool>,
+        schedulingStartTime: Time
+    ): Collection<PlanJobAssignment> {
         return times.flatMap { time ->
             val relevantExistingAssignments = existing.filter { it.time == time }.groupBy { it.allocation?.provider }
-            relevantExistingAssignments.values.flatten() + resourcePools.flatMap { pool ->
+            relevantExistingAssignments.values
+                .flatten()
+                .map { if (it.time != schedulingStartTime) it else it.copy(isMovable = false) } + resourcePools.flatMap { pool ->
                 val (usedCpu, usedMemory) = relevantExistingAssignments[pool.provider]?.mapNotNull { it.allocation }.getCpuAndMemorySum()
                 val reducedPool = pool - usedCpu - usedMemory
                 reducedPool.splitToGranularity().map {
@@ -116,7 +124,8 @@ class InputToDomainConverter {
                         uuid = UUID.randomUUID(),
                         job = null,
                         time = time,
-                        allocation = it
+                        allocation = it,
+                        isMovable = true
                     )
                 }
             }
@@ -142,7 +151,8 @@ class InputToDomainConverter {
                     uuid = UUID.randomUUID(),
                     job = null,
                     time = time,
-                    allocation = resource
+                    allocation = resource,
+                    isMovable = true
                 )
             }
         }

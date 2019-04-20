@@ -1,5 +1,6 @@
 package pw.forst.olb.common.dto
 
+import pw.forst.olb.common.extensions.inSeconds
 import java.util.concurrent.TimeUnit
 
 interface Time : Comparable<Time> {
@@ -62,4 +63,4 @@ data class TimeRangeBuilder(val from: Time, val to: Time)
 
 infix fun Time.until(to: Time) = TimeRangeBuilder(from = this, to = to)
 
-infix fun TimeRangeBuilder.withStep(step: Time): TimeIterator = TimeIterator(this.from, this.to, step)
+infix fun TimeRangeBuilder.withStep(step: Time): TimeIterator = TimeIterator(this.from.inSeconds(), this.to.inSeconds(), step.inSeconds())
