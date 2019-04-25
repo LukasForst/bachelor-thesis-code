@@ -56,7 +56,7 @@ class PeriodicExecutor(
     }
 
     private fun runIteratively(numberOfIterations: Int, initialPlan: AllocationPlan, schedulingData: Map<Job, AlgorithmRuntimeInfo>): AllocationPlan =
-        (0..numberOfIterations - 1).fold(initialPlan) { plan, idx ->
+        (0 until numberOfIterations).fold(initialPlan) { plan, idx ->
             logger.info { "Creating data for $idx iteration!" }
             val (allocationPlan, schedulingProperties) = createNextIteration(plan, schedulingData)
             logger.info { "Executing scheduling for $idx iteration!" }
