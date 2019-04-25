@@ -6,7 +6,8 @@ import pw.forst.olb.server.api.routes.configuration.RouteRegistrationProvider
 
 fun Application.resolveDependencies(ktorSettings: KtorSettings) = ApplicationDependencyBuilder()
     .registerModule(module { single { this@resolveDependencies } }) // add application registration, if needed
-    .registerModules(ktorSettings.koinModules)
+    .registerModule(serverModule) // default server koin module
+    .registerModules(ktorSettings.koinModules) // user modules
     .buildKoinModules()
     .routesBy { RouteRegistrationProvider.getStore(ktorSettings.routesPackage) }
     .configure()

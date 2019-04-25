@@ -2,7 +2,6 @@ package pw.forst.olb.scheduler.server.routes
 
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.post
 import mu.KLogging
@@ -13,6 +12,7 @@ import pw.forst.olb.scheduler.server.ResponseHandler
 import pw.forst.olb.scheduler.server.SchedulingQueue
 import pw.forst.olb.server.api.routes.configuration.Route
 import pw.forst.olb.server.api.routes.configuration.RouteBase
+import pw.forst.olb.server.extensions.receiveInBytes
 
 @Route
 class SchedulingApiRoute(
@@ -26,7 +26,9 @@ class SchedulingApiRoute(
         route {
             post("new-plan") {
                 logger.info { "New plan endpoint called" }
-                val request = call.receive<NewPlanCreationRequest>()
+
+                val request = call.receiveInBytes<NewPlanCreationRequest>()
+
                 logger.info { "New plan creation request parsed, executing scheduling!" }
 
                 schedulingQueue.execute(request) {
@@ -41,7 +43,7 @@ class SchedulingApiRoute(
             post("enhance-plan") {
                 logger.info { "New enhance-plan endpoint called" }
 
-                val request = call.receive<PlanEnhancementRequest>()
+                val request = call.receiveInBytes<PlanEnhancementRequest>()
                 logger.info { "Plan enhancement request parsed, executing scheduling!" }
 
                 schedulingQueue.execute(request) {

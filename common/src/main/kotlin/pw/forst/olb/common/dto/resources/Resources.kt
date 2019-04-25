@@ -1,6 +1,8 @@
 package pw.forst.olb.common.dto.resources
 
-sealed class Resources
+import java.io.Serializable
+
+sealed class Resources : Serializable
 
 data class CpuResources(
     /**
@@ -9,7 +11,7 @@ data class CpuResources(
     val cpuValue: Double,
 
     val type: CpuPowerType
-) : Resources(), Comparable<CpuResources> {
+) : Resources(), Comparable<CpuResources>, Serializable {
 
     companion object {
 
@@ -38,7 +40,7 @@ data class MemoryResources(
 
     val memoryInMegaBytes: Long
 
-) : Resources(), Comparable<MemoryResources> {
+) : Resources(), Comparable<MemoryResources>, Serializable {
 
     companion object {
         fun getSmallest() = MemoryResources(128L)

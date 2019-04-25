@@ -1,6 +1,8 @@
 package pw.forst.olb.common.dto
 
-interface Cost : Comparable<Cost> {
+import java.io.Serializable
+
+interface Cost : Comparable<Cost>, Serializable {
     val value: Double
 
     operator fun plus(other: Cost): Cost

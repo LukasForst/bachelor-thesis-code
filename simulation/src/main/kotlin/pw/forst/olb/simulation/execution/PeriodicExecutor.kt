@@ -18,8 +18,8 @@ import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.common.extensions.averageByInt
 import pw.forst.olb.common.extensions.newLine
+import pw.forst.olb.common.extensions.prettyFormat
 import pw.forst.olb.core.api.OlbCoreApi
-import pw.forst.olb.core.extensions.prettyFormat
 import pw.forst.olb.simulation.extensions.createTimesMap
 import pw.forst.olb.simulation.extensions.toLengthAwareIterationData
 import pw.forst.olb.simulation.input.data.AlgorithmRuntimeInfo

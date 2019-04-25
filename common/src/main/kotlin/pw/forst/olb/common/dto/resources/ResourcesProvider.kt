@@ -1,8 +1,9 @@
 package pw.forst.olb.common.dto.resources
 
+import java.io.Serializable
 import java.util.UUID
 
-interface ResourcesProvider {
+interface ResourcesProvider : Serializable {
     val name: String
 
     val uuid: UUID

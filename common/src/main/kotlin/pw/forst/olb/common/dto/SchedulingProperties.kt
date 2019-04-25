@@ -1,6 +1,8 @@
 package pw.forst.olb.common.dto
 
-interface SchedulingProperties {
+import java.io.Serializable
+
+interface SchedulingProperties : Serializable {
     val startTime: Time
 
     val endTime: Time

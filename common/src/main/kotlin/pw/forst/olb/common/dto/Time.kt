@@ -1,9 +1,10 @@
 package pw.forst.olb.common.dto
 
 import pw.forst.olb.common.extensions.inSeconds
+import java.io.Serializable
 import java.util.concurrent.TimeUnit
 
-interface Time : Comparable<Time> {
+interface Time : Comparable<Time>, Serializable {
     val position: Long
 
     val units: TimeUnit

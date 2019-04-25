@@ -1,6 +1,8 @@
 package pw.forst.olb.common.dto.resources
 
-interface ResourcesPool {
+import java.io.Serializable
+
+interface ResourcesPool : Serializable {
 
     val provider: ResourcesProvider
 

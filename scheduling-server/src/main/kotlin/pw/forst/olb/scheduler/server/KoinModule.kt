@@ -1,5 +1,6 @@
 package pw.forst.olb.scheduler.server
 
+import com.google.gson.GsonBuilder
 import io.ktor.client.HttpClient
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
@@ -11,15 +12,16 @@ import pw.forst.olb.core.solver.OptaplannerSolverFactory
 import java.util.concurrent.Executors
 
 val serverModule = module {
-    // http client
+    // Gson
     factory {
+        GsonBuilder().setUp().create()
+    }
+
+    // http client
+    factory(override = true) {
         HttpClient {
             install(JsonFeature) {
-                serializer = GsonSerializer {
-                    serializeNulls()
-                    disableHtmlEscaping()
-                    setPrettyPrinting()
-                }
+                serializer = GsonSerializer { setUp() }
             }
         }
     }
@@ -34,4 +36,14 @@ val serverModule = module {
 
     // scheduling queue, needs core API and executor service
     single { SchedulingQueue(get(), Executors.newSingleThreadScheduledExecutor()) }
+}
+
+private fun GsonBuilder.setUp(): GsonBuilder {
+    setPrettyPrinting()
+    enableComplexMapKeySerialization()
+    serializeNulls()
+    serializeSpecialFloatingPointValues()
+    generateNonExecutableJson()
+    setLenient()
+    return this
 }

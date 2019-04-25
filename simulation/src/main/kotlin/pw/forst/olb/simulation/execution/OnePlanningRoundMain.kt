@@ -19,17 +19,17 @@ import pw.forst.olb.common.dto.resources.CpuPowerType
 import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesPool
+import pw.forst.olb.common.extensions.prettyFormat
 import pw.forst.olb.core.api.InputToDomainConverter
 import pw.forst.olb.core.api.OlbCoreApi
 import pw.forst.olb.core.api.OlbCoreApiImpl
 import pw.forst.olb.core.domain.PlanningJob
-import pw.forst.olb.core.extensions.prettyFormat
 import pw.forst.olb.core.solver.OptaplannerSolverFactory
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
-class OnePlanningRoundMain {
+open class OnePlanningRoundMain {
 
     companion object {
         @JvmStatic
@@ -53,6 +53,7 @@ class OnePlanningRoundMain {
     }
 
 
+    @Suppress("SameParameterValue") //integration test
     private fun createSchedulingInput(jobsCount: Int, planningHorizon: Long, runningTime: Time, cores: Int? = null): SchedulingInput {
         val (start, end, step) = generateTimes(planningHorizon)
         return SchedulingInputImpl(
@@ -123,6 +124,5 @@ class OnePlanningRoundMain {
 
     private fun randomClient(seed: Int): Client = ClientImpl(name = "Random client $seed", uuid = UUID.randomUUID())
 
-    private fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true)
-
+    protected open fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true)
 }

@@ -1,10 +1,8 @@
-package pw.forst.olb.core.extensions
+package pw.forst.olb.common.extensions
 
 import pw.forst.olb.common.dto.AllocationPlan
 import pw.forst.olb.common.dto.CostImpl
 import pw.forst.olb.common.dto.sum
-import pw.forst.olb.common.extensions.maxValueBy
-import pw.forst.olb.common.extensions.minMaxBy
 import kotlin.math.max
 
 fun AllocationPlan.prettyFormat(printJobsData: Boolean = true): String {

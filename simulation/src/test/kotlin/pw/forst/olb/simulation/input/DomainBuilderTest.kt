@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import pw.forst.olb.common.dto.TimeImpl
 import pw.forst.olb.common.dto.impl.SchedulingPropertiesImpl
+import pw.forst.olb.common.extensions.prettyFormat
 import pw.forst.olb.core.api.InputToDomainConverter
 import pw.forst.olb.core.api.OlbCoreApiImpl
-import pw.forst.olb.core.extensions.prettyFormat
 import pw.forst.olb.core.solver.OptaplannerSolverFactory
 import pw.forst.olb.simulation.input.data.DataParser
 import pw.forst.olb.simulation.input.data.JobWithHistoryFactory
