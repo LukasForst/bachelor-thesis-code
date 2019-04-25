@@ -11,7 +11,7 @@ data class CpuResources(
     val cpuValue: Double,
 
     val type: CpuPowerType
-) : Resources(), Comparable<CpuResources>, Serializable {
+) : Resources(), Comparable<CpuResources> {
 
     companion object {
 
@@ -40,7 +40,7 @@ data class MemoryResources(
 
     val memoryInMegaBytes: Long
 
-) : Resources(), Comparable<MemoryResources>, Serializable {
+) : Resources(), Comparable<MemoryResources> {
 
     companion object {
         fun getSmallest() = MemoryResources(128L)

@@ -1,5 +1,7 @@
 package pw.forst.olb.common.dto.server
 
-interface SchedulingRequest {
+import java.io.Serializable
+
+interface SchedulingRequest : Serializable {
     val reportEndpoint: ReportEndpoint
 }

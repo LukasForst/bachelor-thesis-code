@@ -1,6 +1,8 @@
 package pw.forst.olb.common.dto.job
 
-interface JobValue {
+import java.io.Serializable
+
+interface JobValue : Serializable {
     val value: Double
 
     operator fun plus(other: JobValue): JobValue

@@ -18,6 +18,7 @@ import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.core.api.InputToDomainConverter
+import pw.forst.olb.core.api.OlbCoreApi
 import pw.forst.olb.core.api.OlbCoreApiImpl
 import pw.forst.olb.core.domain.PlanningJob
 import pw.forst.olb.core.solver.OptaplannerSolverFactory
@@ -26,7 +27,7 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
-class ExecutionConfiguration {
+open class ExecutionConfiguration {
 
     companion object {
         @JvmStatic
@@ -40,10 +41,11 @@ class ExecutionConfiguration {
     fun obtainPeriodicExecutor(): PeriodicExecutor =
         PeriodicExecutor(
             dataParser = DataParser(),
-            coreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true),
+            coreApi = buildApi(),
             schedulingProperties = generateSchedulingProperties()
         )
 
+    protected open fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true)
 
     private fun generateSchedulingProperties(): SchedulingProperties = SchedulingPropertiesImpl(
         startTime = TimeImpl(0, TimeUnit.SECONDS),

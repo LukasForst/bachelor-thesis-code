@@ -1,6 +1,8 @@
 package pw.forst.olb.common.dto.job
 
-interface Iteration : Comparable<Iteration> {
+import java.io.Serializable
+
+interface Iteration : Comparable<Iteration>, Serializable {
 
     val position: Int
 
