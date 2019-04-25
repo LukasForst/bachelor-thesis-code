@@ -47,17 +47,22 @@ class SchedulingQueue(
         val checkCondition = { response: SchedulingResponse -> response.id == schedulingId && response.plan != null }
         var response: SchedulingResponse
         do {
+            logger.info { "Checking queue, waiting for id $schedulingId" }
             response = queue.take()
             if (!checkCondition(response)) {
                 queue.put(response)
+                logger.info { "There is ${response.id} plan, waiting for $schedulingId" }
             }
-        } while (checkCondition(response))
+        } while (!checkCondition(response))
 
+        logger.info { "Plan with Id $schedulingId retrieved!" }
         return response.plan!!
     }
 
     fun receive(id: Int, plan: AllocationPlan) {
+        logger.info { "Putting plan $id to the queue" }
         queue.put(SchedulingResponse(id, plan))
+        logger.info { "Plan $id enqueued" }
     }
 
     private data class SchedulingResponse(val id: Int, val plan: AllocationPlan? = null)

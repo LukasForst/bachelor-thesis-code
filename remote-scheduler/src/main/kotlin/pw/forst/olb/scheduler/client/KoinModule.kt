@@ -3,6 +3,7 @@ package pw.forst.olb.scheduler.client
 import org.koin.dsl.module.module
 import pw.forst.olb.common.config.REMOTE_SCHEDULER_API
 import pw.forst.olb.common.config.SCHEDULING_SERVER_API
+import pw.forst.olb.scheduler.client.scenarios.RemotePlanningRound
 
 val serverModule = module {
     // response handler, need http client
