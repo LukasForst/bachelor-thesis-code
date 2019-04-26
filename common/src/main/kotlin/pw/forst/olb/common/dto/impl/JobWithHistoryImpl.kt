@@ -11,6 +11,7 @@ import pw.forst.olb.common.dto.job.JobWithHistory
 import pw.forst.olb.common.dto.job.LengthAwareIteration
 import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import java.util.UUID
+import kotlin.math.roundToInt
 
 data class JobWithHistoryImpl(
     override val plan: GenericPlan,
@@ -23,8 +24,8 @@ data class JobWithHistoryImpl(
     override val name: String,
     override val uuid: UUID,
     override val allocationHistory: Map<Time, ResourcesAllocation>? = null,
-    private val _iterationAllocationQuocient: (Iteration, ResourcesAllocation, JobWithHistory) -> Iteration,
-    private val _iterationsInTimes: Map<Time, Collection<Iteration>>? = null
+    private val _iterationsInTimes: Map<Time, Collection<Iteration>>? = null,
+    private val _iterationAllocationQuocient: ((Iteration, ResourcesAllocation, JobWithHistory) -> Iteration)? = null // this can not be function, it must be pure lambda
 ) : JobWithHistory {
 
     constructor(
@@ -35,8 +36,8 @@ data class JobWithHistoryImpl(
         iterationLengthInTimes: Map<Time, Collection<LengthAwareIteration>>,
         job: Job,
         allocationHistory: Map<Time, ResourcesAllocation>? = null,
-        _iterationAllocationQuotient: (Iteration, ResourcesAllocation, JobWithHistory) -> Iteration,
-        _iterationsInTimes: Map<Time, Collection<Iteration>>? = null
+        _iterationsInTimes: Map<Time, Collection<Iteration>>? = null,
+        _iterationAllocationQuotient: ((Iteration, ResourcesAllocation, JobWithHistory) -> Iteration)? = null
     ) : this(
         plan,
         schedulingStartedTime,
@@ -48,11 +49,18 @@ data class JobWithHistoryImpl(
         job.name,
         job.uuid,
         allocationHistory,
-        _iterationAllocationQuotient,
-        _iterationsInTimes
+        _iterationsInTimes,
+        _iterationAllocationQuotient
     )
 
-    override fun iterationAllocationQuocient(iteration: Iteration, allocation: ResourcesAllocation): Iteration = _iterationAllocationQuocient.invoke(iteration, allocation, this)
+    override fun iterationAllocationQuocient(iteration: Iteration, allocation: ResourcesAllocation): Iteration =
+        _iterationAllocationQuocient?.invoke(iteration, allocation, this) ?: defaultQuocient(iteration, allocation)
+
+    private fun defaultQuocient(iteration: Iteration, allocation: ResourcesAllocation): Iteration {
+        val averageIncrement = averageIteration.iterationLengthInMls * plan.timeIncrement.units.toMillis(plan.timeIncrement.position)
+        val allocationAwareIncrement = (averageIncrement * allocation.cpuResources.cpuValue).roundToInt()
+        return iteration + IterationImpl(allocationAwareIncrement)
+    }
 
     override fun toString(): String {
         return "JobWithHistoryImpl(name='$name')"

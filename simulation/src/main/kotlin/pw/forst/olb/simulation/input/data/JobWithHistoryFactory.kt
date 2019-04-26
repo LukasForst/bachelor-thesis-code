@@ -2,20 +2,16 @@ package pw.forst.olb.simulation.input.data
 
 import pw.forst.olb.common.dto.GenericPlan
 import pw.forst.olb.common.dto.TimeImpl
-import pw.forst.olb.common.dto.impl.IterationImpl
 import pw.forst.olb.common.dto.impl.JobWithHistoryImpl
 import pw.forst.olb.common.dto.impl.LengthAwareIterationImpl
 import pw.forst.olb.common.dto.job.Client
-import pw.forst.olb.common.dto.job.Iteration
 import pw.forst.olb.common.dto.job.JobParameters
 import pw.forst.olb.common.dto.job.JobWithHistory
-import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.extensions.averageByInt
 import pw.forst.olb.simulation.extensions.createTimesMap
 import pw.forst.olb.simulation.extensions.toLengthAwareIterationData
 import java.util.UUID
 import java.util.concurrent.TimeUnit
-import kotlin.math.roundToInt
 
 class JobWithHistoryFactory {
 
@@ -31,14 +27,7 @@ class JobWithHistoryFactory {
             parameters = jobParameters,
             client = client,
             name = runtimeInfo.name,
-            uuid = UUID.randomUUID(),
-            _iterationAllocationQuocient = ::iterationAllocationQuotient
+            uuid = UUID.randomUUID()
         )
-    }
-
-    private fun iterationAllocationQuotient(iteration: Iteration, allocation: ResourcesAllocation, jobWithHistory: JobWithHistory): Iteration {
-        val averageIncrement = jobWithHistory.averageIteration.iterationLengthInMls * jobWithHistory.plan.timeIncrement.units.toMillis(jobWithHistory.plan.timeIncrement.position)
-        val allocationAwareIncrement = (averageIncrement * allocation.cpuResources.cpuValue).roundToInt()
-        return iteration + IterationImpl(allocationAwareIncrement)
     }
 }
