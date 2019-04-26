@@ -7,15 +7,11 @@ import pw.forst.olb.common.dto.AllocationPlanWithHistory
 import pw.forst.olb.common.dto.SchedulingProperties
 import pw.forst.olb.common.dto.TimeImpl
 import pw.forst.olb.common.dto.impl.AllocationPlanWithHistoryImpl
-import pw.forst.olb.common.dto.impl.IterationImpl
 import pw.forst.olb.common.dto.impl.JobWithHistoryImpl
 import pw.forst.olb.common.dto.impl.LengthAwareIterationImpl
 import pw.forst.olb.common.dto.impl.SchedulingInputImpl
 import pw.forst.olb.common.dto.impl.SchedulingPropertiesImpl
-import pw.forst.olb.common.dto.job.Iteration
 import pw.forst.olb.common.dto.job.Job
-import pw.forst.olb.common.dto.job.JobWithHistory
-import pw.forst.olb.common.dto.resources.ResourcesAllocation
 import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.common.extensions.averageByInt
 import pw.forst.olb.common.extensions.newLine
@@ -26,7 +22,6 @@ import pw.forst.olb.simulation.input.data.AlgorithmRuntimeInfo
 import pw.forst.olb.simulation.input.data.DataParser
 import java.io.File
 import java.util.concurrent.TimeUnit
-import kotlin.math.roundToInt
 
 class PeriodicExecutor(
     private val dataParser: DataParser,
@@ -85,8 +80,7 @@ class PeriodicExecutor(
                     .filterKeys { it < newStart }
                     .mapValues { (_, jobs) -> jobs.singleOrNull { it.job == job }?.allocation }
                     .filterValues { it != null }
-                    .mapValues { it.value!! },
-                _iterationAllocationQuotient = ::iterationAllocationQuotient
+                    .mapValues { it.value!! }
             )
         }
         val schedulingProperties = SchedulingPropertiesImpl(
@@ -102,13 +96,6 @@ class PeriodicExecutor(
         )
         return allocationPlanWithHistory to schedulingProperties
     }
-
-    private fun iterationAllocationQuotient(iteration: Iteration, allocation: ResourcesAllocation, jobWithHistory: JobWithHistory): Iteration {
-        val averageIncrement = jobWithHistory.averageIteration.iterationLengthInMls * jobWithHistory.plan.timeIncrement.units.toMillis(jobWithHistory.plan.timeIncrement.position)
-        val allocationAwareIncrement = (averageIncrement * allocation.cpuResources.cpuValue).roundToInt()
-        return iteration + IterationImpl(allocationAwareIncrement)
-    }
-
 
     private fun recordDataMapping(data: Map<Job, AlgorithmRuntimeInfo>) {
         data.forEach { (job, runtimeInfo) -> logger.info { "${job.name} ---- ${runtimeInfo.name}" } }
