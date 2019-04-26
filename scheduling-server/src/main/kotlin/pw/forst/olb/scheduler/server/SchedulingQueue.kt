@@ -1,9 +1,9 @@
 package pw.forst.olb.scheduler.server
 
+import pw.forst.olb.common.api.OlbCoreApi
 import pw.forst.olb.common.dto.AllocationPlan
 import pw.forst.olb.common.dto.server.NewPlanCreationRequest
 import pw.forst.olb.common.dto.server.PlanEnhancementRequest
-import pw.forst.olb.core.api.OlbCoreApi
 import java.util.concurrent.ExecutorService
 
 class SchedulingQueue(

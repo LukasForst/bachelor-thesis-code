@@ -1,6 +1,7 @@
 package pw.forst.olb.core.api
 
 import mu.KLogging
+import pw.forst.olb.common.api.OlbCoreApi
 import pw.forst.olb.common.dto.AllocationPlan
 import pw.forst.olb.common.dto.AllocationPlanWithHistory
 import pw.forst.olb.common.dto.Cost

@@ -1,6 +1,6 @@
 apply plugin: 'application'
 
-mainClassName = "io.ktor.server.netty.EngineMain"
+mainClassName = "pw.forst.olb.scheduler.client.AppKt"
 
 repositories {
     maven { url 'https://kotlin.bintray.com/ktor' }
@@ -9,7 +9,6 @@ repositories {
 
 dependencies {
     implementation project(":common")
-    implementation project(":core")
     implementation project(":server")
     implementation project(":simulation")
 

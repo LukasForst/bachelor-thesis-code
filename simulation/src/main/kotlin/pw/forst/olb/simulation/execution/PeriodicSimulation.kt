@@ -1,5 +1,6 @@
 package pw.forst.olb.simulation.execution
 
+import pw.forst.olb.common.api.OlbCoreApi
 import pw.forst.olb.common.dto.SchedulingProperties
 import pw.forst.olb.common.dto.TimeImpl
 import pw.forst.olb.common.dto.createCost
@@ -18,7 +19,6 @@ import pw.forst.olb.common.dto.resources.CpuResources
 import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.core.api.InputToDomainConverter
-import pw.forst.olb.core.api.OlbCoreApi
 import pw.forst.olb.core.api.OlbCoreApiImpl
 import pw.forst.olb.core.domain.PlanningJob
 import pw.forst.olb.core.solver.OptaplannerSolverFactory

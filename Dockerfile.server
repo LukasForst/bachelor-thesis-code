@@ -1,0 +1,30 @@
+FROM gradle:5.4.0-jdk11-slim as builder
+
+# copy necessary gradle configs
+COPY --chown=gradle:gradle build.gradle /home/gradle/src/
+COPY --chown=gradle:gradle gradle.properties /home/gradle/src/
+COPY --chown=gradle:gradle settings.gradle /home/gradle/src/
+
+# copy dependencies
+COPY --chown=gradle:gradle common /home/gradle/src/common
+COPY --chown=gradle:gradle server /home/gradle/src/server
+COPY --chown=gradle:gradle core /home/gradle/src/core
+
+# copy project
+COPY --chown=gradle:gradle scheduling-server /home/gradle/src/scheduling-server
+
+WORKDIR /home/gradle/src
+RUN gradle build
+
+# second stage -- run built application
+FROM openjdk:11-jre-slim as execution
+
+COPY --from=builder /home/gradle/src/scheduling-server/build/distributions/scheduling-server.tar /app/
+
+WORKDIR /app
+RUN tar -xvf scheduling-server.tar
+WORKDIR /app/scheduling-server
+
+EXPOSE 8091
+
+CMD bin/scheduling-server

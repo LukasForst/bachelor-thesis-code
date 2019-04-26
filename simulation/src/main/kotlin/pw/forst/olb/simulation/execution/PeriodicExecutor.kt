@@ -1,6 +1,7 @@
 package pw.forst.olb.simulation.execution
 
 import mu.KLogging
+import pw.forst.olb.common.api.OlbCoreApi
 import pw.forst.olb.common.dto.AllocationPlan
 import pw.forst.olb.common.dto.AllocationPlanWithHistory
 import pw.forst.olb.common.dto.SchedulingProperties
@@ -19,7 +20,6 @@ import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.common.extensions.averageByInt
 import pw.forst.olb.common.extensions.newLine
 import pw.forst.olb.common.extensions.prettyFormat
-import pw.forst.olb.core.api.OlbCoreApi
 import pw.forst.olb.simulation.extensions.createTimesMap
 import pw.forst.olb.simulation.extensions.toLengthAwareIterationData
 import pw.forst.olb.simulation.input.data.AlgorithmRuntimeInfo

@@ -1,4 +1,4 @@
-package pw.forst.olb.core.api
+package pw.forst.olb.common.api
 
 import pw.forst.olb.common.dto.AllocationPlan
 import pw.forst.olb.common.dto.AllocationPlanWithHistory

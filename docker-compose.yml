@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  scheduling-server:
+    container_name: bp-scheduling-server
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    environment:
+      SERVER_ADDRESS: scheduling-server
+      CLIENT_ADDRESS: scheduling-client
+    image: forst.pw/bp/scheduling-server
+    ports:
+      - 8091:8091
+
+  scheduling-client:
+    container_name: bp-scheduling-client
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    image: forst.pw/bp/scheduling-client
+    environment:
+      SERVER_ADDRESS: scheduling-server
+      CLIENT_ADDRESS: scheduling-client
+    links:
+      - scheduling-server
+    ports:
+      - 8090:8090

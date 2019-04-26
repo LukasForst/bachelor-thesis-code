@@ -5,8 +5,8 @@ import io.ktor.client.HttpClient
 import io.ktor.client.features.json.GsonSerializer
 import io.ktor.client.features.json.JsonFeature
 import org.koin.dsl.module.module
+import pw.forst.olb.common.api.OlbCoreApi
 import pw.forst.olb.core.api.InputToDomainConverter
-import pw.forst.olb.core.api.OlbCoreApi
 import pw.forst.olb.core.api.OlbCoreApiImpl
 import pw.forst.olb.core.solver.OptaplannerSolverFactory
 import java.util.concurrent.Executors

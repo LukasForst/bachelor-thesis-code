@@ -1,6 +1,7 @@
 package pw.forst.olb.core.evaluator
 
 import org.junit.jupiter.api.Test
+import pw.forst.olb.common.api.OlbCoreApi
 import pw.forst.olb.common.dto.SchedulingInput
 import pw.forst.olb.common.dto.Time
 import pw.forst.olb.common.dto.TimeImpl
@@ -21,7 +22,6 @@ import pw.forst.olb.common.dto.resources.MemoryResources
 import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.common.extensions.prettyFormat
 import pw.forst.olb.core.api.InputToDomainConverter
-import pw.forst.olb.core.api.OlbCoreApi
 import pw.forst.olb.core.api.OlbCoreApiImpl
 import pw.forst.olb.core.domain.PlanningJob
 import pw.forst.olb.core.solver.OptaplannerSolverFactory
