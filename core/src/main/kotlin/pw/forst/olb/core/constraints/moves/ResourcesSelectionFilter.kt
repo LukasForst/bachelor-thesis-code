@@ -16,6 +16,8 @@ class ResourcesSelectionFilter : SelectionFilter<Plan, PlanJobAssignment> {
     private fun accept(plan: Plan, selection: PlanJobAssignment): Boolean {
         if (!selection.isValid) return true
 
+        if (!selection.isMovable) return false
+
         // if is not in planning window, this assignment must stay where it is
         if (!selection.isInPlanningWindow(plan)) return false
 

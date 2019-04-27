@@ -62,7 +62,7 @@ open class ExecutionConfiguration {
             cpuCost = CpuCostImpl(1.0),
             memoryCost = MemoryCostImpl(0.02),
             cpuResources = CpuResources(5.0, CpuPowerType.MULTI_CORE),
-            memoryResources = MemoryResources(1024 * 64)
+            memoryResources = MemoryResources(128 * 5)
         ),
         InputResourcesPool(
             name = "Cost: 1.5 + 0.02",
@@ -70,7 +70,7 @@ open class ExecutionConfiguration {
             cpuCost = CpuCostImpl(1.5),
             memoryCost = MemoryCostImpl(0.02),
             cpuResources = CpuResources(2.0, CpuPowerType.MULTI_CORE),
-            memoryResources = MemoryResources(1024 * 64)
+            memoryResources = MemoryResources(128 * 2)
         ),
         InputResourcesPool(
             name = "Cost: 10.0 + 0.05",
@@ -78,7 +78,7 @@ open class ExecutionConfiguration {
             cpuCost = CpuCostImpl(10.0),
             memoryCost = MemoryCostImpl(0.05),
             cpuResources = CpuResources(2.0, CpuPowerType.MULTI_CORE),
-            memoryResources = MemoryResources(1024 * 64)
+            memoryResources = MemoryResources(128 * 2)
         )
     )
 

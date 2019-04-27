@@ -84,8 +84,9 @@ class OlbCoreApiImpl(
 
     }
 
-    private fun CompletePlan.toAllocationPlan(allJobs: Collection<Job>, filteredTimeSchedule: Map<Time, Collection<JobResourcesAllocation>>): AllocationPlan {
-        val assignments = this.assignments.toTimeSchedule(filteredTimeSchedule)
+    private fun CompletePlan.toAllocationPlan(allJobs: Collection<Job>, alreadyPlannedAssignments: Map<Time, Collection<JobResourcesAllocation>>): AllocationPlan {
+        val assignments = this.assignments.toTimeSchedule(alreadyPlannedAssignments)
+
         return AllocationPlanImpl(
             uuid = this.uuid,
             startTime = this.startTime,
@@ -113,11 +114,11 @@ class OlbCoreApiImpl(
             cost = this.assignments.map { it.cost }.sumCosts()
         )
 
-    private fun Collection<CompleteJobAssignment>.toTimeSchedule(dataToAdd: Map<Time, Collection<JobResourcesAllocation>>): Map<Time, Collection<JobResourcesAllocation>> {
+    private fun Collection<CompleteJobAssignment>.toTimeSchedule(fixedAssignments: Map<Time, Collection<JobResourcesAllocation>>): Map<Time, Collection<JobResourcesAllocation>> {
         val newTimeSchedule = this.toTimeSchedule()
-        val allKeys = newTimeSchedule.keys + dataToAdd.keys
+        val allKeys = newTimeSchedule.keys + fixedAssignments.keys
         return allKeys.associate { time ->
-            time to (newTimeSchedule[time] ?: emptyList()) + (dataToAdd[time] ?: emptyList())
+            time to if (fixedAssignments.containsKey(time)) fixedAssignments.getValue(time) else (newTimeSchedule[time] ?: emptyList())
         }
     }
 

@@ -5,7 +5,7 @@ import pw.forst.olb.core.constraints.dto.JobPlanView
 import pw.forst.olb.core.constraints.penalty.Penalty
 import pw.forst.olb.core.constraints.penalty.PenaltyBuilder
 
-class ReallocationEvaluation : CompletePlanEvaluation {
+class ReallocationEvaluation : PlanningWindowAwarePlanEvaluation {
 
     override fun calculatePenalty(jobView: JobPlanView): Penalty {
         val penaltyBuilder = PenaltyBuilder.create()

@@ -53,12 +53,15 @@ class InputToDomainConverter {
         val times = (preStartTime until properties.endTime withStep properties.timeStep).toList()
         val resources = plan.resourcesPools.flatMap { it.splitToGranularity() }
 
+        val jobs = reduceJobs(plan.timeSchedule.filterKeys { it < preStartTime }, plan.jobs, properties).map { it.asSchedulingEntity() }
+        val assignments = generateAssignments(existingRelevantAssignments, times, resources, properties.startTime).sortedBy { it.cost }
+
         return Plan(
             startTime = properties.startTime,
             endTime = properties.endTime,
             timeIncrement = properties.timeStep,
-            assignments = generateAssignments(existingRelevantAssignments, times, resources, properties.startTime).sortedBy { it.cost },
-            jobDomain = reduceJobs(plan.timeSchedule.filterKeys { it < preStartTime }, plan.jobs, properties).map { it.asSchedulingEntity() },
+            assignments = assignments,
+            jobDomain = jobs,
             resourcesStackDomain = resources.sortedBy { it.cost },
             times = times
         )
@@ -114,20 +117,24 @@ class InputToDomainConverter {
     ): Collection<PlanJobAssignment> {
         return times.flatMap { time ->
             val relevantExistingAssignments = existing.filter { it.time == time }.groupBy { it.allocation?.provider }
-            relevantExistingAssignments.values
-                .flatten()
-                .map { if (it.time != schedulingStartTime) it else it.copy(isMovable = false) } + resourcePools.flatMap { pool ->
-                val (usedCpu, usedMemory) = relevantExistingAssignments[pool.provider]?.mapNotNull { it.allocation }.getCpuAndMemorySum()
-                val reducedPool = pool - usedCpu - usedMemory
-                reducedPool.splitToGranularity().map {
-                    PlanJobAssignment(
-                        uuid = UUID.randomUUID(),
-                        job = null,
-                        time = time,
-                        allocation = it,
-                        isMovable = true
-                    )
+
+            if (time >= schedulingStartTime) {
+                relevantExistingAssignments.values
+                    .flatten() + resourcePools.flatMap { pool ->
+                    val (usedCpu, usedMemory) = relevantExistingAssignments[pool.provider]?.mapNotNull { it.allocation }.getCpuAndMemorySum()
+                    val reducedPool = pool - usedCpu - usedMemory
+                    reducedPool.splitToGranularity().map {
+                        PlanJobAssignment(
+                            uuid = UUID.randomUUID(),
+                            job = null,
+                            time = time,
+                            allocation = it,
+                            isMovable = true
+                        )
+                    }
                 }
+            } else {
+                relevantExistingAssignments.values.flatten().map { it.copy(isMovable = false) }
             }
         }
     }

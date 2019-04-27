@@ -32,6 +32,7 @@ data class PlanJobAssignment(
     @field:ProblemFactProperty
     override val time: Time,
 
+    @field:ProblemFactProperty
     override val isMovable: Boolean
 ) : JobAssignment {
 
