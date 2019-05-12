@@ -24,7 +24,7 @@ import pw.forst.olb.common.extensions.prettyFormat
 import pw.forst.olb.core.api.InputToDomainConverter
 import pw.forst.olb.core.api.OlbCoreApiImpl
 import pw.forst.olb.core.domain.PlanningJob
-import pw.forst.olb.core.solver.OptaplannerSolverFactory
+import pw.forst.olb.core.solver.OptaPlannerSolverFactory
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
@@ -124,5 +124,5 @@ open class OnePlanningRoundMain {
 
     private fun randomClient(seed: Int): Client = ClientImpl(name = "Random client $seed", uuid = UUID.randomUUID())
 
-    protected open fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true)
+    protected open fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaPlannerSolverFactory(), true)
 }

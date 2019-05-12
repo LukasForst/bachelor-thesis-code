@@ -5,7 +5,7 @@ import org.optaplanner.core.api.solver.Solver
 import org.optaplanner.core.api.solver.SolverFactory
 import pw.forst.olb.common.dto.SolverConfiguration
 
-class OptaplannerSolverFactory {
+class OptaPlannerSolverFactory {
 
     private companion object : KLogging() {
         const val DEFAULT_CONFIG_XML = "solverConfiguration.xml"

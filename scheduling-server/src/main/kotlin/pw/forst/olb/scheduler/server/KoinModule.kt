@@ -8,7 +8,7 @@ import org.koin.dsl.module.module
 import pw.forst.olb.common.api.OlbCoreApi
 import pw.forst.olb.core.api.InputToDomainConverter
 import pw.forst.olb.core.api.OlbCoreApiImpl
-import pw.forst.olb.core.solver.OptaplannerSolverFactory
+import pw.forst.olb.core.solver.OptaPlannerSolverFactory
 import java.util.concurrent.Executors
 
 val serverModule = module {
@@ -28,7 +28,7 @@ val serverModule = module {
 
     // scheduling core
     single { InputToDomainConverter() }
-    single { OptaplannerSolverFactory() }
+    single { OptaPlannerSolverFactory() }
     single<OlbCoreApi> { OlbCoreApiImpl(get(), get(), true) }
 
     // response handler, need http client

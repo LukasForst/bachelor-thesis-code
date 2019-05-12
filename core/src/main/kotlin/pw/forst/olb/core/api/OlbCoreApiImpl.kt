@@ -35,11 +35,11 @@ import pw.forst.olb.core.extensions.asCompletePlan
 import pw.forst.olb.core.extensions.asSchedulingEntity
 import pw.forst.olb.core.predict.JobPrediction
 import pw.forst.olb.core.predict.factory.PredictionStoreFactory
-import pw.forst.olb.core.solver.OptaplannerSolverFactory
+import pw.forst.olb.core.solver.OptaPlannerSolverFactory
 
 class OlbCoreApiImpl(
     private val inputToDomainConverter: InputToDomainConverter,
-    private val solverFactory: OptaplannerSolverFactory,
+    private val solverFactory: OptaPlannerSolverFactory,
     private val finalLogEnabled: Boolean = false
 ) : OlbCoreApi {
 

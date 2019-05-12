@@ -21,7 +21,7 @@ import pw.forst.olb.common.dto.resources.ResourcesPool
 import pw.forst.olb.core.api.InputToDomainConverter
 import pw.forst.olb.core.api.OlbCoreApiImpl
 import pw.forst.olb.core.domain.PlanningJob
-import pw.forst.olb.core.solver.OptaplannerSolverFactory
+import pw.forst.olb.core.solver.OptaPlannerSolverFactory
 import pw.forst.olb.simulation.input.data.DataParser
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -45,7 +45,7 @@ open class ExecutionConfiguration {
             schedulingProperties = generateSchedulingProperties()
         )
 
-    protected open fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true)
+    protected open fun buildApi(): OlbCoreApi = OlbCoreApiImpl(InputToDomainConverter(), OptaPlannerSolverFactory(), true)
 
     private fun generateSchedulingProperties(): SchedulingProperties = SchedulingPropertiesImpl(
         startTime = TimeImpl(0, TimeUnit.SECONDS),

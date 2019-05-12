@@ -7,7 +7,7 @@ import pw.forst.olb.common.dto.impl.SchedulingPropertiesImpl
 import pw.forst.olb.common.extensions.prettyFormat
 import pw.forst.olb.core.api.InputToDomainConverter
 import pw.forst.olb.core.api.OlbCoreApiImpl
-import pw.forst.olb.core.solver.OptaplannerSolverFactory
+import pw.forst.olb.core.solver.OptaPlannerSolverFactory
 import pw.forst.olb.simulation.input.data.DataParser
 import pw.forst.olb.simulation.input.data.JobWithHistoryFactory
 import java.util.concurrent.TimeUnit
@@ -19,7 +19,7 @@ class DomainBuilderTest {
         val builder = buildDomainBuilder()
         val plan = builder.build("./job-data/input")
 
-        val result = OlbCoreApiImpl(InputToDomainConverter(), OptaplannerSolverFactory(), true).enhancePlan(
+        val result = OlbCoreApiImpl(InputToDomainConverter(), OptaPlannerSolverFactory(), true).enhancePlan(
             plan, SchedulingPropertiesImpl(
                 startTime = plan.startTime + (plan.timeIncrement * 3),
                 endTime = plan.endTime,
