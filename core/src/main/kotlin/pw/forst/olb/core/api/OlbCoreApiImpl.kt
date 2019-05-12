@@ -79,7 +79,6 @@ class OlbCoreApiImpl(
     }
 
     private fun getLastIterationPrediction(@Suppress("UNUSED_PARAMETER") plan: AllocationPlanWithHistory, job: JobWithHistory): Iteration {
-        //TODO get correct prediction
         return (job.jobValueDuringIterations.keys.max() ?: IterationImpl(0)) + IterationImpl(2000)
 
     }

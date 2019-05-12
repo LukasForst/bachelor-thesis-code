@@ -1,6 +1,5 @@
 FROM gradle:5.4.0-jdk11-slim as builder
 
-#TODO find a way how to not copy job-data into the image
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle build

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <solver>
-    <!--<environmentMode>FULL_ASSERT</environmentMode>--><!-- To slowly prove there are no bugs in this code -->
-    <!--<moveThreadCount>AUTO</moveThreadCount>--><!-- To solve faster by saturating multiple CPU cores -->
-
     <!-- Domain model configuration -->
     <scanAnnotatedClasses>
         <packageInclude>pw.forst.olb.core</packageInclude>
@@ -13,21 +10,20 @@
         <easyScoreCalculatorClass>pw.forst.olb.core.evaluation.BigDecimalScoreCalculation</easyScoreCalculatorClass>
     </scoreDirectorFactory>
 
-    <!--    <localSearch>-->
-    <!--        <unionMoveSelector>-->
-    <!--            <swapMoveSelector/>-->
-    <!--            <pillarChangeMoveSelector/>-->
-    <!--            <pillarSwapMoveSelector/>-->
 
-    <!--            <changeMoveSelector>-->
-    <!--                <filterClass>pw.forst.olb.core.constraints.moves.ChangeMoveFilter</filterClass>-->
-    <!--            </changeMoveSelector>-->
-    <!--        </unionMoveSelector>-->
-    <!--    </localSearch>-->
+    <constructionHeuristic>
+        <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
+    </constructionHeuristic>
 
+    <localSearch>
+        <localSearchType>TABU_SEARCH</localSearchType>
+    </localSearch>
 
     <!-- Optimization algorithms configuration -->
     <termination>
         <secondsSpentLimit>20</secondsSpentLimit>
     </termination>
+
+    <!-- To solve faster by saturating multiple CPU cores-->
+    <moveThreadCount>AUTO</moveThreadCount>
 </solver>
