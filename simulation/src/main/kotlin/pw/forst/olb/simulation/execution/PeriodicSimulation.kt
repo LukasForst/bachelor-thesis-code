@@ -27,12 +27,12 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
-open class ExecutionConfiguration {
+open class RuntimeSimulation {
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val configuration = ExecutionConfiguration()
+            val configuration = RuntimeSimulation()
             val executor = configuration.obtainPeriodicExecutor()
             executor.startTest("./job-data/input", 10, configuration.generateJobs(10, TimeUnit.MINUTES.toSeconds(10)), configuration.resourcePools())
         }

@@ -29,12 +29,12 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
-open class OnePlanningRoundMain {
+open class OnePlanningRoundSimulation {
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val schedulingFunction = OnePlanningRoundMain().buildScheduler()
+            val schedulingFunction = OnePlanningRoundSimulation().buildScheduler()
             println("\n\n${schedulingFunction().prettyFormat()}\n")
         }
 

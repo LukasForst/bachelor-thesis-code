@@ -1,14 +1,14 @@
 package pw.forst.olb.simulation
 
-import pw.forst.olb.simulation.execution.ExecutionConfiguration
-import pw.forst.olb.simulation.execution.OnePlanningRoundMain
+import pw.forst.olb.simulation.execution.OnePlanningRoundSimulation
+import pw.forst.olb.simulation.execution.RuntimeSimulation
 
 class SimulationExecutor {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            OnePlanningRoundMain.main(args)
-            ExecutionConfiguration.main(args)
+            OnePlanningRoundSimulation.main(args) // simulation #1
+            RuntimeSimulation.main(args) // simulation #2
         }
     }
 
