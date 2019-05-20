@@ -43,7 +43,7 @@ class PeriodicExecutor(
         logger.info { "Running initial scheduling" }
         val initialPlan = firstRun(jobsDomain, resourcesPool).also {
             logger.info { "Printing Initial plan" }
-            println("0 iteration:$newLine${it.prettyFormat(false)}$newLine")
+            println("0 iteration:$newLine${it.prettyFormat(true)}$newLine")
         }
 
         logger.info { "Running iterative scheduling" }
@@ -57,10 +57,9 @@ class PeriodicExecutor(
             logger.info { "Executing scheduling for $idx iteration!" }
             coreApi.enhancePlan(allocationPlan, schedulingProperties).also {
                 logger.info { "Printing plan for $idx iteration" }
-                println("$idx iteration:$newLine${it.prettyFormat(false)}$newLine")
+                println("$idx iteration:$newLine${it.prettyFormat(true)}$newLine")
             }
         }
-
 
     private fun createNextIteration(plan: AllocationPlan, schedulingData: Map<Job, AlgorithmRuntimeInfo>): Pair<AllocationPlanWithHistory, SchedulingProperties> {
         val newStart = plan.startTime + plan.timeIncrement

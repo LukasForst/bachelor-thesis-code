@@ -34,7 +34,7 @@ open class RuntimeSimulation {
         fun main(args: Array<String>) {
             val configuration = RuntimeSimulation()
             val executor = configuration.obtainPeriodicExecutor()
-            executor.startTest("./job-data/input", 10, configuration.generateJobs(10, TimeUnit.MINUTES.toSeconds(10)), configuration.resourcePools())
+            executor.startTest("./job-data/input", 10, configuration.generateJobs(5, TimeUnit.MINUTES.toSeconds(10)), configuration.resourcePools())
         }
     }
 
